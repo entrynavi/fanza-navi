@@ -9,6 +9,7 @@ const navLinks = [
   { href: "/fanza-navi/ranking", label: "ランキング", icon: <FaStar size={14} /> },
   { href: "/fanza-navi/new", label: "新作", icon: <FaBolt size={14} /> },
   { href: "/fanza-navi/sale", label: "セール", icon: <FaTags size={14} /> },
+  { href: "/fanza-navi/guide", label: "ガイド", icon: <FaSearch size={14} /> },
 ];
 
 export default function Header() {

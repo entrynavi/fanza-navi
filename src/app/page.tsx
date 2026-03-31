@@ -6,8 +6,13 @@ import HeroSection from "@/components/HeroSection";
 import ProductCard from "@/components/ProductCard";
 import GenreFilter from "@/components/GenreFilter";
 import Footer from "@/components/Footer";
+import StickyCTA from "@/components/StickyCTA";
+import SocialProof from "@/components/SocialProof";
+import CountdownTimer from "@/components/CountdownTimer";
+import ExitPopup from "@/components/ExitPopup";
+import RelatedProducts from "@/components/RelatedProducts";
 import { genres, sampleProducts } from "@/data/products";
-import { FaArrowUp } from "react-icons/fa";
+import { FaArrowUp, FaArrowRight, FaBookOpen, FaBalanceScale } from "react-icons/fa";
 
 export default function HomePage() {
   const [activeGenre, setActiveGenre] = useState("all");
@@ -27,6 +32,12 @@ export default function HomePage() {
       </div>
 
       <HeroSection />
+
+      {/* Social proof + Countdown */}
+      <div className="max-w-4xl mx-auto px-4">
+        <SocialProof />
+        <CountdownTimer />
+      </div>
 
       {/* Main content */}
       <section id="ranking" className="max-w-6xl mx-auto px-4 pb-20">
@@ -80,12 +91,15 @@ export default function HomePage() {
         {/* Load more */}
         <div className="text-center mt-12">
           <a
-            href="#"
+            href="/fanza-navi/ranking"
             className="inline-block px-10 py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] hover:opacity-90 transition-opacity text-lg"
           >
-            もっと見る →
+            ランキングをもっと見る →
           </a>
         </div>
+
+        {/* Related */}
+        <RelatedProducts />
       </section>
 
       {/* Sale banner */}
@@ -110,7 +124,7 @@ export default function HomePage() {
               ！見逃すな！
             </p>
             <a
-              href="#"
+              href="/fanza-navi/sale"
               className="inline-block px-8 py-4 rounded-2xl font-bold text-[var(--color-primary)] bg-white hover:bg-gray-100 transition-colors text-lg"
             >
               セール会場へ →
@@ -119,12 +133,82 @@ export default function HomePage() {
         </motion.div>
       </section>
 
+      {/* Article links for SEO */}
+      <section className="max-w-5xl mx-auto px-4 pb-20">
+        <h2 className="text-2xl font-extrabold mb-8 text-center">
+          📚 <span className="gradient-text">お役立ちコンテンツ</span>
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <motion.a
+            href="/fanza-navi/guide"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-card p-6 group"
+          >
+            <div className="flex items-center gap-4 mb-3">
+              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-400">
+                <FaBookOpen size={20} />
+              </div>
+              <div>
+                <h3 className="font-bold group-hover:text-[var(--color-primary-light)] transition-colors">
+                  FANZA完全ガイド
+                </h3>
+                <p className="text-xs text-[var(--color-text-secondary)]">
+                  初心者向け
+                </p>
+              </div>
+              <FaArrowRight
+                size={14}
+                className="ml-auto text-[var(--color-text-secondary)] group-hover:text-[var(--color-primary)] transition-colors"
+              />
+            </div>
+            <p className="text-sm text-[var(--color-text-secondary)]">
+              登録方法・使い方・お得な買い方まで完全解説
+            </p>
+          </motion.a>
+          <motion.a
+            href="/fanza-navi/compare"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="glass-card p-6 group"
+          >
+            <div className="flex items-center gap-4 mb-3">
+              <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-400">
+                <FaBalanceScale size={20} />
+              </div>
+              <div>
+                <h3 className="font-bold group-hover:text-[var(--color-primary-light)] transition-colors">
+                  徹底比較
+                </h3>
+                <p className="text-xs text-[var(--color-text-secondary)]">
+                  VR vs 通常・サブスク vs 単品
+                </p>
+              </div>
+              <FaArrowRight
+                size={14}
+                className="ml-auto text-[var(--color-text-secondary)] group-hover:text-[var(--color-primary)] transition-colors"
+              />
+            </div>
+            <p className="text-sm text-[var(--color-text-secondary)]">
+              あなたに最適な楽しみ方を見つけよう
+            </p>
+          </motion.a>
+        </div>
+      </section>
+
       <Footer />
+
+      {/* Conversion components */}
+      <StickyCTA />
+      <ExitPopup />
 
       {/* Scroll to top */}
       <button
         onClick={scrollToTop}
-        className="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center shadow-lg hover:bg-[var(--color-primary-light)] transition-colors z-50"
+        className="fixed bottom-16 right-6 w-12 h-12 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center shadow-lg hover:bg-[var(--color-primary-light)] transition-colors z-40"
         aria-label="ページトップへ"
       >
         <FaArrowUp />

@@ -82,3 +82,12 @@ body {
   0%, 100% { box-shadow: 0 0 20px rgba(228, 0, 127, 0.3); }
   50% { box-shadow: 0 0 40px rgba(228, 0, 127, 0.6); }
 }
+
+/* Slide in for toasts */
+.animate-slide-in {
+  animation: slide-in 0.4s ease-out;
+}
+@keyframes slide-in {
+  from { transform: translateX(-120%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}

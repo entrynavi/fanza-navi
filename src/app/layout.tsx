@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import JsonLd from "@/components/JsonLd";
+import Analytics from "@/components/Analytics";
 
 export const metadata: Metadata = {
   title: {
@@ -36,6 +37,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className="antialiased min-h-screen">
+        <Analytics />
         <JsonLd />
         <Header />
         {children}
