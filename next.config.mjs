@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "export",
-  basePath: "/dmm-affiliate-site",
+  basePath: "/fanza-navi",
   images: {
     unoptimized: true,
     remotePatterns: [
