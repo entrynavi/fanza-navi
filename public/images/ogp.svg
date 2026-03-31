@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a"/>
+      <stop offset="100%" style="stop-color:#1a1a2e"/>
+    </linearGradient>
+    <linearGradient id="pink" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e4007f"/>
+      <stop offset="100%" style="stop-color:#ff6b35"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1000" cy="100" r="300" fill="#e4007f" opacity="0.07"/>
+  <circle cx="200" cy="500" r="200" fill="#ff6b35" opacity="0.05"/>
+  <text x="600" y="240" text-anchor="middle" font-family="sans-serif" font-size="72" font-weight="800" fill="url(#pink)">FANZA</text>
+  <text x="600" y="320" text-anchor="middle" font-family="sans-serif" font-size="56" font-weight="800" fill="white">おすすめ作品ナビ</text>
+  <text x="600" y="400" text-anchor="middle" font-family="sans-serif" font-size="28" fill="#a0a0b8">人気ランキング・新作・セール情報を毎日更新</text>
+  <rect x="400" y="460" width="400" height="60" rx="30" fill="url(#pink)"/>
+  <text x="600" y="500" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="700" fill="white">🔥 ランキングを見る</text>
+</svg>

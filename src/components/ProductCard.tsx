@@ -10,6 +10,15 @@ const rankColors: Record<number, string> = {
   3: "from-orange-400 to-orange-700",
 };
 
+const genreImageColors: Record<string, { from: string; to: string; icon: string }> = {
+  動画: { from: "#e4007f", to: "#ff6b35", icon: "▶" },
+  VR: { from: "#6366f1", to: "#8b5cf6", icon: "◉" },
+  素人: { from: "#ec4899", to: "#f43f5e", icon: "♡" },
+  アニメ: { from: "#06b6d4", to: "#3b82f6", icon: "★" },
+  成人向け漫画: { from: "#f59e0b", to: "#ef4444", icon: "◆" },
+  ゲーム: { from: "#10b981", to: "#14b8a6", icon: "⬡" },
+};
+
 export default function ProductCard({
   product,
   index,
@@ -20,6 +29,8 @@ export default function ProductCard({
   const discountPercent = product.salePrice
     ? Math.round((1 - product.salePrice / product.price) * 100)
     : 0;
+
+  const genreColor = genreImageColors[product.genre] ?? { from: "#e4007f", to: "#ff6b35", icon: "▶" };
 
   return (
     <motion.div
@@ -60,9 +71,20 @@ export default function ProductCard({
       </div>
 
       {/* Image placeholder */}
-      <div className="relative aspect-[16/10] bg-gradient-to-br from-[var(--color-bg-card)] to-[var(--color-bg-card-hover)] overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center text-6xl opacity-20 group-hover:opacity-30 transition-opacity">
-          🎬
+      <div
+        className="relative aspect-[16/10] overflow-hidden"
+        style={{
+          background: `linear-gradient(135deg, ${genreColor.from}22, ${genreColor.to}22)`,
+        }}
+      >
+        <div
+          className="absolute inset-0 flex items-center justify-center text-7xl font-bold opacity-15 group-hover:opacity-25 transition-opacity select-none"
+          style={{ color: genreColor.from }}
+        >
+          {genreColor.icon}
+        </div>
+        <div className="absolute bottom-2 left-3 text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: `${genreColor.from}33`, color: genreColor.from }}>
+          {product.genre}
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
       </div>

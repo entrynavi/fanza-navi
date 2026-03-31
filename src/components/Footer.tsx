@@ -23,14 +23,17 @@ export default function Footer() {
 
         {/* Links */}
         <div className="flex flex-wrap justify-center gap-6 mb-8 text-sm text-[var(--color-text-secondary)]">
-          <a href="#" className="hover:text-[var(--color-primary)] transition-colors">
+          <a href="/fanza-navi/privacy" className="hover:text-[var(--color-primary)] transition-colors">
             プライバシーポリシー
           </a>
-          <a href="#" className="hover:text-[var(--color-primary)] transition-colors">
+          <a href="/fanza-navi/terms" className="hover:text-[var(--color-primary)] transition-colors">
+            利用規約
+          </a>
+          <a href="/fanza-navi/about" className="hover:text-[var(--color-primary)] transition-colors">
             運営者情報
           </a>
-          <a href="#" className="hover:text-[var(--color-primary)] transition-colors">
-            お問い合わせ
+          <a href="/fanza-navi/guide" className="hover:text-[var(--color-primary)] transition-colors">
+            初心者ガイド
           </a>
         </div>
 
