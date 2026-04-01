@@ -1,77 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://chidori0543-sys.github.io/fanza-navi/</loc>
+    <loc>https://entrynavi.github.io/fanza-navi/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://chidori0543-sys.github.io/fanza-navi/ranking</loc>
+    <loc>https://entrynavi.github.io/fanza-navi/ranking</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://chidori0543-sys.github.io/fanza-navi/new</loc>
+    <loc>https://entrynavi.github.io/fanza-navi/new</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://chidori0543-sys.github.io/fanza-navi/sale</loc>
+    <loc>https://entrynavi.github.io/fanza-navi/sale</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://chidori0543-sys.github.io/fanza-navi/search</loc>
+    <loc>https://entrynavi.github.io/fanza-navi/search</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://chidori0543-sys.github.io/fanza-navi/guide</loc>
+    <loc>https://entrynavi.github.io/fanza-navi/guide</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://chidori0543-sys.github.io/fanza-navi/compare</loc>
+    <loc>https://entrynavi.github.io/fanza-navi/compare</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chidori0543-sys.github.io/fanza-navi/contact</loc>
+    <loc>https://entrynavi.github.io/fanza-navi/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://chidori0543-sys.github.io/fanza-navi/terms</loc>
+    <loc>https://entrynavi.github.io/fanza-navi/terms</loc>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://chidori0543-sys.github.io/fanza-navi/privacy</loc>
+    <loc>https://entrynavi.github.io/fanza-navi/privacy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://chidori0543-sys.github.io/fanza-navi/about</loc>
+    <loc>https://entrynavi.github.io/fanza-navi/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://chidori0543-sys.github.io/fanza-navi/articles</loc>
+    <loc>https://entrynavi.github.io/fanza-navi/articles</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://chidori0543-sys.github.io/fanza-navi/articles/fanza-payment</loc>
+    <loc>https://entrynavi.github.io/fanza-navi/articles/fanza-payment</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chidori0543-sys.github.io/fanza-navi/articles/vr-setup</loc>
+    <loc>https://entrynavi.github.io/fanza-navi/articles/vr-setup</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://chidori0543-sys.github.io/fanza-navi/articles/save-money</loc>
+    <loc>https://entrynavi.github.io/fanza-navi/articles/save-money</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

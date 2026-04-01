@@ -22,7 +22,7 @@ export default function AboutPage() {
             <tr>
               <td className="py-4 pr-4 font-bold text-white">サイトURL</td>
               <td className="py-4 text-[var(--color-text-secondary)]">
-                https://chidori0543-sys.github.io/fanza-navi/
+                https://entrynavi.github.io/fanza-navi/
               </td>
             </tr>
             <tr>

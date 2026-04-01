@@ -5,7 +5,7 @@ import JsonLd from "@/components/JsonLd";
 import Analytics from "@/components/Analytics";
 import ErrorTracker from "@/components/ErrorTracker";
 
-const SITE_URL = "https://chidori0543-sys.github.io/fanza-navi";
+const SITE_URL = "https://entrynavi.github.io/fanza-navi";
 
 export const metadata: Metadata = {
   title: {

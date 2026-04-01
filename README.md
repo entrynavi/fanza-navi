@@ -2,7 +2,7 @@
 
 FANZA（DMM）アフィリエイトサイト — 人気ランキング・新作・セール情報を毎日自動更新
 
-**🌐 Live:** <https://chidori0543-sys.github.io/fanza-navi/>
+**🌐 Live:** <https://entrynavi.github.io/fanza-navi/>
 
 ---
 
