@@ -12,7 +12,7 @@ import CountdownTimer from "@/components/CountdownTimer";
 import ExitPopup from "@/components/ExitPopup";
 import RelatedProducts from "@/components/RelatedProducts";
 import { genres, sampleProducts } from "@/data/products";
-import { FaArrowUp, FaArrowRight, FaBookOpen, FaBalanceScale } from "react-icons/fa";
+import { FaArrowUp, FaArrowRight, FaBookOpen, FaBalanceScale, FaCreditCard, FaVrCardboard, FaCoins } from "react-icons/fa";
 
 export default function HomePage() {
   const [activeGenre, setActiveGenre] = useState("all");
@@ -132,12 +132,17 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* Article links for SEO */}
+      {/* Article links for SEO — prominent section */}
       <section className="max-w-5xl mx-auto px-4 pb-20">
-        <h2 className="text-2xl font-extrabold mb-8 text-center">
+        <h2 className="text-2xl font-extrabold mb-3 text-center">
           📚 <span className="gradient-text">お役立ちコンテンツ</span>
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <p className="text-center text-[var(--color-text-secondary)] mb-8 text-sm">
+          FANZAを快適に使いこなすためのガイド記事を公開中
+        </p>
+
+        {/* Featured articles — 2 column */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <motion.a
             href="/fanza-navi/guide"
             initial={{ opacity: 0, y: 20 }}
@@ -154,7 +159,7 @@ export default function HomePage() {
                   FANZA完全ガイド
                 </h3>
                 <p className="text-xs text-[var(--color-text-secondary)]">
-                  初心者向け
+                  初心者向け・読了10分
                 </p>
               </div>
               <FaArrowRight
@@ -195,6 +200,73 @@ export default function HomePage() {
               あなたに最適な楽しみ方を見つけよう
             </p>
           </motion.a>
+        </div>
+
+        {/* Additional articles — 3 column */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <motion.a
+            href="/fanza-navi/articles/fanza-payment"
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.05 }}
+            className="glass-card p-5 group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center text-green-400 mb-3">
+              <FaCreditCard size={16} />
+            </div>
+            <h3 className="font-bold text-sm mb-1 group-hover:text-[var(--color-primary-light)] transition-colors">
+              支払い方法ガイド
+            </h3>
+            <p className="text-xs text-[var(--color-text-secondary)] line-clamp-2">
+              クレカ・PayPay・ポイントを徹底比較。バレない方法も紹介
+            </p>
+          </motion.a>
+          <motion.a
+            href="/fanza-navi/articles/vr-setup"
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="glass-card p-5 group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-3">
+              <FaVrCardboard size={16} />
+            </div>
+            <h3 className="font-bold text-sm mb-1 group-hover:text-[var(--color-primary-light)] transition-colors">
+              VRセットアップ
+            </h3>
+            <p className="text-xs text-[var(--color-text-secondary)] line-clamp-2">
+              スマホ・Meta Quest・PCデバイス別の設定手順
+            </p>
+          </motion.a>
+          <motion.a
+            href="/fanza-navi/articles/save-money"
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.15 }}
+            className="glass-card p-5 group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 mb-3">
+              <FaCoins size={16} />
+            </div>
+            <h3 className="font-bold text-sm mb-1 group-hover:text-[var(--color-primary-light)] transition-colors">
+              セール攻略法
+            </h3>
+            <p className="text-xs text-[var(--color-text-secondary)] line-clamp-2">
+              クーポン・ポイント・セール活用で年間数万円節約
+            </p>
+          </motion.a>
+        </div>
+
+        <div className="text-center">
+          <a
+            href="/fanza-navi/articles"
+            className="inline-flex items-center gap-2 text-sm text-[var(--color-primary)] font-bold hover:underline"
+          >
+            すべての記事を見る ({5}本) <FaArrowRight size={12} />
+          </a>
         </div>
       </section>
 

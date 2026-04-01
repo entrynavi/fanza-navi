@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaBars, FaTimes, FaFire, FaStar, FaBolt, FaTags, FaSearch } from "react-icons/fa";
+import { FaBars, FaTimes, FaFire, FaStar, FaBolt, FaTags, FaSearch, FaBookOpen } from "react-icons/fa";
 
 const navLinks = [
   { href: "/fanza-navi/", label: "ホーム", icon: <FaFire size={14} /> },
   { href: "/fanza-navi/ranking", label: "ランキング", icon: <FaStar size={14} /> },
   { href: "/fanza-navi/new", label: "新作", icon: <FaBolt size={14} /> },
   { href: "/fanza-navi/sale", label: "セール", icon: <FaTags size={14} /> },
-  { href: "/fanza-navi/guide", label: "ガイド", icon: <FaSearch size={14} /> },
+  { href: "/fanza-navi/articles", label: "記事", icon: <FaBookOpen size={14} /> },
 ];
 
 export default function Header() {
