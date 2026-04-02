@@ -15,7 +15,7 @@ import Footer from "@/components/Footer";
 
 const articles = [
   {
-    href: "/fanza-navi/guide",
+    href: "/guide",
     icon: "book",
     title: "FANZA完全ガイド｜登録方法から使い方まで初心者向け徹底解説",
     description:
@@ -25,7 +25,7 @@ const articles = [
     readTime: "10分",
   },
   {
-    href: "/fanza-navi/compare",
+    href: "/compare",
     icon: "balance",
     title: "VR vs 通常・月額見放題 vs 単品購入｜FANZAの楽しみ方を徹底比較",
     description:
@@ -35,7 +35,7 @@ const articles = [
     readTime: "8分",
   },
   {
-    href: "/fanza-navi/articles/fanza-payment",
+    href: "/articles/fanza-payment",
     icon: "credit",
     title: "FANZA（DMM）の支払い方法を完全解説｜クレカ・PayPay・DMMポイント比較",
     description:
@@ -45,7 +45,7 @@ const articles = [
     readTime: "12分",
   },
   {
-    href: "/fanza-navi/articles/vr-setup",
+    href: "/articles/vr-setup",
     icon: "vr",
     title: "FANZA VR動画の視聴方法｜スマホ・PC・Meta Quest別セットアップガイド",
     description:
@@ -55,7 +55,7 @@ const articles = [
     readTime: "15分",
   },
   {
-    href: "/fanza-navi/articles/save-money",
+    href: "/articles/save-money",
     icon: "coins",
     title: "FANZAで損しない！セール・クーポン・ポイント活用術まとめ【2026年版】",
     description:

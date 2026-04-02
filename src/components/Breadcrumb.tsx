@@ -1,6 +1,7 @@
 "use client";
 
 import { FaChevronRight, FaHome } from "react-icons/fa";
+import { ROUTES } from "@/lib/site";
 
 interface Crumb {
   label: string;
@@ -11,7 +12,7 @@ export default function Breadcrumb({ items }: { items: Crumb[] }) {
   return (
     <nav className="flex items-center gap-2 text-xs text-[var(--color-text-secondary)] mb-6 flex-wrap">
       <a
-        href="/fanza-navi/"
+        href={ROUTES.home}
         className="flex items-center gap-1 hover:text-white transition-colors"
       >
         <FaHome size={12} /> ホーム

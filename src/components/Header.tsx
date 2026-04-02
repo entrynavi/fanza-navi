@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaBars, FaTimes, FaFire, FaStar, FaBolt, FaTags, FaSearch, FaBookOpen } from "react-icons/fa";
+import { ROUTES } from "@/lib/site";
 
 const navLinks = [
-  { href: "/fanza-navi/", label: "ホーム", icon: <FaFire size={14} /> },
-  { href: "/fanza-navi/ranking", label: "ランキング", icon: <FaStar size={14} /> },
-  { href: "/fanza-navi/new", label: "新作", icon: <FaBolt size={14} /> },
-  { href: "/fanza-navi/sale", label: "セール", icon: <FaTags size={14} /> },
-  { href: "/fanza-navi/articles", label: "記事", icon: <FaBookOpen size={14} /> },
+  { href: ROUTES.home, label: "ホーム", icon: <FaFire size={14} /> },
+  { href: ROUTES.ranking, label: "ランキング", icon: <FaStar size={14} /> },
+  { href: ROUTES.newReleases, label: "新作", icon: <FaBolt size={14} /> },
+  { href: ROUTES.sale, label: "セール", icon: <FaTags size={14} /> },
+  { href: ROUTES.articles, label: "記事", icon: <FaBookOpen size={14} /> },
 ];
 
 export default function Header() {
@@ -19,7 +20,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-[var(--color-bg-dark)]/90 backdrop-blur-lg border-b border-[var(--color-border)]">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
-        <a href="/fanza-navi/" className="flex items-center gap-2">
+        <a href={ROUTES.home} className="flex items-center gap-2">
           <span className="text-2xl">🎬</span>
           <span className="text-lg font-extrabold gradient-text hidden sm:inline">
             FANZAナビ
@@ -43,7 +44,7 @@ export default function Header() {
         {/* Search + Mobile toggle */}
         <div className="flex items-center gap-3">
           <a
-            href="/fanza-navi/search"
+            href={ROUTES.search}
             className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-[var(--color-text-secondary)] hover:text-white hover:bg-white/10 transition-all"
           >
             <FaSearch size={14} />

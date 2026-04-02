@@ -77,14 +77,14 @@ export default function HeroSection() {
           className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
         >
           <a
-            href="/fanza-navi/guide"
+            href="/guide"
             className="px-8 py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] hover:from-[var(--color-primary-light)] hover:to-[var(--color-primary)] transition-all duration-300 text-lg pulse-glow"
           >
             <FaBookOpen className="inline mr-2" />
             初心者ガイドを読む
           </a>
           <a
-            href="/fanza-navi/articles"
+            href="/articles"
             className="px-8 py-4 rounded-2xl font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 text-lg"
           >
             📚 すべての記事を見る

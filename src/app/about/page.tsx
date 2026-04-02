@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { FaEnvelope, FaGlobe, FaShieldAlt } from "react-icons/fa";
+import { ROUTES, SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "運営者情報",
@@ -22,7 +23,9 @@ export default function AboutPage() {
             <tr>
               <td className="py-4 pr-4 font-bold text-white">サイトURL</td>
               <td className="py-4 text-[var(--color-text-secondary)]">
-                https://entrynavi.github.io/fanza-navi/
+                <a href={SITE_URL} className="text-[var(--color-primary)] hover:underline">
+                  {SITE_URL}
+                </a>
               </td>
             </tr>
             <tr>
@@ -32,7 +35,7 @@ export default function AboutPage() {
             <tr>
               <td className="py-4 pr-4 font-bold text-white">お問い合わせ</td>
               <td className="py-4 text-[var(--color-text-secondary)]">
-                <a href="/fanza-navi/contact" className="text-[var(--color-primary)] hover:underline">
+                <a href={ROUTES.contact} className="text-[var(--color-primary)] hover:underline">
                   お問い合わせフォーム
                 </a>
                 よりご連絡ください
@@ -91,7 +94,7 @@ export default function AboutPage() {
             <tr>
               <td className="py-3 pr-4 font-bold text-white">個人情報の取扱い</td>
               <td className="py-3 text-[var(--color-text-secondary)]">
-                <a href="/fanza-navi/privacy" className="text-[var(--color-primary)] hover:underline">
+                <a href={ROUTES.privacy} className="text-[var(--color-primary)] hover:underline">
                   プライバシーポリシー
                 </a>
                 をご参照ください

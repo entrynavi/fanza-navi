@@ -42,7 +42,7 @@ export default function StickyCTA() {
             </div>
             <div className="flex items-center gap-2 shrink-0">
               <a
-                href="/fanza-navi/guide"
+                href="/guide"
                 className="px-5 py-2 rounded-xl text-sm font-bold text-[var(--color-primary)] bg-white hover:bg-gray-100 transition-colors whitespace-nowrap"
               >
                 ガイドを読む

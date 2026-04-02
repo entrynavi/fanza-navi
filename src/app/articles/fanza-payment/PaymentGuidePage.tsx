@@ -340,7 +340,7 @@ export default function PaymentGuidePage() {
     <main className="max-w-4xl mx-auto px-4 py-8">
       <Breadcrumb
         items={[
-          { label: "記事一覧", href: "/fanza-navi/articles" },
+          { label: "記事一覧", href: "/articles" },
           { label: "支払い方法ガイド" },
         ]}
       />
@@ -840,7 +840,7 @@ export default function PaymentGuidePage() {
           <h2 className="text-xl font-bold mb-4 text-center">📚 関連記事</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <a
-              href="/fanza-navi/articles/save-money"
+              href="/articles/save-money"
               className="glass-card p-5 hover:border-[var(--color-primary)]/50 transition-colors block"
             >
               <h3 className="font-bold text-sm mb-1">
@@ -851,7 +851,7 @@ export default function PaymentGuidePage() {
               </p>
             </a>
             <a
-              href="/fanza-navi/articles/vr-setup"
+              href="/articles/vr-setup"
               className="glass-card p-5 hover:border-[var(--color-primary)]/50 transition-colors block"
             >
               <h3 className="font-bold text-sm mb-1">

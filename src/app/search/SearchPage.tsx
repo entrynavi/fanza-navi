@@ -48,7 +48,7 @@ export default function SearchPage() {
             FANZA公式で検索 <FaArrowRight size={12} />
           </a>
           <a
-            href="/fanza-navi/articles"
+            href="/articles"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-[var(--color-text-secondary)] bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
           >
             記事を読む <FaArrowRight size={12} />

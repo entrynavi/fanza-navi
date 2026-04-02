@@ -114,7 +114,7 @@ export default function PrivacyPage() {
           </h2>
           <p>
             本ポリシーに関するお問い合わせは、
-            <a href="/fanza-navi/contact" className="text-[var(--color-primary)] hover:underline">
+            <a href="/contact" className="text-[var(--color-primary)] hover:underline">
               お問い合わせフォーム
             </a>
             よりご連絡ください。

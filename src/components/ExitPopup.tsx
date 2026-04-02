@@ -73,14 +73,14 @@ export default function ExitPopup() {
 
             <div className="space-y-3">
               <a
-                href="/fanza-navi/guide"
+                href="/guide"
                 onClick={() => setShow(false)}
                 className="block w-full py-3 rounded-xl font-bold text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:opacity-90 transition-opacity"
               >
                 📚 初心者ガイドを読む
               </a>
               <a
-                href="/fanza-navi/search"
+                href="/search"
                 onClick={() => setShow(false)}
                 className="block w-full py-3 rounded-xl font-bold text-white bg-white/5 border border-[var(--color-border)] hover:bg-white/10 transition-colors"
               >

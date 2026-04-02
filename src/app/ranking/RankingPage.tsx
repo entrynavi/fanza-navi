@@ -40,13 +40,13 @@ export default function RankingPage() {
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <a
-            href="/fanza-navi/guide"
+            href="/guide"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] hover:opacity-90 transition-opacity"
           >
             初心者ガイドを読む <FaArrowRight size={12} />
           </a>
           <a
-            href="/fanza-navi/articles"
+            href="/articles"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-[var(--color-text-secondary)] bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
           >
             記事を読む <FaArrowRight size={12} />

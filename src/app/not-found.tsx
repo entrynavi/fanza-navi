@@ -12,13 +12,13 @@ export default function NotFound() {
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <Link
-          href="/fanza-navi/"
+          href="/"
           className="px-8 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] hover:opacity-90 transition-opacity"
         >
           🏠 トップページへ
         </Link>
         <Link
-          href="/fanza-navi/ranking"
+          href="/ranking"
           className="px-8 py-3 rounded-xl font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
         >
           🏆 ランキングを見る

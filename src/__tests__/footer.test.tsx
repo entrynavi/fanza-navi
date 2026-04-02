@@ -16,9 +16,9 @@ describe("Footer Component", () => {
     const links = Array.from(container.querySelectorAll("a"));
     const hrefs = links.map((a) => a.getAttribute("href"));
 
-    expect(hrefs).toContain("/fanza-navi/privacy");
-    expect(hrefs).toContain("/fanza-navi/terms");
-    expect(hrefs).toContain("/fanza-navi/about");
+    expect(hrefs).toContain("/privacy");
+    expect(hrefs).toContain("/terms");
+    expect(hrefs).toContain("/about");
   });
 
   it("renders copyright", () => {

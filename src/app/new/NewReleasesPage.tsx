@@ -38,7 +38,7 @@ export default function NewReleasesPage() {
           連携完了後、最新リリース作品を自動で取得して表示します。
         </p>
         <a
-          href="/fanza-navi/articles"
+          href="/articles"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] hover:opacity-90 transition-opacity"
         >
           記事を読む <FaArrowRight size={12} />

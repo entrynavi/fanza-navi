@@ -42,7 +42,7 @@ export default function SalePage() {
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <a
-            href="/fanza-navi/articles/save-money"
+            href="/articles/save-money"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] hover:opacity-90 transition-opacity"
           >
             セール攻略法を読む <FaArrowRight size={12} />

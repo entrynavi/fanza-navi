@@ -31,7 +31,7 @@ export default function HomePage() {
         {/* Featured articles — 2 column */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <motion.a
-            href="/fanza-navi/guide"
+            href="/guide"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -59,7 +59,7 @@ export default function HomePage() {
             </p>
           </motion.a>
           <motion.a
-            href="/fanza-navi/compare"
+            href="/compare"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -92,7 +92,7 @@ export default function HomePage() {
         {/* Additional articles — 3 column */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <motion.a
-            href="/fanza-navi/articles/fanza-payment"
+            href="/articles/fanza-payment"
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -110,7 +110,7 @@ export default function HomePage() {
             </p>
           </motion.a>
           <motion.a
-            href="/fanza-navi/articles/vr-setup"
+            href="/articles/vr-setup"
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -128,7 +128,7 @@ export default function HomePage() {
             </p>
           </motion.a>
           <motion.a
-            href="/fanza-navi/articles/save-money"
+            href="/articles/save-money"
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -149,7 +149,7 @@ export default function HomePage() {
 
         <div className="text-center">
           <a
-            href="/fanza-navi/articles"
+            href="/articles"
             className="inline-flex items-center gap-2 text-sm text-[var(--color-primary)] font-bold hover:underline"
           >
             すべての記事を見る ({5}本) <FaArrowRight size={12} />
@@ -179,14 +179,14 @@ export default function HomePage() {
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <a
-                href="/fanza-navi/ranking"
+                href="/ranking"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-[var(--color-primary)] bg-white hover:bg-gray-100 transition-colors"
               >
                 <FaRocket size={14} />
                 ランキング（準備中）
               </a>
               <a
-                href="/fanza-navi/sale"
+                href="/sale"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white bg-white/20 hover:bg-white/30 transition-colors"
               >
                 <FaDatabase size={14} />

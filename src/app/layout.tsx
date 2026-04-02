@@ -4,8 +4,7 @@ import Header from "@/components/Header";
 import JsonLd from "@/components/JsonLd";
 import Analytics from "@/components/Analytics";
 import ErrorTracker from "@/components/ErrorTracker";
-
-const SITE_URL = "https://entrynavi.github.io/fanza-navi";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: {

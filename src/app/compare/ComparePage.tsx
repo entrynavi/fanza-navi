@@ -101,7 +101,7 @@ export default function ComparePage() {
         </div>
         <div className="text-center mt-6">
           <a
-            href="/fanza-navi/ranking"
+            href="/ranking"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-purple-500 to-blue-500 hover:opacity-90 transition-opacity"
           >
             VR作品ランキングを見る <FaArrowRight size={12} />

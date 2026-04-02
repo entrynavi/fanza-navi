@@ -398,7 +398,7 @@ export default function VRSetupPage() {
     <main className="max-w-4xl mx-auto px-4 py-8">
       <Breadcrumb
         items={[
-          { label: "記事一覧", href: "/fanza-navi/articles" },
+          { label: "記事一覧", href: "/articles" },
           { label: "VR視聴ガイド" },
         ]}
       />
@@ -847,7 +847,7 @@ export default function VRSetupPage() {
           <h2 className="text-xl font-bold mb-4 text-center">📚 関連記事</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <a
-              href="/fanza-navi/articles/fanza-payment"
+              href="/articles/fanza-payment"
               className="glass-card p-5 hover:border-[var(--color-primary)]/50 transition-colors block"
             >
               <h3 className="font-bold text-sm mb-1">💳 支払い方法ガイド</h3>
@@ -856,7 +856,7 @@ export default function VRSetupPage() {
               </p>
             </a>
             <a
-              href="/fanza-navi/articles/save-money"
+              href="/articles/save-money"
               className="glass-card p-5 hover:border-[var(--color-primary)]/50 transition-colors block"
             >
               <h3 className="font-bold text-sm mb-1">
