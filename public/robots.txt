@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://fanza-navi.pages.dev/sitemap.xml
+Sitemap: https://fragrant-thunder-2202.chidori0543.workers.dev/sitemap.xml
