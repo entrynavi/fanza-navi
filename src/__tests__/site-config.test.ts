@@ -3,7 +3,7 @@ import { ROUTES, SITE_URL } from "@/lib/site";
 
 describe("site config", () => {
   it("uses a Cloudflare root-hosted site URL", () => {
-    expect(SITE_URL).toBe("https://fanza-navi.pages.dev");
+    expect(SITE_URL).toBe("https://fragrant-thunder-2202.chidori0543.workers.dev");
     expect(new URL(SITE_URL).pathname).toBe("/");
   });
 

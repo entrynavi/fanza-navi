@@ -1,4 +1,4 @@
-export const SITE_URL = "https://fanza-navi.pages.dev";
+export const SITE_URL = "https://fragrant-thunder-2202.chidori0543.workers.dev";
 
 export const ROUTES = {
   home: "/",
