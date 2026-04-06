@@ -114,6 +114,22 @@ describe("catalog loaders", () => {
     expect(relatedProducts.every((product) => product.genre === "vr")).toBe(true);
   });
 
+  it("does not call fetchByGenre for loadGenreProducts without an explicit articleId", async () => {
+    vi.mocked(fetchByGenre).mockResolvedValue([]);
+
+    await loadGenreProducts("vr", { limit: 2 });
+
+    expect(fetchByGenre).not.toHaveBeenCalled();
+  });
+
+  it("does not call fetchByGenre for loadRelatedProducts without an explicit articleId", async () => {
+    vi.mocked(fetchByGenre).mockResolvedValue([]);
+
+    await loadRelatedProducts({ genre: "vr", limit: 2 });
+
+    expect(fetchByGenre).not.toHaveBeenCalled();
+  });
+
   it("falls back to same-genre related products without the current product", async () => {
     vi.mocked(fetchByGenre).mockResolvedValueOnce([]);
 

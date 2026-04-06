@@ -4,6 +4,7 @@ import {
   fetchNewReleases,
   fetchRanking,
   fetchSaleProducts,
+  mapGenreLabelToKey,
   toProduct,
 } from "@/lib/dmm-api";
 import type { DmmProduct } from "@/lib/dmm-api";
@@ -25,36 +26,8 @@ function normalizeLimit(options: CatalogLoadOptions = {}): number {
   return limit > 0 ? limit : 0;
 }
 
-const CANONICAL_GENRE_ALIASES: Record<string, string> = {
-  popular: "popular",
-  "人気": "popular",
-  "人気作品": "popular",
-  "動画": "popular",
-  "new-release": "new-release",
-  newrelease: "new-release",
-  "新作": "new-release",
-  sale: "sale",
-  "セール": "sale",
-  "high-rated": "high-rated",
-  highrated: "high-rated",
-  "高評価": "high-rated",
-  amateur: "amateur",
-  "素人": "amateur",
-  vr: "vr",
-  "VR": "vr",
-};
-
 function canonicalizeGenreKey(label?: string): string {
-  const normalized = label?.trim() ?? "";
-  if (!normalized) {
-    return "popular";
-  }
-
-  return (
-    CANONICAL_GENRE_ALIASES[normalized] ||
-    CANONICAL_GENRE_ALIASES[normalized.toLowerCase()] ||
-    "popular"
-  );
+  return mapGenreLabelToKey(label);
 }
 
 function stripRank(product: Product): Product {
@@ -208,7 +181,11 @@ export async function loadGenreProducts(
   const limit = normalizeLimit(options);
   const hits = options.hits ?? limit;
   const genreKey = canonicalizeGenreKey(genreId);
-  const articleId = options.articleId ?? genreId;
+  const articleId = options.articleId;
+
+  if (!articleId) {
+    return getCuratedGenre(genreKey, limit).map(stripRank);
+  }
 
   return loadCatalogProducts(
     () => fetchByGenre(articleId, hits, options.offset ?? 1),
@@ -223,15 +200,21 @@ export async function loadRelatedProducts(
   const limit = normalizeLimit(options);
   const hits = options.hits ?? limit;
   const genreKey = options.genre ? canonicalizeGenreKey(options.genre) : undefined;
-  const articleId = options.articleId ?? options.genre;
+  const articleId = options.articleId;
   const fallback = getCuratedRelated(genreKey, options.currentId, limit);
   const excludedIds = new Set(options.currentId ? [options.currentId] : []);
 
-  const fetcher = articleId
-    ? () => fetchByGenre(articleId, hits, options.offset ?? 1)
-    : () => fetchRanking(hits, options.offset ?? 1);
+  if (!articleId) {
+    return fallback
+      .filter((product) => !excludedIds.has(product.id))
+      .map(stripRank)
+      .slice(0, limit);
+  }
 
-  const apiProducts = mapApiProducts(await fetcher(), false).filter(
+  const apiProducts = mapApiProducts(
+    await fetchByGenre(articleId, hits, options.offset ?? 1),
+    false
+  ).filter(
     (product) => !excludedIds.has(product.id)
   );
 

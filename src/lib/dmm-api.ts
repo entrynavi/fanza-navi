@@ -20,6 +20,20 @@ const CANONICAL_GENRE_ALIASES: Record<string, string> = {
   "VR": "vr",
 };
 
+export function mapGenreLabelToKey(label?: string): string {
+  const normalized = label?.trim() ?? "";
+
+  if (!normalized) {
+    return "popular";
+  }
+
+  return (
+    CANONICAL_GENRE_ALIASES[normalized] ||
+    CANONICAL_GENRE_ALIASES[normalized.toLowerCase()] ||
+    normalized
+  );
+}
+
 export interface DmmApiConfig {
   apiId: string;
   affiliateId: string;
@@ -184,20 +198,11 @@ async function fetchProducts(url: string): Promise<DmmProduct[]> {
 // DmmProduct → 表示用Productへの変換
 import type { Product } from "@/data/products";
 
-function canonicalizeGenreKey(label?: string): string {
-  const normalized = label?.trim() ?? "";
-  if (!normalized) {
-    return "popular";
-  }
-
-  return CANONICAL_GENRE_ALIASES[normalized] || CANONICAL_GENRE_ALIASES[normalized.toLowerCase()] || "popular";
-}
-
 export function toProduct(item: DmmProduct, rank?: number): Product {
   const priceStr = item.prices?.price?.replace(/[^0-9]/g, "") || "0";
   const price = parseInt(priceStr) || 0;
   const genres = item.iteminfo?.genre?.map((g) => g.name) || [];
-  const genreKey = canonicalizeGenreKey(genres[0]);
+  const genreKey = mapGenreLabelToKey(genres[0]);
 
   return {
     id: item.content_id,

@@ -148,6 +148,24 @@ describe("DMM API Client", () => {
       expect(result.tags).toEqual([]);
     });
 
+    it("preserves unknown genre labels and canonicalizes known buckets", () => {
+      const dramaProduct = {
+        ...mockDmmProduct,
+        iteminfo: {
+          genre: [{ id: 1, name: "ドラマ" }],
+        },
+      };
+      const vrProduct = {
+        ...mockDmmProduct,
+        iteminfo: {
+          genre: [{ id: 1, name: "VR" }],
+        },
+      };
+
+      expect(toProduct(dramaProduct).genre).toBe("ドラマ");
+      expect(toProduct(vrProduct).genre).toBe("vr");
+    });
+
     it("marks recent releases as new", () => {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
