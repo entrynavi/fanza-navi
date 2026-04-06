@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import JsonLd from "@/components/JsonLd";
 import Analytics from "@/components/Analytics";
 import ErrorTracker from "@/components/ErrorTracker";
+import AgeGate from "@/components/AgeGate";
 import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -55,6 +56,7 @@ export default function RootLayout({
         <div className="bg-[#1a1a2e] border-b border-[var(--color-border)] py-1.5 text-center text-[11px] text-[var(--color-text-secondary)]">
           当サイトはアフィリエイト広告（PR）を利用しています
         </div>
+        <AgeGate />
         <Header />
         {children}
       </body>
