@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { FaStar, FaFire, FaTag, FaBolt } from "react-icons/fa";
+import { buildAffiliateUrl } from "@/lib/affiliate";
 import type { Product } from "@/data/products";
 
 const rankColors: Record<number, string> = {
@@ -31,6 +32,7 @@ export default function ProductCard({
     : 0;
 
   const genreColor = genreImageColors[product.genre] ?? { from: "#e4007f", to: "#ff6b35", icon: "▶" };
+  const affiliateHref = product.affiliateUrl.trim() || buildAffiliateUrl("");
 
   return (
     <motion.div
@@ -145,20 +147,14 @@ export default function ProductCard({
         </div>
 
         {/* CTA */}
-        {product.affiliateUrl ? (
-          <a
-            href={product.affiliateUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full text-center py-3 rounded-xl font-bold text-white bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] hover:from-[var(--color-primary-light)] hover:to-[var(--color-primary)] transition-all duration-300"
-          >
-            詳細を見る →
-          </a>
-        ) : (
-          <span className="block w-full text-center py-3 rounded-xl font-bold text-white/50 bg-white/5 border border-white/10 cursor-not-allowed">
-            準備中
-          </span>
-        )}
+        <a
+          href={affiliateHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full text-center py-3 rounded-xl font-bold text-white bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] hover:from-[var(--color-primary-light)] hover:to-[var(--color-primary)] transition-all duration-300"
+        >
+          詳細を見る →
+        </a>
       </div>
     </motion.div>
   );

@@ -58,16 +58,25 @@ describe("ProductCard Component", () => {
     expect(reviewCounts.length).toBeGreaterThanOrEqual(1);
   });
 
-  it("shows '準備中' when affiliateUrl is empty", () => {
-    render(<ProductCard product={baseProduct} index={0} />);
-    const items = screen.getAllByText("準備中");
-    expect(items.length).toBeGreaterThanOrEqual(1);
+  it("renders a safe outbound CTA when affiliateUrl is empty", () => {
+    const { getAllByRole } = render(
+      <ProductCard product={baseProduct} index={0} />
+    );
+    const links = getAllByRole("link", { name: "詳細を見る →" });
+    expect(
+      links.some(
+        (link) => link.getAttribute("href") === "https://www.dmm.co.jp/digital/videoa/"
+      )
+    ).toBe(true);
   });
 
   it("shows '詳細を見る →' when affiliateUrl is set", () => {
     const withUrl = { ...baseProduct, affiliateUrl: "https://example.com" };
-    render(<ProductCard product={withUrl} index={0} />);
-    expect(screen.getByText("詳細を見る →")).toBeInTheDocument();
+    const { getAllByRole } = render(<ProductCard product={withUrl} index={0} />);
+    const links = getAllByRole("link", { name: "詳細を見る →" });
+    expect(
+      links.some((link) => link.getAttribute("href") === "https://example.com")
+    ).toBe(true);
   });
 
   it("renders rank badge for top 3", () => {
