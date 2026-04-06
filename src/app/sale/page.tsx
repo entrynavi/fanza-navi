@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import SalePage from "./SalePage";
+import { ROUTES, toAbsoluteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "セール・キャンペーン",
-  description: "FANZAのお得なセール・キャンペーン情報をお届け。FANZA API連携後にリアルタイムで更新予定。",
+  title: "セール作品",
+  description:
+    "割引中の作品をレビュー導線付きで比較できるセール一覧ページ。価格差と評価の両方を見ながら選べます。",
+  alternates: {
+    canonical: toAbsoluteUrl(ROUTES.sale),
+  },
 };
 
 export default function Page() {
