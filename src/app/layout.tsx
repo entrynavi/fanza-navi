@@ -7,6 +7,24 @@ import ErrorTracker from "@/components/ErrorTracker";
 import AgeGate from "@/components/AgeGate";
 import { SITE_URL } from "@/lib/site";
 
+const AGE_GATE_STORAGE_KEY = "fanza-age-gate-accepted";
+const AGE_GATE_MARKER = "ageGateAccepted";
+const AGE_GATE_STYLE = `
+  html[data-${AGE_GATE_MARKER}="1"] [data-age-gate] {
+    display: none !important;
+  }
+`;
+
+const AGE_GATE_BOOTSTRAP = `
+  (() => {
+    try {
+      if (window.localStorage.getItem("${AGE_GATE_STORAGE_KEY}") === "1") {
+        document.documentElement.dataset.${AGE_GATE_MARKER} = "1";
+      }
+    } catch (error) {}
+  })();
+`;
+
 export const metadata: Metadata = {
   title: {
     default: "FANZAおすすめ作品ナビ | 使い方ガイド＆お得情報",
@@ -47,7 +65,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja">
+    <html lang="ja" suppressHydrationWarning>
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: AGE_GATE_STYLE }} />
+        <script dangerouslySetInnerHTML={{ __html: AGE_GATE_BOOTSTRAP }} />
+      </head>
       <body className="antialiased min-h-screen">
         <Analytics />
         <ErrorTracker />
@@ -57,8 +79,10 @@ export default function RootLayout({
           当サイトはアフィリエイト広告（PR）を利用しています
         </div>
         <AgeGate />
-        <Header />
-        {children}
+        <div id="app-shell">
+          <Header />
+          {children}
+        </div>
       </body>
     </html>
   );

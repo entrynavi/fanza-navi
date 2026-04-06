@@ -8,29 +8,38 @@ const STORAGE_KEY = "fanza-age-gate-accepted";
 const EXIT_URL = "https://www.google.com/";
 
 export default function AgeGate() {
-  const [isOpen, setIsOpen] = useState(true);
-  const previousOverflow = useRef("");
-
-  useEffect(() => {
-    try {
-      const accepted = window.localStorage.getItem(STORAGE_KEY);
-      setIsOpen(accepted !== "1");
-    } catch {
-      setIsOpen(true);
+  const [isOpen, setIsOpen] = useState(() => {
+    if (typeof document === "undefined") {
+      return true;
     }
-  }, []);
+
+    return document.documentElement.dataset.ageGateAccepted !== "1";
+  });
+  const previousOverflow = useRef("");
+  const acceptButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!isOpen) {
       document.body.style.overflow = previousOverflow.current;
+      const appShell = document.getElementById("app-shell");
+      appShell?.removeAttribute("inert");
+      appShell?.removeAttribute("aria-hidden");
       return;
     }
 
     previousOverflow.current = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
+    const appShell = document.getElementById("app-shell");
+    appShell?.setAttribute("inert", "");
+    appShell?.setAttribute("aria-hidden", "true");
+
+    acceptButtonRef.current?.focus();
+
     return () => {
       document.body.style.overflow = previousOverflow.current;
+      appShell?.removeAttribute("inert");
+      appShell?.removeAttribute("aria-hidden");
     };
   }, [isOpen]);
 
@@ -41,6 +50,7 @@ export default function AgeGate() {
       // Ignore storage failures and continue letting the user in.
     }
 
+    document.documentElement.dataset.ageGateAccepted = "1";
     setIsOpen(false);
   };
 
@@ -48,13 +58,14 @@ export default function AgeGate() {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0 }}
+          data-age-gate
+          initial={false}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 px-4 py-6 backdrop-blur-md"
         >
           <motion.section
-            initial={{ scale: 0.96, y: 24 }}
+            initial={false}
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.96, y: 24 }}
             transition={{ type: "spring", stiffness: 260, damping: 24 }}
@@ -104,6 +115,7 @@ export default function AgeGate() {
               </a>
 
               <button
+                ref={acceptButtonRef}
                 type="button"
                 onClick={handleAccept}
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] px-5 py-3 text-sm font-bold text-white transition-all hover:from-[var(--color-primary-light)] hover:to-[var(--color-primary)]"

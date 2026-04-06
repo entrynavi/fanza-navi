@@ -6,6 +6,7 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 import AgeGate from "@/components/AgeGate";
 
 const createStorage = () => {
@@ -28,6 +29,8 @@ const createStorage = () => {
 describe("AgeGate", () => {
   afterEach(() => {
     cleanup();
+    delete document.documentElement.dataset.ageGateAccepted;
+    document.body.innerHTML = "";
   });
 
   beforeEach(() => {
@@ -49,6 +52,48 @@ describe("AgeGate", () => {
     expect(exitLink).toHaveAttribute("href", "https://www.google.com/");
   });
 
+  it("renders visible server HTML for first-time visitors", () => {
+    const html = renderToString(<AgeGate />);
+
+    expect(html).toContain("18歳以上ですか？");
+    expect(html).not.toContain('opacity:0');
+    expect(html).not.toContain('transform:translateY(24px)');
+  });
+
+  it("skips the gate immediately when the accepted marker is present before render", () => {
+    document.documentElement.dataset.ageGateAccepted = "1";
+
+    render(<AgeGate />);
+
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(document.body.style.overflow).toBe("");
+  });
+
+  it("marks the app shell inert and aria-hidden while the gate is open", async () => {
+    document.body.innerHTML = '<div id="app-shell"><a href="/">Home</a></div>';
+
+    render(<AgeGate />);
+
+    const appShell = document.getElementById("app-shell");
+    expect(appShell).toHaveAttribute("inert");
+    expect(appShell).toHaveAttribute("aria-hidden", "true");
+
+    fireEvent.click(screen.getByRole("button", { name: "18歳以上です" }));
+
+    await waitFor(() => {
+      expect(appShell).not.toHaveAttribute("inert");
+      expect(appShell).not.toHaveAttribute("aria-hidden");
+    });
+  });
+
+  it("moves focus into the dialog when the gate opens", async () => {
+    render(<AgeGate />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "18歳以上です" })).toHaveFocus();
+    });
+  });
+
   it("stores acceptance and unlocks scroll when the user confirms they are 18+", async () => {
     render(<AgeGate />);
 
@@ -63,6 +108,7 @@ describe("AgeGate", () => {
 
   it("skips the gate after acceptance is already stored", async () => {
     window.localStorage.setItem("fanza-age-gate-accepted", "1");
+    document.documentElement.dataset.ageGateAccepted = "1";
 
     render(<AgeGate />);
 
