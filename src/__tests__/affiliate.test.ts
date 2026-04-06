@@ -36,11 +36,21 @@ describe("affiliate helpers", () => {
     );
   });
 
-  it("returns a valid fallback outbound URL", () => {
-    vi.stubEnv("DMM_AFFILIATE_ID", "");
+  it("rejects off-domain destinations", () => {
+    const url = buildAffiliateUrl("https://example.com/unsafe");
 
+    expect(url).toBe("https://www.dmm.co.jp/digital/videoa/");
+  });
+
+  it("rejects unsafe schemes", () => {
+    const url = buildAffiliateUrl("javascript:alert(1)");
+
+    expect(url).toBe("https://www.dmm.co.jp/digital/videoa/");
+  });
+
+  it("returns a safe fallback outbound URL", () => {
     const url = buildFallbackOutboundUrl();
 
-    expect(url).toMatch(/^https:\/\/www\.dmm\.co\.jp\//);
+    expect(url).toBe("https://www.dmm.co.jp/digital/videoa/");
   });
 });

@@ -1,7 +1,6 @@
-import { buildAffiliateUrl } from "@/lib/affiliate";
-
 export interface Review {
   slug: string;
+  productId: string;
   title: string;
   excerpt: string;
   publishedAt: string;
@@ -17,15 +16,14 @@ export interface Review {
 export const reviews: Review[] = [
   {
     slug: "popular-series-latest-review",
+    productId: "1",
     title: "人気シリーズ最新作の見どころを整理したレビュー",
     excerpt:
       "シリーズ物の最新作として、演出の安定感と特典付きの満足感を重視したい人向けの一作です。",
     publishedAt: "2026-03-29",
     updatedAt: "2026-03-29",
     productTitle: "【FANZA限定】人気シリーズ最新作 Vol.28",
-    affiliateUrl: buildAffiliateUrl(
-      "https://www.dmm.co.jp/digital/videoa/-/detail/=/cid=test-series-28/"
-    ),
+    affiliateUrl: "https://www.dmm.co.jp/digital/videoa/-/detail/=/cid=test-series-28/",
     rating: 4.7,
     reviewCount: 342,
     tags: ["シリーズ", "特典付き", "人気作"],
@@ -37,15 +35,14 @@ export const reviews: Review[] = [
   },
   {
     slug: "vr-immersive-viewing-review",
+    productId: "41",
     title: "VR作品を長く楽しむためのチェックポイント",
     excerpt:
       "没入感の高さだけでなく、視聴環境との相性まで含めて評価したVR向けレビューです。",
     publishedAt: "2026-03-26",
     updatedAt: "2026-03-26",
     productTitle: "【VR】没入体験 〜あなたのすぐそばに〜",
-    affiliateUrl: buildAffiliateUrl(
-      "https://www.dmm.co.jp/digital/videoa/-/detail/=/cid=test-vr-01/"
-    ),
+    affiliateUrl: "https://www.dmm.co.jp/digital/videoa/-/detail/=/cid=test-vr-01/",
     rating: 4.6,
     reviewCount: 89,
     tags: ["VR", "没入感", "視聴環境"],
@@ -57,15 +54,14 @@ export const reviews: Review[] = [
   },
   {
     slug: "sale-selection-buying-guide",
+    productId: "17",
     title: "セール対象作品を選ぶときの見方をまとめたレビュー",
     excerpt:
       "価格だけでなく、レビュー評価や収録内容のバランスを見て選びたい人向けの実用的なまとめです。",
     publishedAt: "2026-03-22",
     updatedAt: "2026-03-23",
     productTitle: "【72%OFF】春の大感謝祭セット",
-    affiliateUrl: buildAffiliateUrl(
-      "https://www.dmm.co.jp/digital/videoa/-/detail/=/cid=test-sale-72/"
-    ),
+    affiliateUrl: "https://www.dmm.co.jp/digital/videoa/-/detail/=/cid=test-sale-72/",
     rating: 4.4,
     reviewCount: 234,
     tags: ["セール", "セット", "お得"],
@@ -79,6 +75,10 @@ export const reviews: Review[] = [
 
 export function getReviewBySlug(slug: string): Review | undefined {
   return reviews.find((review) => review.slug === slug);
+}
+
+export function getReviewByProductId(productId: string): Review | undefined {
+  return reviews.find((review) => review.productId === productId);
 }
 
 export const reviewSlugs = reviews.map((review) => review.slug);

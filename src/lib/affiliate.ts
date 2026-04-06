@@ -1,17 +1,19 @@
 const DMM_AFFILIATE_TRACKING_URL = "https://al.dmm.co.jp/";
 const DMM_DEFAULT_OUTBOUND_URL = "https://www.dmm.co.jp/digital/videoa/";
+const ALLOWED_OUTBOUND_HOSTS = [
+  "dmm.co.jp",
+  "fanza.com",
+];
 
 function getAffiliateId(): string {
   return process.env.DMM_AFFILIATE_ID?.trim() ?? "";
 }
 
-function isAbsoluteUrl(value: string): boolean {
-  try {
-    new URL(value);
-    return true;
-  } catch {
-    return false;
-  }
+function isAllowedOutboundHost(hostname: string): boolean {
+  return ALLOWED_OUTBOUND_HOSTS.some(
+    (allowedHost) =>
+      hostname === allowedHost || hostname.endsWith(`.${allowedHost}`)
+  );
 }
 
 function normalizeOutboundTarget(target: string = ""): string {
@@ -21,17 +23,29 @@ function normalizeOutboundTarget(target: string = ""): string {
     return DMM_DEFAULT_OUTBOUND_URL;
   }
 
-  if (isAbsoluteUrl(trimmedTarget)) {
-    return trimmedTarget;
+  let parsedUrl: URL;
+
+  try {
+    parsedUrl = new URL(trimmedTarget);
+  } catch {
+    return DMM_DEFAULT_OUTBOUND_URL;
   }
 
-  return `${DMM_DEFAULT_OUTBOUND_URL}-/list/=/article=keyword/keyword=${encodeURIComponent(
-    trimmedTarget
-  )}/`;
+  if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+    return DMM_DEFAULT_OUTBOUND_URL;
+  }
+
+  if (!isAllowedOutboundHost(parsedUrl.hostname)) {
+    return DMM_DEFAULT_OUTBOUND_URL;
+  }
+
+  return parsedUrl.toString();
 }
 
-export function buildAffiliateUrl(destinationUrl: string): string {
-  const affiliateId = getAffiliateId();
+export function buildAffiliateUrl(
+  destinationUrl: string,
+  affiliateId = getAffiliateId()
+): string {
   const normalizedDestination = normalizeOutboundTarget(destinationUrl);
 
   if (!affiliateId) {
@@ -47,5 +61,5 @@ export function buildAffiliateUrl(destinationUrl: string): string {
 }
 
 export function buildFallbackOutboundUrl(target: string = ""): string {
-  return buildAffiliateUrl(normalizeOutboundTarget(target));
+  return normalizeOutboundTarget(target);
 }
