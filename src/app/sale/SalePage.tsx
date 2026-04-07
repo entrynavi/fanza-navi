@@ -3,21 +3,14 @@ import GenreRail from "@/components/GenreRail";
 import PrimaryCta from "@/components/PrimaryCta";
 import ProductGridSection from "@/components/ProductGridSection";
 import RelatedNavigation from "@/components/RelatedNavigation";
-import ReviewCard from "@/components/ReviewCard";
 import SectionIntro from "@/components/SectionIntro";
 import { genrePages } from "@/data/genres";
-import { getReviewBySlug } from "@/data/reviews";
 import { loadSaleProducts } from "@/lib/catalog";
-import { ROUTES, getGenreRoute, getReviewRoute } from "@/lib/site";
+import { ROUTES, getGenreRoute } from "@/lib/site";
 
 const featuredGenres = genrePages.filter((genre) =>
   ["sale", "popular", "high-rated"].includes(genre.slug)
 );
-
-const featuredReviews = [
-  getReviewBySlug("sale-selection-buying-guide"),
-  getReviewBySlug("popular-series-latest-review"),
-].filter((review) => review !== undefined);
 
 export default async function SalePage() {
   const products = await loadSaleProducts({ limit: 8 });
@@ -42,24 +35,6 @@ export default async function SalePage() {
           <span className="chip">元値と現在価格を見る</span>
           <span className="chip">件数が多い作品を先に確認</span>
           <span className="chip">人気作品や高評価へ横移動</span>
-        </div>
-      </section>
-
-      <section className="mt-10">
-        <SectionIntro
-          eyebrow="作品レビュー"
-          title="作品レビュー"
-          description="気になる作品の見方だけ短く確認したいときに使います。"
-          action={
-            <PrimaryCta href={getReviewRoute("sale-selection-buying-guide")} size="sm" variant="outline">
-              レビューへ
-            </PrimaryCta>
-          }
-        />
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {featuredReviews.map((review) => (
-            <ReviewCard key={review.slug} review={review} compact />
-          ))}
         </div>
       </section>
 

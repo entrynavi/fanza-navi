@@ -1,6 +1,6 @@
 "use client";
 
-import { FaArrowUp, FaBalanceScale, FaBookOpen, FaCoins, FaCreditCard } from "react-icons/fa";
+import { FaArrowUp, FaBookOpen, FaCoins } from "react-icons/fa";
 import ActressRankingSection from "@/components/ActressRankingSection";
 import GenreRail from "@/components/GenreRail";
 import HeroSection from "@/components/HeroSection";
@@ -9,13 +9,11 @@ import ProductCard from "@/components/ProductCard";
 import ProductGridSection from "@/components/ProductGridSection";
 import RankingPodium from "@/components/RankingPodium";
 import RelatedNavigation from "@/components/RelatedNavigation";
-import ReviewCard from "@/components/ReviewCard";
 import SectionIntro from "@/components/SectionIntro";
 import StickyCTA from "@/components/StickyCTA";
 import type { ActressRankingEntry } from "@/lib/actress-ranking";
 import type { GenreLandingPage } from "@/data/genres";
 import type { Product } from "@/data/products";
-import type { Review } from "@/data/reviews";
 import { ROUTES } from "@/lib/site";
 
 const supportingGuides = [
@@ -59,7 +57,6 @@ export default function HomePageView({
   salePreview,
   topActresses,
   featuredGenres,
-  featuredReviews,
 }: {
   leadProduct?: Product;
   saleSpotlight?: Product | null;
@@ -68,7 +65,6 @@ export default function HomePageView({
   salePreview: Product[];
   topActresses: ActressRankingEntry[];
   featuredGenres: GenreLandingPage[];
-  featuredReviews: Review[];
 }) {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
   const rankingSpotlight = rankingPreview.slice(0, 3);
@@ -123,10 +119,10 @@ export default function HomePageView({
             columns="grid-cols-1 sm:grid-cols-2"
           />
 
-          <aside className="editorial-surface p-4 md:p-5">
+          <aside className="editorial-surface p-4 md:p-5 lg:self-start">
             <p className="eyebrow">Buying Notes</p>
             <h2 className="mt-1.5 text-[1.5rem] font-semibold text-[var(--color-text-primary)]">
-              セール前に見る比較メモ
+              セール前に見るお買い物ガイド
             </h2>
             <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
               価格だけで決めにくいときの短い確認用です。
@@ -184,24 +180,6 @@ export default function HomePageView({
       </section>
 
       <section className="content-shell px-4 pb-12">
-        <SectionIntro
-          eyebrow="比較メモ"
-          title="迷ったときの比較メモ"
-          description="買う前に少しだけ基準を整理したいときの補助入口です。主役は作品一覧で、ここは迷いを減らすための短いメモとして置いています。"
-          action={
-            <PrimaryCta href={ROUTES.reviews} size="sm" variant="outline">
-              比較メモ一覧へ
-            </PrimaryCta>
-          }
-        />
-        <div className="grid gap-5 md:grid-cols-3">
-          {featuredReviews.map((review) => (
-            <ReviewCard key={review.slug} review={review} />
-          ))}
-        </div>
-      </section>
-
-      <section className="content-shell px-4 pb-18">
         <RelatedNavigation
           title="支払い方法や比較記事も見ておけます"
           description="作品を開く前に確認しておきたい情報だけをまとめています。"

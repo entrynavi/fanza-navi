@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next";
 import { genrePages } from "@/data/genres";
-import { reviewSlugs } from "@/data/reviews";
-import { HAS_CANONICAL_SITE_URL, ROUTES, getGenreRoute, getReviewRoute, toAbsoluteUrl } from "@/lib/site";
+import { HAS_CANONICAL_SITE_URL, ROUTES, getGenreRoute, toAbsoluteUrl } from "@/lib/site";
 
 export const dynamic = "force-static";
 
@@ -15,7 +14,6 @@ const staticEntries: Array<{
   { path: ROUTES.sale, changeFrequency: "daily", priority: 0.9 },
   { path: ROUTES.newReleases, changeFrequency: "daily", priority: 0.85 },
   { path: ROUTES.search, changeFrequency: "weekly", priority: 0.72 },
-  { path: ROUTES.reviews, changeFrequency: "weekly", priority: 0.84 },
   { path: ROUTES.guide, changeFrequency: "monthly", priority: 0.68 },
   { path: ROUTES.compare, changeFrequency: "monthly", priority: 0.62 },
   { path: ROUTES.articles, changeFrequency: "weekly", priority: 0.7 },
@@ -47,12 +45,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "weekly" as const,
       priority: 0.76,
-    })),
-    ...reviewSlugs.map((slug) => ({
-      url: toAbsoluteUrl(getReviewRoute(slug)),
-      lastModified: now,
-      changeFrequency: "monthly" as const,
-      priority: 0.74,
     })),
   ];
 }

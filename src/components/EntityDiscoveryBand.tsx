@@ -1,8 +1,7 @@
 import type { Product } from "@/data/products";
-import { getReviewByProductId } from "@/data/reviews";
 import type { ActressRankingEntry } from "@/lib/actress-ranking";
 import { buildMakerCandidates, buildSeriesCandidates } from "@/lib/entity-ranking";
-import { getActressRoute, getGenreRoute, getReviewRoute } from "@/lib/site";
+import { getActressRoute, getGenreRoute } from "@/lib/site";
 
 type DiscoveryItem = {
   label: string;
@@ -21,12 +20,6 @@ function normalizeEntityLabel(value: string | undefined): string | null {
 }
 
 function getEntityHref(product: Product): string {
-  const review = getReviewByProductId(product.id);
-
-  if (review) {
-    return getReviewRoute(review.slug);
-  }
-
   if (product.affiliateUrl.trim()) {
     return product.affiliateUrl;
   }

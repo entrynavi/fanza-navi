@@ -16,7 +16,6 @@ export const ROUTES = {
   actresses: "/actress",
   makers: "/maker",
   series: "/series",
-  reviews: "/reviews",
   search: "/search",
   guide: "/guide",
   compare: "/compare",
@@ -40,10 +39,6 @@ export function getGenreRoute(slug: string) {
 
 export function getActressRoute(name: string) {
   return `${ROUTES.actresses}/${getActressSlug(name)}`;
-}
-
-export function getReviewRoute(slug: string) {
-  return `${ROUTES.reviews}/${slug}`;
 }
 
 export function getMakerRoute(name: string) {

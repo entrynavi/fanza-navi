@@ -1,9 +1,8 @@
 import PrimaryCta from "@/components/PrimaryCta";
 import SectionIntro from "@/components/SectionIntro";
 import { getGenreBySlug } from "@/data/genres";
-import { getReviewByProductId } from "@/data/reviews";
 import type { ActressRankingEntry } from "@/lib/actress-ranking";
-import { getActressRoute, getReviewRoute } from "@/lib/site";
+import { getActressRoute } from "@/lib/site";
 
 export default function ActressRankingSection({
   entries,
@@ -26,7 +25,6 @@ export default function ActressRankingSection({
 
       <div className={compact ? "grid gap-2.5" : "grid gap-4 md:grid-cols-2 xl:grid-cols-3"}>
         {entries.map((entry, index) => {
-          const review = getReviewByProductId(entry.topProduct.id);
           const genre = getGenreBySlug(entry.topProduct.genre);
           const hasAffiliateUrl = entry.topProduct.affiliateUrl.trim().length > 0;
 
@@ -100,14 +98,6 @@ export default function ActressRankingSection({
                     <PrimaryCta href={entry.topProduct.affiliateUrl} external size="sm">
                       代表作を見る
                     </PrimaryCta>
-                  ) : null}
-                  {review ? (
-                    <a
-                      href={getReviewRoute(review.slug)}
-                      className="text-xs font-semibold text-[var(--color-text-secondary)] transition-colors hover:text-white"
-                    >
-                      比較メモ
-                    </a>
                   ) : null}
                 </div>
               </div>

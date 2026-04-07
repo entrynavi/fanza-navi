@@ -16,7 +16,7 @@ const navSections = [
   {
     title: "読む",
     links: [
-      { href: ROUTES.reviews, label: "レビュー", icon: <FaBookOpen size={10} /> },
+      { href: ROUTES.articles, label: "記事一覧", icon: <FaBookOpen size={10} /> },
       { href: ROUTES.guide, label: "初心者ガイド", icon: null },
       { href: ROUTES.compare, label: "VR比較", icon: null },
       { href: ROUTES.articleSaveMoney, label: "セール攻略", icon: null },
@@ -44,11 +44,11 @@ export default function Footer() {
                 <FaFire size={13} />
               </span>
               <span className="text-lg font-bold tracking-tight text-[var(--color-text-primary)]">
-                FANZA<span className="gradient-text">ナビ</span>
+                オト<span className="gradient-text">ナビ</span>
               </span>
             </a>
             <p className="mt-4 max-w-xs text-sm leading-7 text-[var(--color-text-secondary)]">
-              FANZAの人気作品・セール情報・レビューを<br className="hidden sm:block" />
+              FANZAの人気作品・セール情報・おすすめ作品を<br className="hidden sm:block" />
               まとめた比較ガイドサイトです。
             </p>
           </div>
@@ -90,7 +90,7 @@ export default function Footer() {
 
         <div className="mt-8 flex flex-col items-center gap-3 border-t border-[var(--color-border)] pt-8 sm:flex-row sm:justify-between">
           <p className="text-xs text-[var(--color-text-muted)]">
-            © {new Date().getFullYear()} FANZAナビ
+            © {new Date().getFullYear()} オトナビ
           </p>
           <p className="text-[11px] text-[var(--color-text-muted)]">
             18歳以上向けコンテンツ

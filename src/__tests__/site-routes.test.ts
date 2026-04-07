@@ -21,12 +21,6 @@ import GenrePage, {
 } from "@/app/genre/[slug]/page";
 import RankingPage from "@/app/ranking/RankingPage";
 import { metadata as rankingRouteMetadata } from "@/app/ranking/page";
-import ReviewsIndexPage from "@/app/reviews/page";
-import ReviewPage, {
-  dynamicParams as reviewDynamicParams,
-  generateMetadata as generateReviewMetadata,
-  generateStaticParams as generateReviewStaticParams,
-} from "@/app/reviews/[slug]/page";
 import SeriesPage, {
   dynamicParams as seriesDynamicParams,
   generateMetadata as generateSeriesMetadata,
@@ -36,23 +30,19 @@ import SalePage from "@/app/sale/SalePage";
 import { metadata as saleRouteMetadata } from "@/app/sale/page";
 import SearchRoutePage, { metadata as searchRouteMetadata } from "@/app/search/page";
 import { genreSlugs } from "@/data/genres";
-import { reviewSlugs, reviews } from "@/data/reviews";
 import { decodeEntitySlug } from "@/lib/entity-ranking";
 import {
   ROUTES,
   getActressRoute,
   getGenreRoute,
   getMakerRoute,
-  getReviewRoute,
   getSeriesRoute,
 } from "@/lib/site";
 import { decodeActressSlug } from "@/lib/actress-ranking";
-import { buildAffiliateUrl } from "@/lib/affiliate";
 
 describe("site routes", () => {
-  it("builds root-relative routes for genres and reviews", () => {
+  it("builds root-relative routes for genres and entity pages", () => {
     expect(ROUTES.genres).toBe("/genre");
-    expect(ROUTES.reviews).toBe("/reviews");
     expect(ROUTES.actresses).toBe("/actress");
     expect(ROUTES.makers).toBe("/maker");
     expect(ROUTES.series).toBe("/series");
@@ -60,25 +50,19 @@ describe("site routes", () => {
     expect(getActressRoute("瀬戸環奈")).toContain("/actress/");
     expect(getMakerRoute("MOODYZ")).toContain("/maker/");
     expect(getSeriesRoute("王道ヒットコレクション")).toContain("/series/");
-    expect(getReviewRoute("popular-series-latest-review")).toBe(
-      "/reviews/popular-series-latest-review"
-    );
   });
 
-  it("disables dynamic params and generates static params for every genre and review", async () => {
+  it("disables dynamic params and generates static params for every genre and entity", async () => {
     const genreParams = await generateGenreStaticParams();
-    const reviewParams = await generateReviewStaticParams();
     const actressParams = await generateActressStaticParams();
     const makerParams = await generateMakerStaticParams();
     const seriesParams = await generateSeriesStaticParams();
 
     expect(genreDynamicParams).toBe(false);
-    expect(reviewDynamicParams).toBe(false);
     expect(actressDynamicParams).toBe(false);
     expect(makerDynamicParams).toBe(false);
     expect(seriesDynamicParams).toBe(false);
     expect(genreParams).toEqual(genreSlugs.map((slug) => ({ slug })));
-    expect(reviewParams).toEqual(reviewSlugs.map((slug) => ({ slug })));
     expect(actressParams.length).toBeGreaterThan(0);
     expect(makerParams.length).toBeGreaterThan(0);
     expect(seriesParams.length).toBeGreaterThan(0);
@@ -87,7 +71,7 @@ describe("site routes", () => {
     expect(decodeEntitySlug(seriesParams[0].slug).length).toBeGreaterThan(0);
   });
 
-  it("generates canonical metadata for genre and review pages", async () => {
+  it("generates canonical metadata for genre and entity pages", async () => {
     const genreMetadata = await generateGenreMetadata({
       params: Promise.resolve({ slug: "vr" }),
     });
@@ -102,9 +86,6 @@ describe("site routes", () => {
     });
     const seriesMetadata = await generateSeriesMetadata({
       params: Promise.resolve({ slug: seriesParams[0].slug }),
-    });
-    const reviewMetadata = await generateReviewMetadata({
-      params: Promise.resolve({ slug: reviews[0].slug }),
     });
 
     expect(genreMetadata.alternates?.canonical).toBe(getGenreRoute("vr"));
@@ -127,11 +108,6 @@ describe("site routes", () => {
     );
     expect(String(seriesMetadata.title)).toContain(decodeEntitySlug(seriesParams[0].slug));
     expect(seriesMetadata.twitter?.card).toBe("summary_large_image");
-
-    expect(reviewMetadata.alternates?.canonical).toBe(getReviewRoute(reviews[0].slug));
-    expect(String(reviewMetadata.title)).toContain(reviews[0].title);
-    expect(reviewMetadata.description).toContain(reviews[0].excerpt);
-    expect(reviewMetadata.twitter?.card).toBe("summary_large_image");
   });
 
   it("sets discovery metadata for ranking, sale, new, and search routes", () => {
@@ -156,7 +132,7 @@ describe("site routes", () => {
     expect(searchRouteMetadata.alternates?.canonical).toBe(ROUTES.search);
   });
 
-  it("renders a static genre page with intro copy, review links, and product cards", async () => {
+  it("renders a static genre page with intro copy and product cards", async () => {
     const page = await GenrePage({
       params: Promise.resolve({ slug: "vr" }),
     });
@@ -165,41 +141,7 @@ describe("site routes", () => {
 
     expect(screen.getByRole("heading", { level: 1, name: /^VR$/ })).toBeInTheDocument();
     expect(screen.getAllByText(/視聴環境を整えてから選ぶと満足度が上がりやすい/i).length).toBeGreaterThan(0);
-    expect(screen.getByRole("link", { name: /比較メモを読む/i })).toHaveAttribute(
-      "href",
-      getReviewRoute("vr-immersive-viewing-review")
-    );
     expect(screen.getAllByRole("link", { name: /FANZAのレビューを見る|FANZAで詳細を見る/i }).length).toBeGreaterThan(0);
-  });
-
-  it("renders a static review page with affiliate CTA and related products", async () => {
-    const page = await ReviewPage({
-      params: Promise.resolve({ slug: reviews[0].slug }),
-    });
-
-    const { container } = render(page);
-
-    expect(
-      screen.getByRole("heading", {
-        name: reviews[0].title,
-      })
-    ).toBeInTheDocument();
-    expect(
-      screen
-        .getAllByRole("link", { name: reviews[0].ctaLabel })
-        .some((link) => link.getAttribute("href") === buildAffiliateUrl(reviews[0].destinationUrl))
-    ).toBe(true);
-    expect(container.querySelector(`a[href="${ROUTES.reviews}"]`)).not.toBeNull();
-    expect(screen.getByAltText(/の商品画像$/)).toBeInTheDocument();
-    expect(screen.getByText(/流れが近い関連作品/i)).toBeInTheDocument();
-  });
-
-  it("renders a review index route for the articles funnel", () => {
-    const { container } = render(React.createElement(ReviewsIndexPage));
-
-    expect(screen.getByRole("heading", { name: "比較メモ一覧" })).toBeInTheDocument();
-    expect(container.querySelector(`a[href="${getReviewRoute(reviews[0].slug)}"]`)).not.toBeNull();
-    expect(container.querySelector(`a[href="${getGenreRoute("popular")}"]`)).not.toBeNull();
   });
 
   it("renders a monthly ranking page with product cards and related discovery links", async () => {
@@ -209,7 +151,6 @@ describe("site routes", () => {
     expect(screen.getByRole("heading", { name: "人気女優ランキング" })).toBeInTheDocument();
     expect(screen.getByText(/女優・メーカー・レーベルで絞る/i)).toBeInTheDocument();
     expect(screen.queryByText(/準備中/i)).toBeNull();
-    expect(container.querySelector(`a[href="${getReviewRoute(reviews[0].slug)}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${getGenreRoute("popular")}"]`)).not.toBeNull();
     expect(screen.getAllByRole("link", { name: /FANZAのレビューを見る|FANZAで詳細を見る/i }).length).toBeGreaterThan(0);
   });
@@ -259,25 +200,22 @@ describe("site routes", () => {
     expect(seriesView.container.querySelector(`a[href="${ROUTES.sale}"]`)).not.toBeNull();
   });
 
-  it("renders a real sale page with monetized product cards and review links", async () => {
+  it("renders a real sale page with monetized product cards", async () => {
     const { container } = render(await SalePage());
 
     expect(screen.getByRole("heading", { name: /セール作品/i })).toBeInTheDocument();
-    expect(screen.getByText(/割引率だけでなくレビューと収録内容も見ながら/i)).toBeInTheDocument();
     expect(screen.queryByText(/API連携/i)).toBeNull();
-    expect(container.querySelector(`a[href="${getReviewRoute("sale-selection-buying-guide")}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${getGenreRoute("sale")}"]`)).not.toBeNull();
     expect(screen.getAllByRole("link", { name: /FANZAのレビューを見る|FANZAで詳細を見る/i }).length).toBeGreaterThan(0);
   });
 
-  it("renders a new releases page with product cards and paths into reviews and genres", async () => {
+  it("renders a new releases page with product cards and genre paths", async () => {
     const { container } = render(await NewReleasesPage());
 
     expect(screen.getByRole("heading", { name: /新着リリース/i })).toBeInTheDocument();
     expect(screen.getByText(/配信直後の作品を、反応の早さと件数で追いやすく並べています/i)).toBeInTheDocument();
     expect(container.querySelector(`a[href="${getGenreRoute("new-release")}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${getGenreRoute("vr")}"]`)).not.toBeNull();
-    expect(container.querySelector(`a[href="${ROUTES.reviews}"]`)).not.toBeNull();
     expect(screen.getAllByRole("link", { name: /FANZAのレビューを見る|FANZAで詳細を見る/i }).length).toBeGreaterThan(0);
   });
 
@@ -292,15 +230,9 @@ describe("site routes", () => {
     expect(screen.getAllByRole("link", { name: /FANZAのレビューを見る|FANZAで詳細を見る/i }).length).toBeGreaterThan(0);
   });
 
-  it("adds review funnel links to the articles discovery page", () => {
+  it("renders the articles discovery page with genre links", () => {
     const { container } = render(React.createElement(ArticlesPage));
 
-    expect(
-      screen
-        .getAllByRole("link", { name: /レビュー一覧へ/i })
-        .some((link) => link.getAttribute("href") === ROUTES.reviews)
-    ).toBe(true);
-    expect(container.querySelector(`a[href="${getReviewRoute(reviews[0].slug)}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${getGenreRoute("vr")}"]`)).not.toBeNull();
   });
 });

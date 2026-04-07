@@ -23,7 +23,7 @@ describe("Footer Component", () => {
 
   it("renders copyright", () => {
     const { container } = render(<Footer />);
-    expect(container.textContent).toContain("FANZAナビ");
+    expect(container.textContent).toContain("オトナビ");
   });
 
   it("no links point to '#'", () => {

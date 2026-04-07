@@ -36,7 +36,7 @@ describe("RootLayout disclosure shell", () => {
     expect(markup).toContain("ランキング");
     expect(markup).toContain("セール");
     expect(markup).toContain("ジャンル別");
-    expect(markup).toContain("レビュー");
+    expect(markup).toContain("記事");
     expect(markup).toContain("新作");
     expect(markup).toContain("ガイド");
     expect(markup).toContain("検索入口");

@@ -4,10 +4,10 @@ export default function JsonLd() {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "FANZAナビ",
+    name: "オトナビ",
     url: SITE_URL,
     description:
-      "ランキング、セール、レビューを落ち着いて比較できるFANZA作品ガイド。",
+      "ランキング・セール速報・おすすめ作品をじっくり比較できるFANZA作品ガイド。",
   };
 
   return (

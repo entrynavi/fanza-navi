@@ -22,7 +22,7 @@ export default function ContactPage() {
     e.preventDefault();
     const body = `【お名前】${name}\n【メールアドレス】${email}\n\n${message}`;
     const mailtoUrl = `mailto:entrynavi.contact@gmail.com?subject=${encodeURIComponent(
-      `[FANZAナビ] ${subject}`
+      `[オトナビ] ${subject}`
     )}&body=${encodeURIComponent(body)}`;
 
     window.open(mailtoUrl, "_blank");

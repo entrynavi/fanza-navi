@@ -1,4 +1,4 @@
-import { FaBookOpen, FaCompass, FaFireAlt, FaShieldAlt } from "react-icons/fa";
+import { FaCompass, FaFireAlt, FaShieldAlt } from "react-icons/fa";
 import PrimaryCta from "@/components/PrimaryCta";
 import type { Product } from "@/data/products";
 import { getPrimaryFanzaCtaLabel, getProductSupportLine } from "@/lib/product-presenter";
@@ -125,8 +125,8 @@ export default function HeroSection({
             <div className="mt-5 flex flex-wrap gap-6 text-sm">
               {[
                 { num: "56+", label: "厳選作品" },
-                { num: "8", label: "詳細レビュー" },
                 { num: "10+", label: "ジャンル対応" },
+                { num: "毎日", label: "情報更新" },
               ].map((s) => (
                 <div key={s.label}>
                   <span className="font-bold text-[var(--color-accent)]">{s.num}</span>{" "}
@@ -234,11 +234,10 @@ export default function HeroSection({
                 ジャンルから絞る
               </a>
               <a
-                href={ROUTES.reviews}
+                href={ROUTES.articles}
                 className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/[0.04] px-4 py-2 text-sm text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-border-strong)] hover:text-white"
               >
-                <FaBookOpen size={12} />
-                レビューから探す
+                ガイド記事を読む
               </a>
             </div>
           </div>

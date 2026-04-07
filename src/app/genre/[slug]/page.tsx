@@ -6,10 +6,8 @@ import GenreRail from "@/components/GenreRail";
 import PrimaryCta from "@/components/PrimaryCta";
 import ProductGridSection from "@/components/ProductGridSection";
 import RelatedNavigation from "@/components/RelatedNavigation";
-import ReviewCard from "@/components/ReviewCard";
 import SectionIntro from "@/components/SectionIntro";
 import { getGenreBySlug, genrePages, genreSlugs } from "@/data/genres";
-import { getReviewsByGenreSlug } from "@/data/reviews";
 import { loadGenreProducts } from "@/lib/catalog";
 import { buildPageMetadata } from "@/lib/metadata";
 import { ROUTES, getGenreRoute } from "@/lib/site";
@@ -34,7 +32,7 @@ export async function generateMetadata({
 
   const path = getGenreRoute(genre.slug);
   const title = `${genre.name}おすすめ作品と選び方`;
-  const description = `${genre.name}の注目作品をレビュー導線付きで整理。${genre.intro}`;
+  const description = `${genre.name}の注目作品を比較しやすく整理。${genre.intro}`;
 
   return buildPageMetadata({
     title,
@@ -56,13 +54,10 @@ export default async function GenrePage({
     notFound();
   }
 
-  const [products, relatedReviews] = await Promise.all([
-    loadGenreProducts(genre.slug, {
+  const products = await loadGenreProducts(genre.slug, {
       articleId: genre.articleId,
       limit: 8,
-    }),
-    Promise.resolve(getReviewsByGenreSlug(genre.slug)),
-  ]);
+    });
 
   const neighborGenres = genrePages.filter(
     (candidate) => candidate.slug !== genre.slug
@@ -97,31 +92,6 @@ export default async function GenrePage({
         </div>
       </section>
 
-      <section className="mt-12">
-        <SectionIntro
-          eyebrow="Reviews"
-          title="レビューから探す"
-          description="ジャンルの見どころを短時間でつかめるレビューを先に読めます。"
-          action={
-            <PrimaryCta href={ROUTES.reviews} size="sm" variant="outline">
-              レビュー一覧へ
-            </PrimaryCta>
-          }
-        />
-
-        {relatedReviews.length > 0 ? (
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {relatedReviews.map((review) => (
-              <ReviewCard key={review.slug} review={review} />
-            ))}
-          </div>
-        ) : (
-          <p className="rounded-[24px] border border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-6 text-sm text-[var(--color-text-secondary)]">
-            このジャンルのレビューは準備中です。先に作品一覧から比較できます。
-          </p>
-        )}
-      </section>
-
       <ProductGridSection
         eyebrow="Genre Picks"
         title={`${genre.name}のおすすめ作品`}
@@ -149,10 +119,10 @@ export default async function GenrePage({
             eyebrow: "Genre",
           },
           {
-            href: ROUTES.reviews,
-            title: "レビュー一覧へ",
-            description: "ジャンルをまたいで作風を比較したいときの入口です。",
-            eyebrow: "Review",
+            href: ROUTES.sale,
+            title: "セール一覧へ",
+            description: "価格差を基準に比較したいときの入口です。",
+            eyebrow: "Sale",
           },
           {
             href: ROUTES.ranking,

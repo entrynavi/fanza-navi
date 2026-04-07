@@ -19,7 +19,7 @@ const primaryLinks = [
   { href: ROUTES.ranking, label: "ランキング", icon: <FaChartLine size={12} />, accent: false },
   { href: ROUTES.sale, label: "セール", icon: <FaTags size={12} />, accent: true },
   { href: getGenreRoute("popular"), label: "ジャンル別", icon: <FaCompass size={12} />, accent: false },
-  { href: ROUTES.reviews, label: "レビュー", icon: <FaBookOpen size={12} />, accent: false },
+  { href: ROUTES.articles, label: "記事", icon: <FaBookOpen size={12} />, accent: false },
 ];
 
 const utilityLinks = [
@@ -41,10 +41,10 @@ export default function Header() {
               </span>
               <div className="min-w-0">
                 <p className="truncate text-lg font-bold tracking-tight text-[var(--color-text-primary)]">
-                  FANZA<span className="gradient-text">ナビ</span>
+                  オト<span className="gradient-text">ナビ</span>
                 </p>
                 <p className="truncate text-[10px] font-medium text-[var(--color-text-muted)]">
-                  セール速報＆レビュー
+                  セール速報＆おすすめ探し
                 </p>
               </div>
             </div>

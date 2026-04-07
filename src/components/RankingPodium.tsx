@@ -1,8 +1,7 @@
 import PrimaryCta from "@/components/PrimaryCta";
 import type { Product } from "@/data/products";
-import { getReviewByProductId } from "@/data/reviews";
-import { getPrimaryFanzaCtaLabel, getProductSupportLine } from "@/lib/product-presenter";
-import { getGenreRoute, getReviewRoute } from "@/lib/site";
+import { getDiscountPercent, getPrimaryFanzaCtaLabel, getProductSupportLine } from "@/lib/product-presenter";
+import { getGenreRoute } from "@/lib/site";
 
 const PODIUM_ORDER = [
   "md:col-span-2",
@@ -12,11 +11,11 @@ const PODIUM_ORDER = [
 
 export default function RankingPodium({ products }: { products: Product[] }) {
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className="grid gap-2.5 md:grid-cols-3">
       {products.slice(0, 3).map((product, index) => {
-        const review = getReviewByProductId(product.id);
         const hasAffiliateUrl = product.affiliateUrl.trim().length > 0;
         const isLeadCard = index === 0;
+        const discount = getDiscountPercent(product);
 
         return (
           <article
@@ -89,9 +88,16 @@ export default function RankingPodium({ products }: { products: Product[] }) {
                         ¥{(product.salePrice ?? product.price).toLocaleString()}
                       </span>
                       {product.salePrice ? (
-                        <span className="text-sm text-[var(--color-text-muted)] line-through">
-                          ¥{product.price.toLocaleString()}
-                        </span>
+                        <>
+                          <span className="text-sm text-[var(--color-text-muted)] line-through">
+                            ¥{product.price.toLocaleString()}
+                          </span>
+                          {discount ? (
+                            <span className="rounded-full border border-[rgba(177,120,82,0.3)] bg-[rgba(177,120,82,0.12)] px-2 py-1 text-[11px] font-semibold text-[#e1b49d]">
+                              {discount}%OFF
+                            </span>
+                          ) : null}
+                        </>
                       ) : null}
                     </div>
                   </div>
@@ -103,14 +109,6 @@ export default function RankingPodium({ products }: { products: Product[] }) {
                     >
                       同ジャンルを見る
                     </a>
-                    {review ? (
-                      <a
-                        href={getReviewRoute(review.slug)}
-                        className="inline-flex items-center rounded-full border border-white/10 px-4 py-2 text-xs font-semibold text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-primary)]/25 hover:text-white"
-                      >
-                        比較メモ
-                      </a>
-                    ) : null}
                     <PrimaryCta href={product.affiliateUrl} external={hasAffiliateUrl} size="sm">
                       {getPrimaryFanzaCtaLabel(product)}
                     </PrimaryCta>

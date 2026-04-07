@@ -54,11 +54,11 @@ describe("SEO metadata routes", () => {
     const entries = sitemap();
     expect(entries.length).toBeGreaterThan(10);
     expect(entries[0]?.url).toBe("https://example.com/");
-    expect(entries.some((entry) => entry.url === "https://example.com/reviews")).toBe(true);
+    expect(entries.some((entry) => entry.url === "https://example.com/ranking")).toBe(true);
     expect(
       entries.some(
         (entry) =>
-          entry.url === "https://example.com/reviews/popular-series-latest-review"
+          entry.url === "https://example.com/sale"
       )
     ).toBe(true);
   });

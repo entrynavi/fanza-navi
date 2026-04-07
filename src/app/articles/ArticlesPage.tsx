@@ -10,10 +10,8 @@ import {
 import Breadcrumb from "@/components/Breadcrumb";
 import GenreRail from "@/components/GenreRail";
 import PrimaryCta from "@/components/PrimaryCta";
-import ReviewCard from "@/components/ReviewCard";
 import SectionIntro from "@/components/SectionIntro";
 import { genrePages } from "@/data/genres";
-import { reviews } from "@/data/reviews";
 import { ROUTES } from "@/lib/site";
 
 const articles = [
@@ -73,8 +71,6 @@ const featuredGenres = genrePages.filter((genre) =>
   ["popular", "sale", "vr"].includes(genre.slug)
 );
 
-const featuredReviews = reviews.slice(0, 3);
-
 export default function ArticlesPage() {
   return (
     <main className="content-shell px-4 py-8">
@@ -86,8 +82,8 @@ export default function ArticlesPage() {
           title="記事一覧"
           description="支払い方法、比較、VRの準備、セールの見方など、作品を見る前後で迷いやすい情報をまとめています。レビュー導線やジャンル導線と行き来しやすい構成です。"
           action={
-            <PrimaryCta href={ROUTES.reviews} size="sm" variant="outline">
-              レビュー一覧へ
+            <PrimaryCta href={ROUTES.ranking} size="sm" variant="outline">
+              ランキングへ
             </PrimaryCta>
           }
         />
@@ -156,19 +152,6 @@ export default function ArticlesPage() {
                 </div>
               </div>
             </a>
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-12">
-        <SectionIntro
-          eyebrow="レビュー"
-          title="記事のあとに見やすいレビュー"
-          description="読み物で判断軸を作ったあと、そのまま作品レビューへ進める導線を近くに置いています。"
-        />
-        <div className="grid gap-5 md:grid-cols-3">
-          {featuredReviews.map((review) => (
-            <ReviewCard key={review.slug} review={review} />
           ))}
         </div>
       </section>

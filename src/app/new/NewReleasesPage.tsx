@@ -3,21 +3,14 @@ import GenreRail from "@/components/GenreRail";
 import PrimaryCta from "@/components/PrimaryCta";
 import ProductGridSection from "@/components/ProductGridSection";
 import RelatedNavigation from "@/components/RelatedNavigation";
-import ReviewCard from "@/components/ReviewCard";
 import SectionIntro from "@/components/SectionIntro";
 import { genrePages } from "@/data/genres";
-import { getReviewBySlug } from "@/data/reviews";
 import { loadNewProducts } from "@/lib/catalog";
 import { ROUTES, getGenreRoute } from "@/lib/site";
 
 const featuredGenres = genrePages.filter((genre) =>
   ["new-release", "vr", "popular"].includes(genre.slug)
 );
-
-const featuredReviews = [
-  getReviewBySlug("vr-immersive-viewing-review"),
-  getReviewBySlug("popular-series-latest-review"),
-].filter((review) => review !== undefined);
 
 export default async function NewReleasesPage() {
   const products = await loadNewProducts({ limit: 8 });
@@ -40,21 +33,8 @@ export default async function NewReleasesPage() {
 
         <div className="mt-4 flex flex-wrap gap-2 text-xs text-[var(--color-text-secondary)]">
           <span className="chip">新作フラグを先に確認</span>
-          <span className="chip">反応が薄いときはレビューで補う</span>
+          <span className="chip">気になったらジャンルで広げる</span>
           <span className="chip">VRや人気作品へ横移動</span>
-        </div>
-      </section>
-
-      <section className="mt-12">
-        <SectionIntro
-          eyebrow="関連レビュー"
-          title="作品レビュー"
-          description="新作で迷ったときだけ、短い確認用として使えます。"
-        />
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {featuredReviews.map((review) => (
-            <ReviewCard key={review.slug} review={review} compact />
-          ))}
         </div>
       </section>
 
@@ -85,10 +65,10 @@ export default async function NewReleasesPage() {
             eyebrow: "ランキング",
           },
           {
-            href: ROUTES.reviews,
-            title: "レビュー一覧へ",
-            description: "作風や向いている人を短く確認できます。",
-            eyebrow: "レビュー",
+            href: ROUTES.sale,
+            title: "セール一覧へ",
+            description: "値下げ中の作品も一緒に比較できます。",
+            eyebrow: "セール",
           },
           {
             href: getGenreRoute("vr"),

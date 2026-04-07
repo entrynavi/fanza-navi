@@ -5,7 +5,6 @@ import { FaStar } from "react-icons/fa";
 import PrimaryCta from "@/components/PrimaryCta";
 import FavoriteButton from "@/components/FavoriteButton";
 import { getGenreBySlug } from "@/data/genres";
-import { getReviewByProductId } from "@/data/reviews";
 import type { Product } from "@/data/products";
 import {
   formatPriceYen,
@@ -15,7 +14,7 @@ import {
   getPrimaryFanzaCtaLabel,
   getProductSupportLine,
 } from "@/lib/product-presenter";
-import { getReviewRoute, getGenreRoute } from "@/lib/site";
+import { getGenreRoute } from "@/lib/site";
 
 const rankColors: Record<number, string> = {
   1: "#d3af6f",
@@ -41,7 +40,6 @@ export default function ProductCard({
 }) {
   const genreColor = genreMeta[product.genre] ?? genreMeta.popular;
   const hasAffiliateUrl = product.affiliateUrl.trim().length > 0;
-  const review = getReviewByProductId(product.id);
   const genre = getGenreBySlug(product.genre);
   const originalPrice = getPresentedOriginalPrice(product);
   const currentPrice = getPresentedCurrentPrice(product);
@@ -144,18 +142,9 @@ export default function ProductCard({
             >
               {genre?.name ?? genreMeta[product.genre]?.label ?? "作品"}
             </a>
-            {review ? (
-              <span className="chip">レビューあり</span>
-            ) : null}
           </div>
           <h3 className="line-clamp-3 text-lg font-semibold leading-tight text-[var(--color-text-primary)] transition-colors group-hover:text-white">
-            {review ? (
-              <a href={getReviewRoute(review.slug)} className="editorial-link">
-                {product.title}
-              </a>
-            ) : (
-              product.title
-            )}
+            {product.title}
           </h3>
           <p className="mt-2 text-xs leading-5 text-[var(--color-text-muted)]">
             {getProductSupportLine(product)}
@@ -201,23 +190,7 @@ export default function ProductCard({
             </div>
           </div>
 
-          {review && hasAffiliateUrl ? (
-            <div className="grid gap-2 text-right">
-              <PrimaryCta href={product.affiliateUrl} external size="sm">
-                {getPrimaryFanzaCtaLabel(product)}
-              </PrimaryCta>
-              <a
-                href={getReviewRoute(review.slug)}
-                className="text-xs font-semibold text-[var(--color-text-secondary)] transition-colors hover:text-white"
-              >
-                レビューを見る
-              </a>
-            </div>
-          ) : review ? (
-            <PrimaryCta href={getReviewRoute(review.slug)} size="sm" variant="outline">
-              レビューを見る
-            </PrimaryCta>
-          ) : hasAffiliateUrl ? (
+          {hasAffiliateUrl ? (
             <PrimaryCta href={product.affiliateUrl} external size="sm">
               {getPrimaryFanzaCtaLabel(product)}
             </PrimaryCta>

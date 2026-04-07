@@ -1,6 +1,5 @@
 import HomePageView from "@/components/HomePageView";
 import { genrePages } from "@/data/genres";
-import { reviews } from "@/data/reviews";
 import { loadNewProducts, loadRankingProducts, loadSaleProducts } from "@/lib/catalog";
 import { buildActressRanking } from "@/lib/actress-ranking";
 import type { Product } from "@/data/products";
@@ -42,7 +41,6 @@ export default async function HomePage() {
       salePreview={salePreview}
       topActresses={topActresses}
       featuredGenres={genrePages}
-      featuredReviews={reviews.slice(0, 3)}
     />
   );
 }

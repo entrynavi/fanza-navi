@@ -6,20 +6,14 @@ import PrimaryCta from "@/components/PrimaryCta";
 import ProductCard from "@/components/ProductCard";
 import RankingPodium from "@/components/RankingPodium";
 import RelatedNavigation from "@/components/RelatedNavigation";
-import ReviewCard from "@/components/ReviewCard";
 import SectionIntro from "@/components/SectionIntro";
 import { genrePages } from "@/data/genres";
-import { reviews } from "@/data/reviews";
 import { buildActressRanking } from "@/lib/actress-ranking";
 import { loadRankingProducts } from "@/lib/catalog";
-import { ROUTES, getGenreRoute, getReviewRoute } from "@/lib/site";
+import { ROUTES, getGenreRoute } from "@/lib/site";
 
 const featuredGenres = genrePages.filter((genre) =>
   ["popular", "high-rated", "vr"].includes(genre.slug)
-);
-
-const featuredReviews = reviews.filter((review) =>
-  ["popular", "sale"].includes(review.genreSlug)
 );
 
 export default async function RankingPage() {
@@ -38,24 +32,24 @@ export default async function RankingPage() {
           title="月間ランキング"
           description="今月よく見られている作品を、評価、件数、価格差ごとに見比べやすくまとめています。"
           action={
-            <PrimaryCta href={ROUTES.reviews} size="sm" variant="outline">
-              レビュー一覧へ
+            <PrimaryCta href={ROUTES.sale} size="sm" variant="outline">
+              セール一覧へ
             </PrimaryCta>
           }
         />
         <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-[var(--color-text-secondary)]">
           <span className="chip">上位3作で温度感を掴む</span>
-          <span className="chip">レビュー件数で迷いを減らす</span>
-          <span className="chip">ジャンルとレビューも見る</span>
+          <span className="chip">評価件数で迷いを減らす</span>
+          <span className="chip">ジャンルも見る</span>
         </div>
       </section>
 
-      <section className="mt-5">
-        <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_320px]">
+      <section className="mt-4">
+        <div className="grid gap-2.5 xl:grid-cols-[minmax(0,1fr)_300px]">
           <div>
             <RankingPodium products={podiumProducts} />
             {moreProducts.length > 0 ? (
-              <div className="mt-2.5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              <div className="mt-2 grid gap-2.5 md:grid-cols-2 xl:grid-cols-3">
                 {moreProducts.map((product, index) => (
                   <ProductCard key={product.id} product={product} index={index} />
                 ))}
@@ -74,24 +68,6 @@ export default async function RankingPage() {
           topActresses={topActresses}
           compact
         />
-      </section>
-
-      <section className="mt-6">
-        <SectionIntro
-          eyebrow="レビュー"
-          title="作品レビュー"
-          description="人気作品のレビューを読んで購入の参考にできます。"
-          action={
-            <PrimaryCta href={getReviewRoute(reviews[0].slug)} size="sm" variant="outline">
-              レビューへ
-            </PrimaryCta>
-          }
-        />
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {featuredReviews.map((review) => (
-            <ReviewCard key={review.slug} review={review} compact />
-          ))}
-        </div>
       </section>
 
       <section className="mt-7">
@@ -120,10 +96,10 @@ export default async function RankingPage() {
             eyebrow: "ジャンル",
           },
           {
-            href: ROUTES.reviews,
-            title: "レビュー一覧へ",
-            description: "作風や向いている人を先に確認したいときの入口です。",
-            eyebrow: "レビュー",
+            href: ROUTES.guide,
+            title: "初心者ガイドへ",
+            description: "登録や支払い方法を確認したいときに便利です。",
+            eyebrow: "ガイド",
           },
         ]}
       />

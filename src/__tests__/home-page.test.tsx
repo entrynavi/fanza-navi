@@ -1,8 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import HomePage from "@/app/page";
-import { ROUTES, getGenreRoute, getReviewRoute } from "@/lib/site";
-import { reviews } from "@/data/reviews";
+import { ROUTES, getGenreRoute } from "@/lib/site";
 
 afterEach(() => {
   cleanup();
@@ -19,7 +18,6 @@ describe("HomePage", () => {
     expect(headings).toContain("今月よく見られている作品");
     expect(headings).toContain("値下げ中の作品");
     expect(headings).toContain("ジャンルから探す");
-    expect(headings).toContain("迷ったときの比較メモ");
     expect(headings).toContain("支払い方法や比較記事も見ておけます");
 
     expect(screen.getByText(/人気作から探す/)).toBeInTheDocument();
@@ -43,7 +41,6 @@ describe("HomePage", () => {
     expect(screen.getByText(/最新の価格・配信状況はFANZA公式サイトで確認/)).toBeInTheDocument();
     expect(container.querySelector(`a[href="${ROUTES.sale}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${getGenreRoute("popular")}"]`)).not.toBeNull();
-    expect(container.querySelector(`a[href="${getReviewRoute(reviews[0].slug)}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${ROUTES.articles}"]`)).not.toBeNull();
     expect(
       screen.getAllByRole("link", { name: /FANZAのレビューを見る|FANZAで詳細を見る|FANZAで見る/ }).length
