@@ -71,6 +71,8 @@ describe("AgeGate", () => {
     expect(html).toContain('id="app-shell" inert="" aria-hidden="true"');
     expect(html.split('removeAttribute("inert")')).toHaveLength(2);
     expect(html.split('removeAttribute("aria-hidden")')).toHaveLength(2);
+    expect(html).toContain("data-age-gate-accept");
+    expect(html).toContain('closest("[data-age-gate-accept]")');
   });
 
   it("skips the gate immediately when the accepted marker is present before render", () => {
@@ -110,7 +112,10 @@ describe("AgeGate", () => {
   it("stores acceptance and unlocks scroll when the user confirms they are 18+", async () => {
     render(<AgeGate />);
 
-    fireEvent.click(screen.getByRole("button", { name: "18歳以上です" }));
+    const acceptButton = screen.getByRole("button", { name: "18歳以上です" });
+    expect(acceptButton).toHaveAttribute("data-age-gate-accept", "true");
+
+    fireEvent.click(acceptButton);
 
     await waitFor(() => {
       expect(window.localStorage.getItem("fanza-age-gate-accepted")).toBe("1");

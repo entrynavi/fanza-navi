@@ -52,16 +52,60 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const unlockAcceptedShellScript = `(() => {
-    const accepted =
-      document.documentElement.dataset.ageGateAccepted === "1" ||
-      window.localStorage?.getItem("fanza-age-gate-accepted") === "1";
-    if (!accepted) return;
-    document.documentElement.dataset.ageGateAccepted = "1";
-    const appShell = document.getElementById("app-shell");
-    if (!appShell) return;
-    appShell.removeAttribute("inert");
-    appShell.removeAttribute("aria-hidden");
+  const bootstrapAgeGateScript = `(() => {
+    const STORAGE_KEY = "fanza-age-gate-accepted";
+
+    const hideGate = () => {
+      const ageGate = document.querySelector("[data-age-gate]");
+      if (!(ageGate instanceof HTMLElement)) return;
+      ageGate.setAttribute("aria-hidden", "true");
+      ageGate.style.display = "none";
+      ageGate.style.pointerEvents = "none";
+      ageGate.style.opacity = "0";
+    };
+
+    const unlock = () => {
+      document.documentElement.dataset.ageGateAccepted = "1";
+      try {
+        window.localStorage.setItem(STORAGE_KEY, "1");
+      } catch {}
+
+      document.body.style.overflow = "";
+      const appShell = document.getElementById("app-shell");
+      if (appShell) {
+        appShell.removeAttribute("inert");
+        appShell.removeAttribute("aria-hidden");
+      }
+
+      hideGate();
+    };
+
+    const isAccepted = () => {
+      try {
+        return (
+          document.documentElement.dataset.ageGateAccepted === "1" ||
+          window.localStorage.getItem(STORAGE_KEY) === "1"
+        );
+      } catch {
+        return document.documentElement.dataset.ageGateAccepted === "1";
+      }
+    };
+
+    if (isAccepted()) {
+      unlock();
+    }
+
+    document.addEventListener(
+      "click",
+      (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        if (!target.closest("[data-age-gate-accept]")) return;
+        event.preventDefault();
+        unlock();
+      },
+      { capture: true }
+    );
   })();`;
 
   return (
@@ -77,7 +121,7 @@ export default function RootLayout({
           <Footer />
         </div>
         <AgeGate />
-        <script dangerouslySetInnerHTML={{ __html: unlockAcceptedShellScript }} />
+        <script dangerouslySetInnerHTML={{ __html: bootstrapAgeGateScript }} />
       </body>
     </html>
   );

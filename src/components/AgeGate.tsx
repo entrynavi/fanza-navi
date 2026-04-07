@@ -120,6 +120,7 @@ export default function AgeGate() {
               <button
                 ref={acceptButtonRef}
                 type="button"
+                data-age-gate-accept="true"
                 onClick={handleAccept}
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] px-5 py-3 text-sm font-bold text-white transition-all hover:from-[var(--color-primary-light)] hover:to-[var(--color-primary)]"
               >
