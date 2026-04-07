@@ -6,7 +6,7 @@ describe("Footer Component", () => {
   it("renders disclaimer", () => {
     render(<Footer />);
     expect(
-      screen.getByText(/アフィリエイトプログラムに参加/)
+      screen.getByText(/DMMアフィリエイトを利用しています/)
     ).toBeInTheDocument();
   });
 

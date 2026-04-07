@@ -113,7 +113,31 @@ describe("DMM API Client", () => {
       expect(product.reviewCount).toBe(42);
       expect(product.genre).toBe("ドラマ");
       expect(product.tags).toEqual(["ドラマ", "恋愛"]);
+      expect(product.maker).toBeUndefined();
+      expect(product.label).toBeUndefined();
+      expect(product.actresses).toEqual([]);
       expect(product.rank).toBe(1);
+    });
+
+    it("maps optional maker, label, and actress metadata when available", () => {
+      const p = {
+        ...mockDmmProduct,
+        iteminfo: {
+          ...mockDmmProduct.iteminfo,
+          maker: [{ id: 7, name: "MOODYZ" }],
+          label: [{ id: 8, name: "みんなのランキング" }],
+          actress: [
+            { id: 1, name: "瀬戸環奈" },
+            { id: 2, name: "石川澪" },
+          ],
+        },
+      };
+
+      const result = toProduct(p);
+
+      expect(result.maker).toBe("MOODYZ");
+      expect(result.label).toBe("みんなのランキング");
+      expect(result.actresses).toEqual(["瀬戸環奈", "石川澪"]);
     });
 
     it("uses small image when large is not available", () => {
@@ -141,11 +165,43 @@ describe("DMM API Client", () => {
       expect(result.reviewCount).toBe(0);
     });
 
+    it("coerces string review values from the live API into numbers", () => {
+      const p = {
+        ...mockDmmProduct,
+        review: {
+          average: "4.87",
+          count: "128",
+        } as unknown as DmmProduct["review"],
+      };
+      const result = toProduct(p);
+
+      expect(result.rating).toBe(4.87);
+      expect(result.reviewCount).toBe(128);
+    });
+
     it("handles missing genre gracefully", () => {
       const p = { ...mockDmmProduct, iteminfo: {} };
       const result = toProduct(p);
       expect(result.genre).toBe("popular");
       expect(result.tags).toEqual([]);
+    });
+
+    it("preserves unknown genre labels and canonicalizes known buckets", () => {
+      const dramaProduct = {
+        ...mockDmmProduct,
+        iteminfo: {
+          genre: [{ id: 1, name: "ドラマ" }],
+        },
+      };
+      const vrProduct = {
+        ...mockDmmProduct,
+        iteminfo: {
+          genre: [{ id: 1, name: "VR" }],
+        },
+      };
+
+      expect(toProduct(dramaProduct).genre).toBe("ドラマ");
+      expect(toProduct(vrProduct).genre).toBe("vr");
     });
 
     it("marks recent releases as new", () => {

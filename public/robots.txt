@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://fragrant-thunder-2202.chidori0543.workers.dev/sitemap.xml

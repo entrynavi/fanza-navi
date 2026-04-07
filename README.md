@@ -1,124 +1,152 @@
-# FANZAおすすめ作品ナビ
+# FANZAナビ
 
-FANZA（DMM）アフィリエイトサイト — 人気ランキング・新作・セール情報を毎日自動更新
-
-**🌐 Live:** <https://fanza-navi.pages.dev/>
-
----
+FANZA / DMM アフィリエイト向けの静的レビューサイトです。  
+Next.js App Router を `output: "export"` で運用し、Cloudflare Pages にそのまま載せられる構成にしています。
 
 ## 技術スタック
 
-| カテゴリ | 技術 |
-|----------|------|
-| フレームワーク | Next.js 16 (Static Export) |
-| スタイル | Tailwind CSS v4 |
-| アニメーション | Framer Motion |
-| デプロイ | Cloudflare Pages |
-| API | DMM FANZA Affiliate API v3 |
+- Next.js 16
+- React 19
+- Tailwind CSS v4
+- Framer Motion
+- Vitest + Testing Library
+- Cloudflare Pages 向け static export
 
-## ページ構成（全11ページ）
+## サイト構成
 
-| パス | 内容 |
-|------|------|
-| `/` | トップページ（ランキング・セール・ジャンルフィルター） |
-| `/ranking` | 総合ランキング |
-| `/new` | 新作リリース |
-| `/sale` | セール商品 |
-| `/search` | 作品検索 |
-| `/guide` | FANZA初心者ガイド（SEO記事） |
-| `/compare` | VR vs 通常 / サブスク比較（SEO記事） |
-| `/terms` | 利用規約 |
-| `/privacy` | プライバシーポリシー |
-| `/about` | 運営者情報・特定商取引法表記 |
-| `404` | カスタムエラーページ |
+- `/`
+  ランキング、セール、ジャンル、レビューに流すトップページ
+- `/ranking`
+  月間ランキング
+- `/sale`
+  セール情報
+- `/new`
+  新作導線
+- `/search`
+  静的サイト向けの検索入口ページ
+- `/genre/[slug]`
+  ジャンル別一覧テンプレート
+- `/reviews`
+  レビュー一覧
+- `/reviews/[slug]`
+  個別レビューテンプレート
+- `/articles`
+  ガイド記事一覧
+- `/about`
+  運営者情報
+- `/contact`
+  お問い合わせ
+- `/privacy`
+  プライバシーポリシー
+- `/terms`
+  利用規約
+
+## ローカル起動
+
+```bash
+npm install
+npm run dev
+```
+
+開発サーバーは通常 `http://localhost:3000` です。
+
+## build / export
+
+```bash
+npm run build
+```
+
+成功すると `out/` に静的ファイルが出力されます。  
+Cloudflare Pages ではこの `out/` を配信します。
+
+## 環境変数
+
+`.env.example` をコピーして使ってください。
+
+```bash
+cp .env.example .env.local
+```
+
+主な変数:
+
+- `SITE_URL`
+  本番URL。canonical / OGP / sitemap / robots に使います
+- `DMM_AFFILIATE_LINK`
+  DMM アフィリエイトのトラッキングURL
+- `DMM_API_ID`
+  DMM Web Service API ID
+- `DMM_AFFILIATE_ID`
+  API用アフィリエイトID
+- `FANZA_FLOOR`
+  既定フロア。通常は `videoa`
+- `FANZA_DEFAULT_GENRE`
+  デフォルトのジャンル slug
+- `ANALYTICS_ID`
+  Google Analytics の測定ID
+- `GTM_ID`
+  Google Tag Manager ID
+
+補足:
+
+- `SITE_URL` 未設定時はローカル安全値 `http://localhost:3000` にフォールバックします
+- `SITE_URL` 未設定の build では robots を noindex 相当にし、sitemap は空で出します
+- 本番公開前に `SITE_URL` は必ず設定してください
+
+## Cloudflare Pages 設定
+
+- Build command: `npm run build`
+- Build output directory: `out`
+
+必要な環境変数:
+
+- `SITE_URL`
+- `DMM_AFFILIATE_LINK`
+- `DMM_API_ID`
+- `DMM_AFFILIATE_ID`
+- `FANZA_FLOOR`
+- `FANZA_DEFAULT_GENRE`
+- `ANALYTICS_ID` または `GTM_ID` は任意
+
+`public/_headers` でセキュリティヘッダーを配信します。
+
+## SEO 実装
+
+- metadata API による title / description / canonical / OGP / Twitter Card
+- `src/app/robots.ts`
+- `src/app/sitemap.ts`
+- `JsonLd` による `WebSite`
+- レビュー詳細の `Review` 構造化データ
 
 ## テスト
 
 ```bash
-# テスト実行
 npm test
-
-# ウォッチモード
-npm run test:watch
-
-# カバレッジ付き
-npm run test:coverage
 ```
 
-46テスト（6ファイル）:
-- `products.test.ts` — 商品データ整合性（11テスト）
-- `dmm-api.test.ts` — APIクライアント・エラーハンドリング（15テスト）
-- `product-card.test.tsx` — 商品カードコンポーネント（12テスト）
-- `social-proof.test.tsx` — ソーシャルプルーフ（偽データなし確認）
-- `footer.test.tsx` — フッターリンク・法的ページ確認
-- `site-config.test.ts` — サイトURL・ルート設定確認
+主な対象:
 
-## セットアップ
+- env 契約
+- affiliate link helper
+- age gate
+- ルート metadata / static params
+- ホーム導線
+- 商品カード
+- レビューデータ
+
+## GitLab への初期 push
+
+空の GitLab repo を作成したあとに:
 
 ```bash
-# 依存関係インストール
-npm install
-
-# 開発サーバー
-npm run dev
-
-# ビルド（静的エクスポート）
-npm run build
-
-# ビルド結果の確認
-npx serve out
+git remote remove origin
+git remote add origin https://gitlab.com/<user>/<repo>.git
+git push -u origin main
 ```
 
-## 環境変数
+HTTPS で push する場合は GitLab Personal Access Token を使います。
 
-Cloudflare Pages の環境変数または `.env.local` に設定:
+## 運用メモ
 
-| 変数名 | 説明 | 必須 |
-|--------|------|------|
-| `DMM_API_ID` | DMM API ID（審査承認後に取得） | ビルド時 |
-| `DMM_AFFILIATE_ID` | DMMアフィリエイトID | ビルド時 |
-| `NEXT_PUBLIC_GA_ID` | Google Analytics 測定ID | 任意 |
-
-### DMM API キー設定手順
-
-1. [DMM アフィリエイト](https://affiliate.dmm.com/) で審査承認後、API IDを取得
-2. Cloudflare Pages プロジェクト → Settings → Variables and Secrets
-3. `DMM_API_ID` と `DMM_AFFILIATE_ID` を追加
-4. Deployments から再デプロイを実行
-
-## Cloudflare Pages デプロイ
-
-- **接続方法:** Cloudflare Pages で GitHub リポジトリを接続
-- **Build command:** `npm run build`
-- **Build output directory:** `out`
-- **本番URL:** `https://fanza-navi.pages.dev/`
-
-## コンバージョン最適化機能
-
-- **スティッキーCTA** — スクロール時に追従するアクションバー
-- **ソーシャルプルーフ** — リアルタイム閲覧数・購入カウンター・トースト通知
-- **カウントダウンタイマー** — セール終了までの緊急性表示
-- **離脱防止ポップアップ** — マウスが画面外に出た時のリテンション
-- **関連商品レコメンド** — クロスセル・回遊率向上
-- **ジャンルフィルター** — ワンクリックでジャンル絞り込み
-
-## SEO対策
-
-- `robots.txt` + `sitemap.xml`（全ページ網羅）
-- JSON-LD 構造化データ (WebSite + SearchAction)
-- OGP / Twitter Cards メタタグ + OGP画像
-- セマンティック HTML + アクセシビリティ
-- SEO記事2本（初心者ガイド・比較表）
-
-## セキュリティ
-
-- `public/_headers` 経由で Cloudflare Pages にセキュリティヘッダーを配信
-- `X-Content-Type-Options: nosniff`
-- `X-Frame-Options: DENY`
-- `X-XSS-Protection: 1; mode=block`
-- `Referrer-Policy: strict-origin-when-cross-origin`
-- `Permissions-Policy: camera=(), microphone=(), geolocation=()`
-
-## ライセンス
-
-Private — All rights reserved.
+- DMM API が取れない場合でも、フォールバック作品データで一覧が空にならないようにしています
+- アフィリエイトリンクは `src/lib/affiliate.ts` を経由して生成します
+- 公開時は 18歳確認ゲート、上部開示表記、運営者情報ページをセットで確認してください

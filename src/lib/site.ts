@@ -1,6 +1,5 @@
 import { getSiteConfig } from "@/lib/env";
 import { getActressSlug } from "@/lib/actress-ranking";
-import { getEntitySlug } from "@/lib/entity-ranking";
 
 const SITE_CONFIG = getSiteConfig();
 
@@ -15,9 +14,9 @@ export const ROUTES = {
   genres: "/genre",
   actresses: "/actress",
   makers: "/maker",
+  series: "/series",
   reviews: "/reviews",
   search: "/search",
-  series: "/series",
   guide: "/guide",
   compare: "/compare",
   contact: "/contact",
@@ -42,14 +41,18 @@ export function getActressRoute(name: string) {
   return `${ROUTES.actresses}/${getActressSlug(name)}`;
 }
 
-export function getMakerRoute(name: string) {
-  return `${ROUTES.makers}/${getEntitySlug(name)}`;
-}
-
 export function getReviewRoute(slug: string) {
   return `${ROUTES.reviews}/${slug}`;
 }
 
+function toUrlSafeSlug(name: string): string {
+  return Buffer.from(name, "utf-8").toString("hex");
+}
+
+export function getMakerRoute(name: string) {
+  return `${ROUTES.makers}/${toUrlSafeSlug(name)}`;
+}
+
 export function getSeriesRoute(name: string) {
-  return `${ROUTES.series}/${getEntitySlug(name)}`;
+  return `${ROUTES.series}/${toUrlSafeSlug(name)}`;
 }

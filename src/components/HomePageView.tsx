@@ -1,15 +1,14 @@
 "use client";
 
-import { FaArrowUp } from "react-icons/fa";
+import { FaArrowUp, FaBalanceScale, FaBookOpen, FaCoins, FaCreditCard } from "react-icons/fa";
 import ActressRankingSection from "@/components/ActressRankingSection";
-import EntityDiscoveryBand from "@/components/EntityDiscoveryBand";
+import Footer from "@/components/Footer";
 import GenreRail from "@/components/GenreRail";
 import HeroSection from "@/components/HeroSection";
 import PrimaryCta from "@/components/PrimaryCta";
 import ProductCard from "@/components/ProductCard";
 import ProductGridSection from "@/components/ProductGridSection";
 import RankingPodium from "@/components/RankingPodium";
-import RecentlyViewed from "@/components/RecentlyViewed";
 import RelatedNavigation from "@/components/RelatedNavigation";
 import ReviewCard from "@/components/ReviewCard";
 import SectionIntro from "@/components/SectionIntro";
@@ -25,25 +24,25 @@ const supportingGuides = [
     href: ROUTES.guide,
     title: "FANZA完全ガイド",
     description: "最初の登録から購入までの流れを短時間で確認できます。",
-    eyebrow: "ガイド",
+    eyebrow: "Guide",
   },
   {
     href: ROUTES.compare,
     title: "VR・通常作品の比較",
     description: "視聴スタイルごとの違いを整理して無駄買いを減らします。",
-    eyebrow: "比較",
+    eyebrow: "Compare",
   },
   {
     href: ROUTES.articleFanzaPayment,
     title: "支払い方法ガイド",
     description: "クレカ、PayPay、ポイントの使い分けをまとめています。",
-    eyebrow: "決済",
+    eyebrow: "Payment",
   },
   {
     href: ROUTES.articleSaveMoney,
     title: "セール攻略法",
     description: "クーポンとポイント活用で購入単価を抑える記事です。",
-    eyebrow: "節約術",
+    eyebrow: "Sale Tips",
   },
 ];
 
@@ -69,7 +68,6 @@ export default function HomePageView({
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
   const rankingSpotlight = rankingPreview.slice(0, 3);
   const rankingMore = rankingPreview.slice(3);
-  const discoveryProducts = [...rankingPreview, ...salePreview, ...(newSpotlight ? [newSpotlight] : [])];
 
   return (
     <main className="pb-24">
@@ -79,18 +77,18 @@ export default function HomePageView({
         newSpotlight={newSpotlight ?? undefined}
       />
 
-      <section className="content-shell px-4 pb-7">
+      <section className="content-shell px-4 pb-8">
         <SectionIntro
-          eyebrow="人気ランキング"
+          eyebrow="Monthly Ranking"
           title="今月よく見られている作品"
-          description="上位から見て、気になる作品だけ詳細やレビューへ進めます。"
+          description="上位から見ていくと、いま動いている作品がつかみやすいです。気になるものだけ詳細やレビューへ進めます。"
           action={
             <PrimaryCta href={ROUTES.ranking} size="sm" variant="outline">
               ランキング一覧へ
             </PrimaryCta>
           }
         />
-        <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
           <div>
             <RankingPodium products={rankingSpotlight} />
             {rankingMore.length > 0 ? (
@@ -103,71 +101,110 @@ export default function HomePageView({
           </div>
           <ActressRankingSection entries={topActresses} compact />
         </div>
-        <div className="mt-4">
-          <EntityDiscoveryBand
-            title="女優・メーカー・レーベルで絞る"
-            products={discoveryProducts}
-            topActresses={topActresses}
-            compact
-          />
-        </div>
       </section>
 
       <section className="content-shell px-4 pb-8">
-        <ProductGridSection
-          eyebrow="セール情報"
-          title="値下げ中の作品"
-          description="価格差とレビュー件数を見ながら、いま買いやすい作品を拾えます。"
-          action={
-            <PrimaryCta href={ROUTES.sale} size="sm" variant="outline">
-              セール一覧へ
-            </PrimaryCta>
-          }
-          products={salePreview}
-          columns="grid-cols-1 sm:grid-cols-2"
-        />
+        <div className="grid gap-4 lg:grid-cols-[1.14fr_0.86fr] lg:items-start">
+          <ProductGridSection
+            eyebrow="Sale Highlights"
+            title="値下げ中の作品"
+            description="価格差とレビュー件数を見ながら、いま買いやすい作品を拾えます。"
+            action={
+              <PrimaryCta href={ROUTES.sale} size="sm" variant="outline">
+                セール一覧へ
+              </PrimaryCta>
+            }
+            products={salePreview}
+            columns="grid-cols-1 sm:grid-cols-2"
+          />
+
+          <aside className="editorial-surface p-4 md:p-5">
+            <p className="eyebrow">Buying Notes</p>
+            <h2 className="mt-1.5 text-[1.5rem] font-semibold text-[var(--color-text-primary)]">
+              セール前に見る比較メモ
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+              価格だけで決めにくいときの短い確認用です。
+            </p>
+            <div className="mt-3 space-y-2.5">
+              <a
+                href={ROUTES.articleSaveMoney}
+                className="block rounded-[20px] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 transition-colors hover:border-[var(--color-border-strong)]"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--color-surface-highlight)] text-[var(--color-accent)]">
+                    <FaCoins size={16} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--color-text-primary)]">節約ガイドを読む</p>
+                    <p className="mt-1 text-sm leading-6 text-[var(--color-text-secondary)]">
+                      クーポンとポイントの使い分けだけ先に押さえられます。
+                    </p>
+                  </div>
+                </div>
+              </a>
+              <a
+                href={ROUTES.sale}
+                className="block rounded-[20px] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 transition-colors hover:border-[var(--color-border-strong)]"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--color-surface-highlight)] text-[var(--color-accent)]">
+                    <FaBookOpen size={16} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--color-text-primary)]">セール会場へ進む</p>
+                    <p className="mt-1 text-sm leading-6 text-[var(--color-text-secondary)]">
+                      値引き作品を見て、そのまま詳細とレビューへ進めます。
+                    </p>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </aside>
+        </div>
       </section>
 
       <section id="genre-discovery" className="content-shell px-4 pb-14">
         <SectionIntro
-          eyebrow="ジャンル一覧"
+          eyebrow="Genre Navigation"
           title="ジャンルから探す"
           description="人気、セール、VRなど、見たい切り口からそのまま進めます。"
           action={
             <PrimaryCta href={ROUTES.search} size="sm" variant="outline">
-              作品を検索
+              検索入口へ
             </PrimaryCta>
           }
         />
         <GenreRail genres={featuredGenres} />
       </section>
 
-      <section className="content-shell px-4 pb-10">
+      <section className="content-shell px-4 pb-12">
         <SectionIntro
-          eyebrow="レビュー"
-          title="作品レビュー"
-          description="購入前に読んでおきたいポイントを短くまとめています。"
+          eyebrow="Editorial Notes"
+          title="迷ったときの比較メモ"
+          description="買う前に少しだけ基準を整理したいときの補助入口です。主役は作品一覧で、ここは迷いを減らすための短いメモとして置いています。"
           action={
             <PrimaryCta href={ROUTES.reviews} size="sm" variant="outline">
-              レビュー一覧へ
+              比較メモ一覧へ
             </PrimaryCta>
           }
         />
-        <div className="grid gap-3 md:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-3">
           {featuredReviews.map((review) => (
-            <ReviewCard key={review.slug} review={review} compact />
+            <ReviewCard key={review.slug} review={review} />
           ))}
         </div>
       </section>
 
       <section className="content-shell px-4 pb-18">
-        <RecentlyViewed />
         <RelatedNavigation
           title="支払い方法や比較記事も見ておけます"
           description="作品を開く前に確認しておきたい情報だけをまとめています。"
           items={supportingGuides}
         />
       </section>
+
+      <Footer />
 
       <StickyCTA />
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Breadcrumb from "@/components/Breadcrumb";
+import Footer from "@/components/Footer";
 import GenreRail from "@/components/GenreRail";
 import PrimaryCta from "@/components/PrimaryCta";
 import ProductGridSection from "@/components/ProductGridSection";
@@ -98,7 +99,7 @@ export default async function GenrePage({
 
       <section className="mt-12">
         <SectionIntro
-          eyebrow="レビュー"
+          eyebrow="Reviews"
           title="レビューから探す"
           description="ジャンルの見どころを短時間でつかめるレビューを先に読めます。"
           action={
@@ -122,7 +123,7 @@ export default async function GenrePage({
       </section>
 
       <ProductGridSection
-        eyebrow="ジャンル作品"
+        eyebrow="Genre Picks"
         title={`${genre.name}のおすすめ作品`}
         description="このジャンルでよく見られている作品を、比較しやすい密度で並べています。"
         products={products}
@@ -130,7 +131,7 @@ export default async function GenrePage({
 
       <section className="mt-12">
         <SectionIntro
-          eyebrow="近いジャンル"
+          eyebrow="Neighbor Genres"
           title="近いジャンルにも広げる"
           description="作風が近いページへ横移動すると、比較の視野が広がります。"
         />
@@ -145,22 +146,24 @@ export default async function GenrePage({
             href: getGenreRoute("popular"),
             title: "人気作品ジャンルへ",
             description: "定番側の強さも合わせて見たいときに向いています。",
-            eyebrow: "ジャンル",
+            eyebrow: "Genre",
           },
           {
             href: ROUTES.reviews,
             title: "レビュー一覧へ",
             description: "ジャンルをまたいで作風を比較したいときの入口です。",
-            eyebrow: "レビュー",
+            eyebrow: "Review",
           },
           {
             href: ROUTES.ranking,
             title: "月間ランキングへ",
             description: "今月全体の温度感を見直したいときに使えます。",
-            eyebrow: "ランキング",
+            eyebrow: "Ranking",
           },
         ]}
       />
+
+      <Footer />
     </main>
   );
 }

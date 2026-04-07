@@ -64,7 +64,6 @@ export interface DmmProduct {
     maker?: { id: number; name: string }[];
     actress?: { id: number; name: string }[];
     label?: { id: number; name: string }[];
-    series?: { id: number; name: string }[];
   };
 }
 
@@ -75,17 +74,6 @@ export interface DmmApiResponse {
     total_count: number;
     first_position: number;
     items: DmmProduct[];
-  };
-}
-
-export interface DmmNamedEntity {
-  id: number | string;
-  name: string;
-}
-
-interface DmmNamedEntityResponse {
-  result?: {
-    items?: DmmNamedEntity[];
   };
 }
 
@@ -110,26 +98,6 @@ function buildUrl(
     ...params,
   });
   return `${DMM_API_BASE}/${endpoint}?${searchParams.toString()}`;
-}
-
-function buildEntitySearchUrl(
-  endpoint: "ActressSearch" | "MakerSearch" | "SeriesSearch",
-  keyword: string,
-  hits: number,
-  offset: number
-): string {
-  const { fanzaFloor } = getSiteConfig();
-  const params: Record<string, string> = {
-    floor: fanzaFloor,
-    hits: String(hits),
-    offset: String(offset),
-  };
-
-  if (keyword.trim()) {
-    params.keyword = keyword.trim();
-  }
-
-  return buildUrl(endpoint, params);
 }
 
 // ランキング取得（人気順）
@@ -176,62 +144,6 @@ export async function searchProducts(
     sort: "rank",
   });
   return fetchProducts(url);
-}
-
-async function fetchNamedEntities(url: string): Promise<DmmNamedEntity[]> {
-  const { apiId } = getConfig();
-
-  if (!apiId) {
-    return [];
-  }
-
-  try {
-    const res = await fetch(url, { next: { revalidate: 3600 } });
-
-    if (!res.ok) {
-      throw new Error(`DMM API error: ${res.status}`);
-    }
-
-    const data: DmmNamedEntityResponse = await res.json();
-
-    if (!Array.isArray(data?.result?.items)) {
-      throw new Error("Invalid entity response structure");
-    }
-
-    return data.result.items
-      .map((item) => ({
-        id: item.id,
-        name: item.name?.trim?.() ?? "",
-      }))
-      .filter((item) => item.name.length > 0);
-  } catch (e) {
-    console.error("[DMM API] Entity fetch error:", e instanceof Error ? e.message : e);
-    return [];
-  }
-}
-
-export async function fetchActressSearch(
-  keyword: string,
-  hits: number = 20,
-  offset: number = 1
-): Promise<DmmNamedEntity[]> {
-  return fetchNamedEntities(buildEntitySearchUrl("ActressSearch", keyword, hits, offset));
-}
-
-export async function fetchMakerSearch(
-  keyword: string,
-  hits: number = 20,
-  offset: number = 1
-): Promise<DmmNamedEntity[]> {
-  return fetchNamedEntities(buildEntitySearchUrl("MakerSearch", keyword, hits, offset));
-}
-
-export async function fetchSeriesSearch(
-  keyword: string,
-  hits: number = 20,
-  offset: number = 1
-): Promise<DmmNamedEntity[]> {
-  return fetchNamedEntities(buildEntitySearchUrl("SeriesSearch", keyword, hits, offset));
 }
 
 // セール商品（キーワードでセール検索）
@@ -298,7 +210,6 @@ export function toProduct(item: DmmProduct, rank?: number): Product {
   const actresses = item.iteminfo?.actress?.map((person) => person.name) || [];
   const maker = item.iteminfo?.maker?.[0]?.name;
   const label = item.iteminfo?.label?.[0]?.name;
-  const series = item.iteminfo?.series?.[0]?.name;
 
   return {
     id: item.content_id,
@@ -313,7 +224,6 @@ export function toProduct(item: DmmProduct, rank?: number): Product {
     tags: genres.slice(0, 3),
     maker,
     label,
-    series,
     actresses,
     rank: rank,
     isNew: isNewRelease(item.date),

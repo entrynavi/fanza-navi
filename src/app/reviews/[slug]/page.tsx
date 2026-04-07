@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Breadcrumb from "@/components/Breadcrumb";
+import Footer from "@/components/Footer";
 import PrimaryCta from "@/components/PrimaryCta";
 import ProductGridSection from "@/components/ProductGridSection";
 import RelatedNavigation from "@/components/RelatedNavigation";
@@ -100,7 +101,7 @@ export default async function ReviewPage({
       href: getGenreRoute(item.slug),
       title: item.name,
       description: item.headline,
-      eyebrow: "ジャンル",
+      eyebrow: "Genre",
     }));
   const reviewStructuredData = {
     "@context": "https://schema.org",
@@ -113,7 +114,7 @@ export default async function ReviewPage({
     dateModified: review.updatedAt,
     author: {
       "@type": "Organization",
-      name: "FANZAナビ",
+      name: "FANZAおすすめ作品ナビ",
     },
     itemReviewed: {
       "@type": "Product",
@@ -153,7 +154,7 @@ export default async function ReviewPage({
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(211,175,111,0.14),transparent_28%)]" />
             <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(163,55,88,0.18),transparent_48%)]" />
             <div className="relative max-w-3xl">
-              <p className="eyebrow mb-3">レビュー / {review.productTitle}</p>
+              <p className="eyebrow mb-3">Review / {review.productTitle}</p>
               <h1 className="text-3xl font-semibold leading-tight text-[var(--color-text-primary)] md:text-5xl">
                 {review.title}
               </h1>
@@ -215,7 +216,7 @@ export default async function ReviewPage({
 
           <aside className="space-y-5">
             <div className="editorial-panel p-5">
-              <p className="eyebrow mb-2">レビュー</p>
+              <p className="eyebrow mb-2">Review Route</p>
               <h2 className="text-xl font-semibold text-[var(--color-text-primary)]">
                 次に見たいページ
               </h2>
@@ -259,7 +260,7 @@ export default async function ReviewPage({
       </article>
 
       <ProductGridSection
-        eyebrow="関連作品"
+        eyebrow="Related Works"
         title="流れが近い関連作品"
         description="同じ温度感で選びやすい作品を並べています。レビューを読んだあとに比較対象として見やすい順です。"
         products={sortedRelatedProducts}
@@ -274,24 +275,26 @@ export default async function ReviewPage({
               href: ROUTES.reviews,
               title: "レビュー一覧へ戻る",
               description: "他の切り口のレビューをまとめて確認できます。",
-              eyebrow: "レビュー",
+              eyebrow: "Review",
             },
             ...relatedGenres,
             {
               href: ROUTES.articleSaveMoney,
               title: "セール攻略ガイド",
               description: "値引き作品を見る前の基準整理に使えます。",
-              eyebrow: "ガイド",
+              eyebrow: "Guide",
             },
             {
               href: ROUTES.articleFanzaPayment,
               title: "支払い方法ガイド",
               description: "購入前に支払い手段を確認したいとき向けです。",
-              eyebrow: "ガイド",
+              eyebrow: "Guide",
             },
           ].slice(0, 3)}
         />
       </section>
+
+      <Footer />
     </main>
   );
 }

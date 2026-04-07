@@ -1,7 +1,7 @@
-import { cache } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Breadcrumb from "@/components/Breadcrumb";
+import Footer from "@/components/Footer";
 import GenreRail from "@/components/GenreRail";
 import PrimaryCta from "@/components/PrimaryCta";
 import ProductGridSection from "@/components/ProductGridSection";
@@ -9,20 +9,26 @@ import RelatedNavigation from "@/components/RelatedNavigation";
 import SectionIntro from "@/components/SectionIntro";
 import { genrePages } from "@/data/genres";
 import { buildActressRanking, decodeActressSlug, getActressSlug } from "@/lib/actress-ranking";
-import { loadActressProducts, loadEntityDiscoveryCatalog } from "@/lib/catalog";
+import { loadActressProducts, loadNewProducts, loadRankingProducts, loadSaleProducts } from "@/lib/catalog";
 import { buildPageMetadata } from "@/lib/metadata";
 import { ROUTES, getGenreRoute } from "@/lib/site";
 
 export const dynamicParams = false;
 
-const loadActressContext = cache(async () => {
-  const catalog = await loadEntityDiscoveryCatalog({ limit: 8 });
+async function loadActressContext() {
+  const [ranking, sale, latest] = await Promise.all([
+    loadRankingProducts({ limit: 8 }),
+    loadSaleProducts({ limit: 6 }),
+    loadNewProducts({ limit: 6 }),
+  ]);
+
+  const sourceProducts = [...ranking, ...sale, ...latest];
 
   return {
-    sourceProducts: catalog.sourceProducts,
-    actresses: buildActressRanking(catalog.sourceProducts, 8),
+    sourceProducts,
+    actresses: buildActressRanking(sourceProducts, 8),
   };
-});
+}
 
 export async function generateStaticParams() {
   const { actresses } = await loadActressContext();
@@ -88,7 +94,7 @@ export default async function ActressPage({
 
       <section className="editorial-surface p-6 md:p-8">
         <SectionIntro
-          eyebrow="注目女優"
+          eyebrow="Actress Focus"
           title={actressName}
           description={`${actressName}が気になるときに、そのまま代表作と近いジャンルへ進める入口です。ランキングでよく見られている作品を中心に並べています。`}
           action={
@@ -125,7 +131,7 @@ export default async function ActressPage({
       </section>
 
       <ProductGridSection
-        eyebrow="注目作品"
+        eyebrow="Featured Titles"
         title={`${actressName}で見られている作品`}
         description="まずはレビュー件数が動いている作品から見て、そのあと近いジャンルへ広げると比較しやすいです。"
         products={products}
@@ -134,7 +140,7 @@ export default async function ActressPage({
       {relatedGenres.length > 0 ? (
         <section className="mt-10">
           <SectionIntro
-            eyebrow="関連ジャンル"
+            eyebrow="Related Genres"
             title="近いジャンルへ広げる"
             description="出演作の傾向が近いジャンルもそのまま比較できます。"
           />
@@ -150,13 +156,13 @@ export default async function ActressPage({
             href: ROUTES.ranking,
             title: "月間ランキングへ",
             description: "全体の温度感を見直したいときの入口です。",
-            eyebrow: "ランキング",
+            eyebrow: "Ranking",
           },
           {
             href: ROUTES.sale,
             title: "セール一覧へ",
             description: "値引き中の出演作から見たいときに向いています。",
-            eyebrow: "セール",
+            eyebrow: "Sale",
           },
           {
             href: relatedGenres[0] ? getGenreRoute(relatedGenres[0].slug) : ROUTES.search,
@@ -164,10 +170,12 @@ export default async function ActressPage({
             description: relatedGenres[0]
               ? "作風が近い作品をそのまま比較できます。"
               : "別の切り口から探したいときの入口です。",
-            eyebrow: "ジャンル",
+            eyebrow: "Genre",
           },
         ]}
       />
+
+      <Footer />
     </main>
   );
 }

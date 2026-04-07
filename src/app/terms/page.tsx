@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/metadata";
+import { ROUTES } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "利用規約",
-};
+  description:
+    "FANZAナビの利用規約。年齢制限、免責事項、著作権、禁止事項などサイト利用に関する基本条件をまとめています。",
+  path: ROUTES.terms,
+});
 
 export default function TermsPage() {
   return (

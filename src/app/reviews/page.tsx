@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Breadcrumb from "@/components/Breadcrumb";
+import Footer from "@/components/Footer";
 import GenreRail from "@/components/GenreRail";
 import PrimaryCta from "@/components/PrimaryCta";
 import RelatedNavigation from "@/components/RelatedNavigation";
@@ -11,9 +12,9 @@ import { buildPageMetadata } from "@/lib/metadata";
 import { ROUTES } from "@/lib/site";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "レビュー一覧",
+  title: "比較メモ一覧",
   description:
-    "FANZA作品を比べるときの短い補助レビューを一覧で確認。ジャンル別ページへの導線付きで気になる作品を探せます。",
+    "FANZAの人気作、VR、セール作品を比較するためのメモを一覧で確認。ジャンル別ページへの導線付きで気になる作品を探せます。",
   path: ROUTES.reviews,
 });
 
@@ -28,9 +29,9 @@ export default function ReviewsIndexPage() {
 
       <section className="editorial-surface p-6 md:p-8">
         <SectionIntro
-          eyebrow="レビュー"
-          title="レビュー一覧"
-          description="迷ったときだけ開く補助ページです。最終判断は公式ページで確認できます。"
+          eyebrow="Editorial Notes"
+          title="比較メモ一覧"
+          description="一覧だけでは決めにくいときに使う、短い比較メモをまとめています。作品の最終判断は公式ページのレビューと詳細で確認する前提です。"
           action={
             <PrimaryCta href={ROUTES.ranking} size="sm" variant="outline">
               ランキングへ
@@ -41,22 +42,22 @@ export default function ReviewsIndexPage() {
 
       <section className="mt-12">
         <SectionIntro
-          eyebrow="レビュー一覧"
-          title="公開中のレビュー"
-          description="気になる作品の特徴やポイントを短くまとめています。"
+          eyebrow="Published Notes"
+          title="公開中の比較メモ"
+          description="作風や買い方の基準を短く整理したいときの補助ページです。"
         />
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {reviews.map((review) => (
-            <ReviewCard key={review.slug} review={review} compact />
+            <ReviewCard key={review.slug} review={review} />
           ))}
         </div>
       </section>
 
       <section className="mt-12">
         <SectionIntro
-          eyebrow="ジャンル"
+          eyebrow="Genres"
           title="ジャンル別に深掘りする"
-          description="レビューのあとに、近い作品をまとめて見られます。"
+          description="レビューのあとに、そのジャンルで近い作品をまとめて見られます。"
         />
         <GenreRail genres={featuredGenres} />
       </section>
@@ -68,23 +69,25 @@ export default function ReviewsIndexPage() {
           {
             href: ROUTES.ranking,
             title: "月間ランキングへ",
-            description: "王道の動きを見直したいときに向いています。",
-            eyebrow: "ランキング",
+            description: "いま動いている王道から見直したいときに向いています。",
+            eyebrow: "Ranking",
           },
           {
             href: ROUTES.sale,
             title: "セール一覧へ",
             description: "価格差を基準に比較したいときの入口です。",
-            eyebrow: "セール",
+            eyebrow: "Sale",
           },
           {
             href: ROUTES.guide,
             title: "初心者ガイドへ",
-            description: "登録や支払い方法を整理したいときに使えます。",
-            eyebrow: "ガイド",
+            description: "登録や支払い方法も整理しておきたいときに便利です。",
+            eyebrow: "Guide",
           },
         ]}
       />
+
+      <Footer />
     </main>
   );
 }

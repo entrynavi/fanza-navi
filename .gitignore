@@ -1,4 +1,8 @@
 node_modules/
 .next/
-.env*
 .worktrees/
+.superpowers/
+.env*
+!.env.example
+.DS_Store
+out/

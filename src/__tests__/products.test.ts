@@ -1,7 +1,11 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { sampleProducts, genres } from "@/data/products";
 
 describe("Product Data Integrity", () => {
+  beforeEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it("should have at least 40 products", () => {
     expect(sampleProducts.length).toBeGreaterThanOrEqual(40);
   });
@@ -34,6 +38,24 @@ describe("Product Data Integrity", () => {
     for (const p of sampleProducts) {
       expect(p.affiliateUrl).not.toBe("#");
     }
+  });
+
+  it("every product has a valid outbound affiliate URL", () => {
+    for (const p of sampleProducts) {
+      expect(p.affiliateUrl).toMatch(/^https:\/\/(www\.)?(dmm\.co\.jp|fanza\.com)\//);
+    }
+  });
+
+  it("does not change product links when affiliate env changes", async () => {
+    const defaultUrl = sampleProducts[0].affiliateUrl;
+
+    vi.stubEnv("DMM_AFFILIATE_ID", "product-affiliate");
+    vi.resetModules();
+
+    const { sampleProducts: envProducts } = await import("@/data/products");
+
+    expect(envProducts[0].affiliateUrl).toBe(defaultUrl);
+    expect(envProducts[0].affiliateUrl).not.toContain("al.dmm.co.jp");
   });
 
   it("sale products have valid sale price less than regular price", () => {

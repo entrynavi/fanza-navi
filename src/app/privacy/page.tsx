@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/metadata";
+import { ROUTES } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "プライバシーポリシー",
-};
+  description:
+    "FANZAナビのプライバシーポリシー。アクセス解析、Cookie、アフィリエイト計測、個人情報の取り扱い方針を記載しています。",
+  path: ROUTES.privacy,
+});
 
 export default function PrivacyPage() {
   return (

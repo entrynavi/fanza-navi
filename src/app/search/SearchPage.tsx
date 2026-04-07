@@ -80,8 +80,7 @@ export default function SearchPage({
           p.description.toLowerCase().includes(q) ||
           p.tags.some((t) => t.toLowerCase().includes(q)) ||
           p.actresses?.some((a) => a.toLowerCase().includes(q)) ||
-          p.maker?.toLowerCase().includes(q) ||
-          p.series?.toLowerCase().includes(q)
+          p.maker?.toLowerCase().includes(q)
       );
     }
 

@@ -903,23 +903,7 @@ const fallbackProducts: Product[] = [
   },
 ];
 
-const discoveryMetadataById: Record<string, Pick<Product, "maker" | "label" | "series">> = {
-  "1": { maker: "S1 NO.1 STYLE", label: "限定シリーズ", series: "人気シリーズ最新作" },
-  "2": { maker: "MOODYZ", label: "学園ドラマ", series: "禁断の放課後レッスン" },
-  "3": { maker: "S1 NO.1 STYLE", label: "オフィスドラマ", series: "真夜中のオフィスラブ" },
-  "4": { maker: "PRESTIGE", label: "旅行ロマンス", series: "温泉旅情" },
-  "5": { maker: "IdeaPocket", label: "共同生活", series: "彼女のルームシェア事情" },
-  "6": { maker: "MOODYZ", label: "フェチライン", series: "絶対領域" },
-  "7": { maker: "S1 NO.1 STYLE", label: "恋愛ドラマ", series: "週末カノジョ" },
-  "8": { maker: "PRESTIGE", label: "テクニック実演", series: "マッサージ師の本気テクニック" },
-  "17": { maker: "FANZA動画", label: "大型セール", series: "半額ピックアップ" },
-  "18": { maker: "SOD Create", label: "大型セール", series: "半額ピックアップ" },
-  "25": { maker: "kawaii*", label: "新着ライン", series: "春の新作ライン" },
-  "26": { maker: "Attackers", label: "新着ライン", series: "春の新作ライン" },
-};
-
 export const sampleProducts: Product[] = fallbackProducts.map((product) => ({
   ...product,
-  ...(discoveryMetadataById[product.id] ?? {}),
   affiliateUrl: product.affiliateUrl || FALLBACK_OUTBOUND_URL,
 }));

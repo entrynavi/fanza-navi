@@ -1,2 +1,0 @@
-:HL["/_next/static/chunks/0yule_umkxysv.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"series","param":null,"prefetchHints":0,"slots":{"children":{"name":"slug","param":{"type":"d","key":"e5bdbce5a5b3e381aee383abe383bce383a0e382b7e382a7e382a2e4ba8be68385","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"u-ZZ0NHcdVoAy4TiZdjpq"}
