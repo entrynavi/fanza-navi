@@ -13,7 +13,7 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-lg font-bold text-white mb-3">第1条（適用）</h2>
-          <p>本規約は、FANZAおすすめ作品ナビ（以下「本サイト」）の利用に関する条件を定めるものです。利用者は、本サイトを利用することにより、本規約に同意したものとみなされます。</p>
+          <p>本規約は、FANZAナビ（以下「本サイト」）の利用に関する条件を定めるものです。利用者は、本サイトを利用することにより、本規約に同意したものとみなされます。</p>
         </section>
 
         <section>

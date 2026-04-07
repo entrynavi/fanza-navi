@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { FaStar } from "react-icons/fa";
 import PrimaryCta from "@/components/PrimaryCta";
+import FavoriteButton from "@/components/FavoriteButton";
 import { getGenreBySlug } from "@/data/genres";
 import { getReviewByProductId } from "@/data/reviews";
 import type { Product } from "@/data/products";
@@ -79,6 +80,12 @@ export default function ProductCard({
           </>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
+        <div className="absolute top-3 right-3 z-10">
+          <FavoriteButton
+            productId={product.id}
+            className="h-9 w-9 bg-black/30 backdrop-blur-sm hover:bg-black/50"
+          />
+        </div>
         <div className="absolute inset-x-0 bottom-0 p-4">
           <div className="flex items-start justify-between gap-3">
             <div className="space-y-2">

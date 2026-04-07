@@ -2,7 +2,6 @@ import { cache } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 import GenreRail from "@/components/GenreRail";
 import PrimaryCta from "@/components/PrimaryCta";
 import ProductGridSection from "@/components/ProductGridSection";
@@ -199,38 +198,36 @@ export default async function SeriesPage({
             href: ROUTES.ranking,
             title: "月間ランキングへ",
             description: "全体の温度感を見直したいときの入口です。",
-            eyebrow: "Ranking",
+            eyebrow: "ランキング",
           },
           {
             href: ROUTES.sale,
             title: "セール一覧へ",
             description: "値下げ中の近い作品から見たいときに向いています。",
-            eyebrow: "Sale",
+            eyebrow: "セール",
           },
           makerCandidates[0]
             ? {
                 href: getMakerRoute(makerCandidates[0].name),
                 title: `${makerCandidates[0].name}ページへ`,
                 description: "同じメーカーの他作品から広げられます。",
-                eyebrow: "Maker",
+                eyebrow: "メーカー",
               }
             : actressCandidates[0]
               ? {
                   href: getActressRoute(actressCandidates[0].name),
                   title: `${actressCandidates[0].name}ページへ`,
                   description: "出演者から近い作品を追い直せます。",
-                  eyebrow: "Actress",
+                  eyebrow: "女優",
                 }
               : {
                   href: relatedGenres[0] ? getGenreRoute(relatedGenres[0].slug) : ROUTES.search,
                   title: relatedGenres[0] ? `${relatedGenres[0].name}ジャンルへ` : "検索入口へ",
                   description: "別の切り口から広げたいときの入口です。",
-                  eyebrow: "Genre",
+                  eyebrow: "ジャンル",
                 },
         ]}
       />
-
-      <Footer />
     </main>
   );
 }

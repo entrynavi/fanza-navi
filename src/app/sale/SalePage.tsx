@@ -1,5 +1,4 @@
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 import GenreRail from "@/components/GenreRail";
 import PrimaryCta from "@/components/PrimaryCta";
 import ProductGridSection from "@/components/ProductGridSection";
@@ -88,24 +87,22 @@ export default async function SalePage() {
             href: ROUTES.ranking,
             title: "月間ランキングへ",
             description: "王道の動きを見直したいときに使えます。",
-            eyebrow: "Ranking",
+            eyebrow: "ランキング",
           },
           {
             href: getGenreRoute("sale"),
             title: "セールジャンルへ",
             description: "近い値下げ作品をジャンル単位で確認できます。",
-            eyebrow: "Genre",
+            eyebrow: "ジャンル",
           },
           {
             href: ROUTES.articleSaveMoney,
             title: "節約ガイドへ",
             description: "クーポンとポイントの使い方を整理できます。",
-            eyebrow: "Guide",
+            eyebrow: "ガイド",
           },
         ]}
       />
-
-      <Footer />
     </main>
   );
 }

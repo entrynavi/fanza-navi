@@ -8,7 +8,6 @@ import {
   FaVrCardboard,
 } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 import GenreRail from "@/components/GenreRail";
 import PrimaryCta from "@/components/PrimaryCta";
 import ReviewCard from "@/components/ReviewCard";
@@ -24,7 +23,7 @@ const articles = [
     title: "FANZA完全ガイド｜登録方法から使い方まで初心者向け徹底解説",
     description:
       "会員登録、作品の探し方、購入までの流れを一通り確認したい人向けの基本ガイドです。",
-    tag: "Guide",
+    tag: "ガイド",
     date: "2026.03.28",
     readTime: "10分",
   },
@@ -34,7 +33,7 @@ const articles = [
     title: "VR vs 通常・月額見放題 vs 単品購入｜FANZAの楽しみ方を比較",
     description:
       "視聴スタイルや課金の仕方で迷ったときに、比較の軸をまとめて確認できる記事です。",
-    tag: "Compare",
+    tag: "比較",
     date: "2026.03.28",
     readTime: "8分",
   },
@@ -44,7 +43,7 @@ const articles = [
     title: "FANZA（DMM）の支払い方法を完全解説｜クレカ・PayPay・DMMポイント比較",
     description:
       "支払い手段ごとの特徴や、購入前に押さえておきたい違いを整理しています。",
-    tag: "Payment",
+    tag: "決済",
     date: "2026.03.30",
     readTime: "12分",
   },
@@ -201,8 +200,6 @@ export default function ArticlesPage() {
           </div>
         </div>
       </section>
-
-      <Footer />
     </main>
   );
 }

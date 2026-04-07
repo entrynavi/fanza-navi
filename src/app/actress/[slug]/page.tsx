@@ -2,7 +2,6 @@ import { cache } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 import GenreRail from "@/components/GenreRail";
 import PrimaryCta from "@/components/PrimaryCta";
 import ProductGridSection from "@/components/ProductGridSection";
@@ -151,13 +150,13 @@ export default async function ActressPage({
             href: ROUTES.ranking,
             title: "月間ランキングへ",
             description: "全体の温度感を見直したいときの入口です。",
-            eyebrow: "Ranking",
+            eyebrow: "ランキング",
           },
           {
             href: ROUTES.sale,
             title: "セール一覧へ",
             description: "値引き中の出演作から見たいときに向いています。",
-            eyebrow: "Sale",
+            eyebrow: "セール",
           },
           {
             href: relatedGenres[0] ? getGenreRoute(relatedGenres[0].slug) : ROUTES.search,
@@ -165,12 +164,10 @@ export default async function ActressPage({
             description: relatedGenres[0]
               ? "作風が近い作品をそのまま比較できます。"
               : "別の切り口から探したいときの入口です。",
-            eyebrow: "Genre",
+            eyebrow: "ジャンル",
           },
         ]}
       />
-
-      <Footer />
     </main>
   );
 }

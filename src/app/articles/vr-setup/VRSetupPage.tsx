@@ -20,7 +20,6 @@ import {
   FaStar,
 } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 
 /* ───────────────────────── data ───────────────────────── */
 
@@ -869,8 +868,6 @@ export default function VRSetupPage() {
           </div>
         </section>
       </article>
-
-      <Footer />
     </main>
   );
 }

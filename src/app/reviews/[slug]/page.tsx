@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 import PrimaryCta from "@/components/PrimaryCta";
 import ProductGridSection from "@/components/ProductGridSection";
 import RelatedNavigation from "@/components/RelatedNavigation";
@@ -101,7 +100,7 @@ export default async function ReviewPage({
       href: getGenreRoute(item.slug),
       title: item.name,
       description: item.headline,
-      eyebrow: "Genre",
+      eyebrow: "ジャンル",
     }));
   const reviewStructuredData = {
     "@context": "https://schema.org",
@@ -114,7 +113,7 @@ export default async function ReviewPage({
     dateModified: review.updatedAt,
     author: {
       "@type": "Organization",
-      name: "FANZAおすすめ作品ナビ",
+      name: "FANZAナビ",
     },
     itemReviewed: {
       "@type": "Product",
@@ -275,26 +274,24 @@ export default async function ReviewPage({
               href: ROUTES.reviews,
               title: "レビュー一覧へ戻る",
               description: "他の切り口のレビューをまとめて確認できます。",
-              eyebrow: "Review",
+              eyebrow: "レビュー",
             },
             ...relatedGenres,
             {
               href: ROUTES.articleSaveMoney,
               title: "セール攻略ガイド",
               description: "値引き作品を見る前の基準整理に使えます。",
-              eyebrow: "Guide",
+              eyebrow: "ガイド",
             },
             {
               href: ROUTES.articleFanzaPayment,
               title: "支払い方法ガイド",
               description: "購入前に支払い手段を確認したいとき向けです。",
-              eyebrow: "Guide",
+              eyebrow: "ガイド",
             },
           ].slice(0, 3)}
         />
       </section>
-
-      <Footer />
     </main>
   );
 }

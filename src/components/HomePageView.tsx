@@ -9,6 +9,7 @@ import PrimaryCta from "@/components/PrimaryCta";
 import ProductCard from "@/components/ProductCard";
 import ProductGridSection from "@/components/ProductGridSection";
 import RankingPodium from "@/components/RankingPodium";
+import RecentlyViewed from "@/components/RecentlyViewed";
 import RelatedNavigation from "@/components/RelatedNavigation";
 import ReviewCard from "@/components/ReviewCard";
 import SectionIntro from "@/components/SectionIntro";
@@ -160,6 +161,7 @@ export default function HomePageView({
       </section>
 
       <section className="content-shell px-4 pb-18">
+        <RecentlyViewed />
         <RelatedNavigation
           title="支払い方法や比較記事も見ておけます"
           description="作品を開く前に確認しておきたい情報だけをまとめています。"

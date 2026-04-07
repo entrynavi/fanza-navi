@@ -122,6 +122,19 @@ export default function HeroSection({
               </PrimaryCta>
             </div>
 
+            <div className="mt-5 flex flex-wrap gap-6 text-sm">
+              {[
+                { num: "56+", label: "厳選作品" },
+                { num: "8", label: "詳細レビュー" },
+                { num: "10+", label: "ジャンル対応" },
+              ].map((s) => (
+                <div key={s.label}>
+                  <span className="font-bold text-[var(--color-accent)]">{s.num}</span>{" "}
+                  <span className="text-[var(--color-text-muted)]">{s.label}</span>
+                </div>
+              ))}
+            </div>
+
             <p className="mt-4 max-w-[34rem] text-xs leading-6 text-[var(--color-text-muted)] md:text-sm">
               18歳以上向け。商品情報・価格は記事執筆時点のものです。最新の価格・配信状況はFANZA公式サイトで確認できます。
             </p>

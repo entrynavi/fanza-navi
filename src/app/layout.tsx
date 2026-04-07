@@ -9,15 +9,18 @@ import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: {
-    default: "FANZAおすすめ作品ナビ | 使い方ガイド＆お得情報",
+    default: "FANZAナビ — セール速報＆作品レビュー",
     template: "%s | FANZAナビ",
   },
   description:
-    "FANZAの使い方・支払い方法・VR設定・セール攻略法まで徹底解説。初心者でもわかるガイド記事を公開中。",
-  keywords: ["FANZA", "DMM", "使い方", "ガイド", "VR", "セール", "支払い方法", "お得"],
+    "FANZAのセール速報・人気ランキング・新作レビューを毎日更新。支払い方法からVRの始め方まで、初心者でも迷わないガイドも公開中。",
+  keywords: ["FANZA", "DMM", "セール", "ランキング", "レビュー", "VR", "支払い方法", "お得", "新作"],
+  icons: {
+    icon: "/favicon.svg",
+  },
   openGraph: {
-    title: "FANZAおすすめ作品ナビ",
-    description: "FANZAの使い方・お得情報をわかりやすく解説するガイドメディア",
+    title: "FANZAナビ — セール速報＆作品レビュー",
+    description: "ランキング・セール・新作レビューを厳選してお届け。初心者ガイドから支払い方法まで完全解説。",
     type: "website",
     siteName: "FANZAナビ",
     images: [
@@ -25,14 +28,14 @@ export const metadata: Metadata = {
         url: `${SITE_URL}/images/ogp.svg`,
         width: 1200,
         height: 630,
-        alt: "FANZAおすすめ作品ナビ",
+        alt: "FANZAナビ — セール速報＆作品レビュー",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "FANZAおすすめ作品ナビ",
-    description: "FANZAの使い方・お得情報をわかりやすく解説するガイドメディア",
+    title: "FANZAナビ — セール速報＆作品レビュー",
+    description: "ランキング・セール・新作レビューを厳選してお届け。初心者ガイドから支払い方法まで完全解説。",
     images: [`${SITE_URL}/images/ogp.svg`],
   },
   robots: {

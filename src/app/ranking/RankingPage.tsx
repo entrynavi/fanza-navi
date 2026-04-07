@@ -1,6 +1,5 @@
 import ActressRankingSection from "@/components/ActressRankingSection";
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 import EntityDiscoveryBand from "@/components/EntityDiscoveryBand";
 import GenreRail from "@/components/GenreRail";
 import PrimaryCta from "@/components/PrimaryCta";
@@ -112,24 +111,22 @@ export default async function RankingPage() {
             href: ROUTES.sale,
             title: "セール情報へ",
             description: "値下げ中の作品だけを見て価格差から比較できます。",
-            eyebrow: "Sale",
+            eyebrow: "セール",
           },
           {
             href: getGenreRoute("popular"),
             title: "人気作品ジャンルへ",
             description: "ランキング寄りの定番作品をジャンル単位でまとめて見られます。",
-            eyebrow: "Genre",
+            eyebrow: "ジャンル",
           },
           {
             href: ROUTES.reviews,
             title: "レビュー一覧へ",
             description: "作風や向いている人を先に確認したいときの入口です。",
-            eyebrow: "Review",
+            eyebrow: "レビュー",
           },
         ]}
       />
-
-      <Footer />
     </main>
   );
 }

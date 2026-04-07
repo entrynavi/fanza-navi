@@ -22,7 +22,6 @@ import {
   FaGift,
 } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 
 /* ───────────────────────── data ───────────────────────── */
 
@@ -903,8 +902,6 @@ export default function SaveMoneyPage() {
           </div>
         </section>
       </article>
-
-      <Footer />
     </main>
   );
 }

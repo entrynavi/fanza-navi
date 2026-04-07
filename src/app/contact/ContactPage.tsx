@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { FaEnvelope, FaExclamationTriangle, FaPaperPlane, FaRegClock } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 import SectionIntro from "@/components/SectionIntro";
 
 const NOTICE_ITEMS = [
@@ -36,7 +35,7 @@ export default function ContactPage() {
 
       <section className="editorial-surface p-6 md:p-8">
         <SectionIntro
-          eyebrow="Contact"
+          eyebrow="お問い合わせ"
           title="お問い合わせ"
           description="記事内容の誤り、リンク切れ、表示不具合、運営に関する連絡はこちらからどうぞ。購入やアカウントの相談は公式サポートをご利用ください。"
         />
@@ -234,8 +233,6 @@ export default function ContactPage() {
           </div>
         </aside>
       </section>
-
-      <Footer />
     </main>
   );
 }

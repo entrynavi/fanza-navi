@@ -2,14 +2,16 @@ import type { Metadata } from "next";
 import SearchPage from "./SearchPage";
 import { ROUTES } from "@/lib/site";
 import { buildPageMetadata } from "@/lib/metadata";
+import { sampleProducts } from "@/data/products";
+import { genrePages } from "@/data/genres";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "作品検索の入口",
+  title: "作品検索",
   description:
-    "人気、新着、セール、レビューへ進める作品探索の入口ページ。静的サイトでも回遊しやすく、比較から購入導線までつなげます。",
+    "キーワード・ジャンル・価格帯で作品を検索。人気順・新着順・価格順で並び替え、お目当ての作品がすぐ見つかります。",
   path: ROUTES.search,
 });
 
 export default function Page() {
-  return <SearchPage />;
+  return <SearchPage allProducts={sampleProducts} genres={genrePages} />;
 }

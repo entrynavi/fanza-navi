@@ -1,28 +1,33 @@
 import Link from "next/link";
+import { ROUTES } from "@/lib/site";
 
 export default function NotFound() {
   return (
-    <main className="max-w-2xl mx-auto px-4 py-20 text-center">
-      <div className="text-8xl mb-6">😵</div>
-      <h1 className="text-4xl font-extrabold mb-4">
-        <span className="gradient-text">404</span>
-      </h1>
-      <p className="text-lg text-[var(--color-text-secondary)] mb-8">
-        お探しのページは見つかりませんでした
-      </p>
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Link
-          href="/"
-          className="px-8 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] hover:opacity-90 transition-opacity"
-        >
-          🏠 トップページへ
-        </Link>
-        <Link
-          href="/ranking"
-          className="px-8 py-3 rounded-xl font-bold text-white bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
-        >
-          🏆 ランキングを見る
-        </Link>
+    <main className="content-shell flex min-h-[60vh] items-center justify-center px-4 py-16">
+      <div className="text-center max-w-md">
+        <div className="mb-4 text-7xl font-black bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] bg-clip-text text-transparent opacity-30">
+          404
+        </div>
+        <h1 className="mb-2 text-xl font-bold text-[var(--color-text-primary)]">
+          ページが見つかりません
+        </h1>
+        <p className="mb-6 text-sm text-[var(--color-text-muted)]">
+          お探しのページは存在しないか、移動した可能性があります。
+        </p>
+        <div className="flex justify-center gap-3">
+          <Link
+            href={ROUTES.home}
+            className="rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+          >
+            トップページへ
+          </Link>
+          <Link
+            href={ROUTES.search}
+            className="rounded-full border border-[var(--color-border)] px-5 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-border-strong)]"
+          >
+            作品を検索
+          </Link>
+        </div>
       </div>
     </main>
   );

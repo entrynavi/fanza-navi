@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { FaCheck, FaTimes, FaArrowRight } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 
 const vrComparison = [
   { feature: "没入感", vr: "◎ 圧倒的", normal: "△ 画面視聴" },
@@ -182,8 +181,6 @@ export default function ComparePage() {
         </a>
         <p className="text-xs text-[var(--color-text-secondary)] mt-2">※ PR</p>
       </section>
-
-      <Footer />
     </main>
   );
 }

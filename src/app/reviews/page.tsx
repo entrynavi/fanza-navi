@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 import GenreRail from "@/components/GenreRail";
 import PrimaryCta from "@/components/PrimaryCta";
 import RelatedNavigation from "@/components/RelatedNavigation";
@@ -55,7 +54,7 @@ export default function ReviewsIndexPage() {
 
       <section className="mt-12">
         <SectionIntro
-          eyebrow="Genres"
+          eyebrow="ジャンル"
           title="ジャンル別に深掘りする"
           description="レビューのあとに、近い作品をまとめて見られます。"
         />
@@ -70,24 +69,22 @@ export default function ReviewsIndexPage() {
             href: ROUTES.ranking,
             title: "月間ランキングへ",
             description: "王道の動きを見直したいときに向いています。",
-            eyebrow: "Ranking",
+            eyebrow: "ランキング",
           },
           {
             href: ROUTES.sale,
             title: "セール一覧へ",
             description: "価格差を基準に比較したいときの入口です。",
-            eyebrow: "Sale",
+            eyebrow: "セール",
           },
           {
             href: ROUTES.guide,
             title: "初心者ガイドへ",
             description: "登録や支払い方法を整理したいときに使えます。",
-            eyebrow: "Guide",
+            eyebrow: "ガイド",
           },
         ]}
       />
-
-      <Footer />
     </main>
   );
 }

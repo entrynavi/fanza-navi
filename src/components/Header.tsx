@@ -44,7 +44,7 @@ export default function Header() {
                   FANZA<span className="gradient-text">ナビ</span>
                 </p>
                 <p className="truncate text-[10px] font-medium text-[var(--color-text-muted)]">
-                  作品比較ガイド
+                  セール速報＆レビュー
                 </p>
               </div>
             </div>

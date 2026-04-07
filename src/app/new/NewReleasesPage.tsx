@@ -1,5 +1,4 @@
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 import GenreRail from "@/components/GenreRail";
 import PrimaryCta from "@/components/PrimaryCta";
 import ProductGridSection from "@/components/ProductGridSection";
@@ -83,24 +82,22 @@ export default async function NewReleasesPage() {
             href: ROUTES.ranking,
             title: "月間ランキングへ",
             description: "定番側の強さを見直したいときに使えます。",
-            eyebrow: "Ranking",
+            eyebrow: "ランキング",
           },
           {
             href: ROUTES.reviews,
             title: "レビュー一覧へ",
             description: "作風や向いている人を短く確認できます。",
-            eyebrow: "Review",
+            eyebrow: "レビュー",
           },
           {
             href: getGenreRoute("vr"),
             title: "VRジャンルへ",
             description: "没入感重視の作品を別軸で見られます。",
-            eyebrow: "Genre",
+            eyebrow: "ジャンル",
           },
         ]}
       />
-
-      <Footer />
     </main>
   );
 }

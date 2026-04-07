@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { FaCheckCircle, FaArrowRight } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 
 const steps = [
   {
@@ -210,8 +209,6 @@ export default function GuidePage() {
         </a>
         <p className="text-xs text-[var(--color-text-secondary)] mt-2">※ PR</p>
       </section>
-
-      <Footer />
     </main>
   );
 }

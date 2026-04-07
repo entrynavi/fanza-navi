@@ -1,154 +1,309 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { FaSearch, FaTimes, FaSlidersH, FaStar, FaFire, FaTags, FaBolt } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
+import ProductCard from "@/components/ProductCard";
 import GenreRail from "@/components/GenreRail";
-import PrimaryCta from "@/components/PrimaryCta";
-import ProductGridSection from "@/components/ProductGridSection";
-import RelatedNavigation from "@/components/RelatedNavigation";
-import ReviewCard from "@/components/ReviewCard";
 import SectionIntro from "@/components/SectionIntro";
 import type { Product } from "@/data/products";
-import { genrePages } from "@/data/genres";
-import { reviews } from "@/data/reviews";
-import { loadNewProducts, loadRankingProducts, loadSaleProducts } from "@/lib/catalog";
-import { ROUTES, getGenreRoute } from "@/lib/site";
+import type { GenreLandingPage } from "@/data/genres";
 
-const discoveryGenres = genrePages.filter((genre) =>
-  ["popular", "sale", "new-release", "vr"].includes(genre.slug)
-);
+const sortOptions = [
+  { value: "popular", label: "人気順", icon: <FaFire size={11} /> },
+  { value: "price-asc", label: "価格が安い順", icon: <FaTags size={11} /> },
+  { value: "price-desc", label: "価格が高い順", icon: <FaTags size={11} /> },
+  { value: "rating", label: "評価が高い順", icon: <FaStar size={11} /> },
+  { value: "new", label: "新着順", icon: <FaBolt size={11} /> },
+] as const;
 
-function mergeDiscoveryProducts(collections: Product[][], limit: number): Product[] {
-  const merged = new Map<string, Product>();
+type SortValue = (typeof sortOptions)[number]["value"];
 
-  collections.flat().forEach((product) => {
-    if (merged.size >= limit) {
-      return;
-    }
-    if (!product.affiliateUrl.trim() || merged.has(product.id)) {
-      return;
-    }
-    merged.set(product.id, product);
-  });
+const priceRanges = [
+  { label: "すべて", min: 0, max: Infinity },
+  { label: "〜¥1,000", min: 0, max: 1000 },
+  { label: "¥1,000〜¥3,000", min: 1000, max: 3000 },
+  { label: "¥3,000〜¥5,000", min: 3000, max: 5000 },
+  { label: "¥5,000〜", min: 5000, max: Infinity },
+] as const;
 
-  return Array.from(merged.values());
+function getEffectivePrice(p: Product) {
+  return p.salePrice ?? p.price;
 }
 
-export default async function SearchPage() {
-  const [rankingProducts, saleProducts, newProducts] = await Promise.all([
-    loadRankingProducts({ limit: 3 }),
-    loadSaleProducts({ limit: 3 }),
-    loadNewProducts({ limit: 3 }),
-  ]);
+function sortProducts(products: Product[], sort: SortValue): Product[] {
+  const sorted = [...products];
+  switch (sort) {
+    case "popular":
+      return sorted.sort((a, b) => (b.rank ?? 999) - (a.rank ?? 999) || b.reviewCount - a.reviewCount);
+    case "price-asc":
+      return sorted.sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b));
+    case "price-desc":
+      return sorted.sort((a, b) => getEffectivePrice(b) - getEffectivePrice(a));
+    case "rating":
+      return sorted.sort((a, b) => b.rating - a.rating);
+    case "new":
+      return sorted.sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime());
+    default:
+      return sorted;
+  }
+}
 
-  const featuredProducts = mergeDiscoveryProducts(
-    [rankingProducts, saleProducts, newProducts],
-    8
-  );
+export default function SearchPage({
+  allProducts,
+  genres,
+}: {
+  allProducts: Product[];
+  genres: GenreLandingPage[];
+}) {
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<SortValue>("popular");
+  const [priceRange, setPriceRange] = useState(0);
+  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+  const [saleOnly, setSaleOnly] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+
+  const genreList = useMemo(() => {
+    const counts = new Map<string, number>();
+    allProducts.forEach((p) => counts.set(p.genre, (counts.get(p.genre) || 0) + 1));
+    return genres.filter((g) => counts.has(g.slug));
+  }, [allProducts, genres]);
+
+  const results = useMemo(() => {
+    let filtered = allProducts;
+
+    if (query.trim()) {
+      const q = query.toLowerCase();
+      filtered = filtered.filter(
+        (p) =>
+          p.title.toLowerCase().includes(q) ||
+          p.description.toLowerCase().includes(q) ||
+          p.tags.some((t) => t.toLowerCase().includes(q)) ||
+          p.actresses?.some((a) => a.toLowerCase().includes(q)) ||
+          p.maker?.toLowerCase().includes(q) ||
+          p.series?.toLowerCase().includes(q)
+      );
+    }
+
+    if (selectedGenre) {
+      filtered = filtered.filter((p) => p.genre === selectedGenre);
+    }
+
+    if (saleOnly) {
+      filtered = filtered.filter((p) => p.isSale);
+    }
+
+    const range = priceRanges[priceRange];
+    if (range.min > 0 || range.max < Infinity) {
+      filtered = filtered.filter((p) => {
+        const price = getEffectivePrice(p);
+        return price >= range.min && price < range.max;
+      });
+    }
+
+    return sortProducts(filtered, sort);
+  }, [allProducts, query, sort, priceRange, selectedGenre, saleOnly]);
+
+  const activeFilterCount =
+    (selectedGenre ? 1 : 0) + (saleOnly ? 1 : 0) + (priceRange > 0 ? 1 : 0);
 
   return (
     <main className="content-shell px-4 py-8">
       <Breadcrumb items={[{ label: "検索" }]} />
 
-      <section className="editorial-surface p-6 md:p-8">
+      <section className="mb-8">
         <SectionIntro
           eyebrow="作品検索"
-          title="作品検索の入口"
-          description="静的サイトでも迷わず探せるように、人気、新着、セール、レビューへの入口を1ページにまとめています。まずは比較しやすい切り口から進み、そのまま作品詳細へ移動できます。"
+          title="気になる作品を見つけよう"
+          description="キーワード・ジャンル・価格帯で絞り込めます。"
         />
 
-        <div className="grid gap-4 md:grid-cols-3">
-          <a
-            href={getGenreRoute("popular")}
-            className="rounded-[22px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 transition-colors hover:border-[var(--color-border-strong)]"
-          >
-            <p className="eyebrow">Popular</p>
-            <h2 className="mt-3 text-xl font-semibold text-[var(--color-text-primary)]">まずは人気から</h2>
-            <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
-              定番タイトルを軸に比較したいときの入口です。
-            </p>
-          </a>
-          <a
-            href={getGenreRoute("sale")}
-            className="rounded-[22px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 transition-colors hover:border-[var(--color-border-strong)]"
-          >
-            <p className="eyebrow">Sale</p>
-            <h2 className="mt-3 text-xl font-semibold text-[var(--color-text-primary)]">割引から探す</h2>
-            <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
-              値下げ中の作品を優先して比較したいときに向いています。
-            </p>
-          </a>
-          <a
-            href={ROUTES.reviews}
-            className="rounded-[22px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 transition-colors hover:border-[var(--color-border-strong)]"
-          >
-            <p className="eyebrow">Review</p>
-            <h2 className="mt-3 text-xl font-semibold text-[var(--color-text-primary)]">レビューから探す</h2>
-            <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
-              選び方の基準を先に固めたいときはレビュー一覧から入れます。
-            </p>
-          </a>
+        {/* Search bar */}
+        <div className="relative mb-4">
+          <FaSearch
+            size={15}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]"
+          />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="作品名・女優名・メーカー・タグで検索…"
+            className="w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] py-3.5 pl-11 pr-10 text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] transition-colors focus:border-[var(--color-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]/30"
+          />
+          {query && (
+            <button
+              onClick={() => setQuery("")}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+            >
+              <FaTimes size={14} />
+            </button>
+          )}
         </div>
+
+        {/* Filter toggle + sort */}
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all ${
+              showFilters || activeFilterCount > 0
+                ? "border-[var(--color-primary)]/30 bg-[var(--color-primary)]/8 text-[var(--color-primary-light)]"
+                : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-strong)]"
+            }`}
+          >
+            <FaSlidersH size={12} />
+            フィルター
+            {activeFilterCount > 0 && (
+              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[var(--color-primary)] text-[10px] font-bold text-white">
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+
+          <button
+            onClick={() => setSaleOnly(!saleOnly)}
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-2 text-sm transition-all ${
+              saleOnly
+                ? "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 text-[var(--color-accent)]"
+                : "border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-strong)]"
+            }`}
+          >
+            <FaTags size={11} />
+            セール中のみ
+          </button>
+
+          <div className="ml-auto">
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortValue)}
+              className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm text-[var(--color-text-secondary)] focus:outline-none"
+            >
+              {sortOptions.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Expandable filters */}
+        {showFilters && (
+          <div className="mb-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 space-y-4">
+            <div>
+              <p className="text-xs font-semibold text-[var(--color-text-muted)] mb-2">ジャンル</p>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => setSelectedGenre(null)}
+                  className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
+                    !selectedGenre
+                      ? "bg-[var(--color-primary)] text-white"
+                      : "border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-strong)]"
+                  }`}
+                >
+                  すべて
+                </button>
+                {genreList.map((g) => (
+                  <button
+                    key={g.slug}
+                    onClick={() => setSelectedGenre(selectedGenre === g.slug ? null : g.slug)}
+                    className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
+                      selectedGenre === g.slug
+                        ? "bg-[var(--color-primary)] text-white"
+                        : "border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-strong)]"
+                    }`}
+                  >
+                    {g.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs font-semibold text-[var(--color-text-muted)] mb-2">価格帯</p>
+              <div className="flex flex-wrap gap-2">
+                {priceRanges.map((range, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setPriceRange(i)}
+                    className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
+                      priceRange === i
+                        ? "bg-[var(--color-accent)] text-[#1a1520]"
+                        : "border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-strong)]"
+                    }`}
+                  >
+                    {range.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {activeFilterCount > 0 && (
+              <button
+                onClick={() => {
+                  setSelectedGenre(null);
+                  setPriceRange(0);
+                  setSaleOnly(false);
+                }}
+                className="text-xs text-[var(--color-primary-light)] hover:underline"
+              >
+                フィルターをリセット
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Results count */}
+        <div className="mb-4 flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+          <span className="font-semibold text-[var(--color-text-primary)]">{results.length}</span>
+          <span>件の作品</span>
+          {query && (
+            <span>
+              「<span className="text-[var(--color-accent)]">{query}</span>」の検索結果
+            </span>
+          )}
+        </div>
+
+        {/* Results grid */}
+        {results.length > 0 ? (
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
+            {results.map((product, i) => (
+              <ProductCard key={product.id} product={product} index={i} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-12 text-center">
+            <div className="text-4xl mb-4">🔍</div>
+            <p className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">
+              該当する作品が見つかりませんでした
+            </p>
+            <p className="text-sm text-[var(--color-text-muted)] mb-4">
+              検索条件を変更するか、フィルターをリセットしてみてください。
+            </p>
+            <button
+              onClick={() => {
+                setQuery("");
+                setSelectedGenre(null);
+                setPriceRange(0);
+                setSaleOnly(false);
+              }}
+              className="inline-flex items-center gap-2 rounded-full border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/8 px-4 py-2 text-sm font-medium text-[var(--color-primary-light)] transition-colors hover:bg-[var(--color-primary)]/15"
+            >
+              条件をリセット
+            </button>
+          </div>
+        )}
       </section>
 
-      <section id="genre-discovery" className="mt-12">
-        <SectionIntro
-          eyebrow="ジャンル一覧"
-          title="ジャンル別の入口"
-          description="検索フォームがなくても、よく使う切り口へ迷わず移動できるようにしています。"
-          action={
-            <PrimaryCta href={ROUTES.newReleases} size="sm" variant="outline">
-              新作を見る
-            </PrimaryCta>
-          }
-        />
-        <GenreRail genres={discoveryGenres} dense />
-      </section>
-
+      {/* Genre discovery */}
       <section className="mt-12">
         <SectionIntro
-          eyebrow="レビュー"
-          title="レビュー付きの入口"
-          description="代表的な切り口をレビュー経由で確かめてから商品ページへ進めます。"
+          eyebrow="ジャンル一覧"
+          title="ジャンル別に探す"
+          description="人気、セール、VRなど、目的別にすぐ探せます。"
         />
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {reviews.map((review) => (
-            <ReviewCard key={review.slug} review={review} />
-          ))}
-        </div>
+        <GenreRail genres={genres} dense />
       </section>
-
-      <ProductGridSection
-        eyebrow="注目作品"
-        title="入口ページからそのまま見られる作品"
-        description="人気、新作、セールを横断して、まず見ておきたい作品を拾えるようにしています。"
-        products={featuredProducts}
-      />
-
-      <RelatedNavigation
-        title="次の比較先"
-        description="検索入口から、さらに深く見たいページへそのまま移動できます。"
-        items={[
-          {
-            href: ROUTES.ranking,
-            title: "月間ランキングへ",
-            description: "今月動いている王道を先に見て基準を作れます。",
-            eyebrow: "Ranking",
-          },
-          {
-            href: ROUTES.sale,
-            title: "セール一覧へ",
-            description: "値引き作品だけで比較したいときの入口です。",
-            eyebrow: "Sale",
-          },
-          {
-            href: ROUTES.reviews,
-            title: "レビュー一覧へ",
-            description: "作風や向いている人を先に読みたいときに向いています。",
-            eyebrow: "Review",
-          },
-        ]}
-      />
-
-      <Footer />
     </main>
   );
 }
