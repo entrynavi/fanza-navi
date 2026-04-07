@@ -1,22 +1,34 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FaStar, FaFire, FaTag, FaBolt } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
+import PrimaryCta from "@/components/PrimaryCta";
+import { getGenreBySlug } from "@/data/genres";
+import { getReviewByProductId } from "@/data/reviews";
 import type { Product } from "@/data/products";
+import {
+  formatPriceYen,
+  getDiscountPercent,
+  getPresentedCurrentPrice,
+  getPresentedOriginalPrice,
+  getPrimaryFanzaCtaLabel,
+  getProductSupportLine,
+} from "@/lib/product-presenter";
+import { getReviewRoute, getGenreRoute } from "@/lib/site";
 
 const rankColors: Record<number, string> = {
-  1: "from-yellow-400 to-amber-600",
-  2: "from-gray-300 to-gray-500",
-  3: "from-orange-400 to-orange-700",
+  1: "#d3af6f",
+  2: "#bdb7af",
+  3: "#b17852",
 };
 
-const genreImageColors: Record<string, { from: string; to: string; icon: string }> = {
-  動画: { from: "#e4007f", to: "#ff6b35", icon: "▶" },
-  VR: { from: "#6366f1", to: "#8b5cf6", icon: "◉" },
-  素人: { from: "#ec4899", to: "#f43f5e", icon: "♡" },
-  アニメ: { from: "#06b6d4", to: "#3b82f6", icon: "★" },
-  成人向け漫画: { from: "#f59e0b", to: "#ef4444", icon: "◆" },
-  ゲーム: { from: "#10b981", to: "#14b8a6", icon: "⬡" },
+const genreMeta: Record<string, { from: string; to: string; icon: string; label: string }> = {
+  popular: { from: "#a33758", to: "#d3af6f", icon: "人気", label: "人気作品" },
+  "new-release": { from: "#5b7ca2", to: "#7ba3d2", icon: "新作", label: "新作" },
+  sale: { from: "#b17852", to: "#d3af6f", icon: "SALE", label: "セール" },
+  "high-rated": { from: "#4f8a7c", to: "#8dc7b6", icon: "評価", label: "高評価" },
+  amateur: { from: "#8d627f", to: "#bb8fb0", icon: "素人", label: "素人" },
+  vr: { from: "#5d63a3", to: "#8e91cb", icon: "VR", label: "VR" },
 };
 
 export default function ProductCard({
@@ -26,11 +38,13 @@ export default function ProductCard({
   product: Product;
   index: number;
 }) {
-  const discountPercent = product.salePrice
-    ? Math.round((1 - product.salePrice / product.price) * 100)
-    : 0;
-
-  const genreColor = genreImageColors[product.genre] ?? { from: "#e4007f", to: "#ff6b35", icon: "▶" };
+  const genreColor = genreMeta[product.genre] ?? genreMeta.popular;
+  const hasAffiliateUrl = product.affiliateUrl.trim().length > 0;
+  const review = getReviewByProductId(product.id);
+  const genre = getGenreBySlug(product.genre);
+  const originalPrice = getPresentedOriginalPrice(product);
+  const currentPrice = getPresentedCurrentPrice(product);
+  const discountPercent = getDiscountPercent(product);
 
   return (
     <motion.div
@@ -38,127 +52,174 @@ export default function ProductCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.1, duration: 0.5 }}
-      className="glass-card group relative overflow-hidden"
+      className="glass-card group relative flex h-full flex-col overflow-hidden"
     >
-      {/* Rank badge */}
-      {product.rank && product.rank <= 3 && (
-        <div
-          className={`absolute top-3 left-3 z-10 w-10 h-10 rounded-full bg-gradient-to-br ${
-            rankColors[product.rank]
-          } flex items-center justify-center text-white font-bold text-lg shadow-lg`}
-        >
-          {product.rank}
-        </div>
-      )}
-      {product.rank && product.rank > 3 && (
-        <div className="absolute top-3 left-3 z-10 w-10 h-10 rounded-full bg-[var(--color-bg-card)] border border-[var(--color-border)] flex items-center justify-center text-[var(--color-text-secondary)] font-bold text-sm">
-          {product.rank}
-        </div>
-      )}
-
-      {/* Badges row */}
-      <div className="absolute top-3 right-3 z-10 flex gap-2">
-        {product.isNew && (
-          <span className="px-2 py-1 rounded-full text-xs font-bold bg-blue-500/90 text-white flex items-center gap-1">
-            <FaBolt size={10} /> NEW
-          </span>
-        )}
-        {product.isSale && (
-          <span className="px-2 py-1 rounded-full text-xs font-bold bg-red-500/90 text-white flex items-center gap-1">
-            <FaTag size={10} /> {discountPercent}%OFF
-          </span>
-        )}
-      </div>
-
-      {/* Image placeholder */}
       <div
-        className="relative aspect-[16/10] overflow-hidden"
+        className="relative aspect-[4/3] overflow-hidden"
         style={{
-          background: `linear-gradient(135deg, ${genreColor.from}22, ${genreColor.to}22)`,
+          background: `linear-gradient(135deg, ${genreColor.from}30, ${genreColor.to}18)`,
         }}
       >
-        <div
-          className="absolute inset-0 flex items-center justify-center text-7xl font-bold opacity-15 group-hover:opacity-25 transition-opacity select-none"
-          style={{ color: genreColor.from }}
-        >
-          {genreColor.icon}
+        {product.imageUrl ? (
+          <img
+            src={product.imageUrl}
+            alt={product.title}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            loading="lazy"
+          />
+        ) : (
+          <>
+            <div
+              className="absolute inset-0 flex items-center justify-center text-4xl font-semibold opacity-55 transition-opacity group-hover:opacity-75"
+              style={{ color: genreColor.from }}
+            >
+              {genreColor.icon}
+            </div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_35%)]" />
+          </>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="space-y-2">
+              <span
+                className="inline-flex rounded-full px-3 py-1 text-[11px] font-semibold tracking-[0.08em]"
+                style={{ background: `${genreColor.from}28`, color: "#fff4e4" }}
+              >
+                {genreColor.label}
+              </span>
+              <div className="flex flex-wrap gap-2 text-xs text-white/85">
+                {product.rank ? (
+                  <span
+                    className="inline-flex rounded-full px-2.5 py-1 font-semibold"
+                    style={{
+                      backgroundColor:
+                        product.rank <= 3 ? `${rankColors[product.rank]}33` : "rgba(255,255,255,0.12)",
+                    }}
+                  >
+                    {product.rank}位
+                  </span>
+                ) : null}
+                {product.isNew ? (
+                  <span className="inline-flex rounded-full bg-[rgba(123,163,210,0.22)] px-2.5 py-1 font-semibold">
+                    NEW
+                  </span>
+                ) : null}
+                {product.isSale && discountPercent ? (
+                  <span className="inline-flex rounded-full bg-[rgba(177,120,82,0.25)] px-2.5 py-1 font-semibold">
+                    {discountPercent}%OFF
+                  </span>
+                ) : null}
+              </div>
+            </div>
+            <div className="rounded-full bg-black/35 px-2.5 py-1 text-xs text-white/85">
+              {product.reviewCount}件
+            </div>
+          </div>
         </div>
-        <div className="absolute bottom-2 left-3 text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: `${genreColor.from}33`, color: genreColor.from }}>
-          {product.genre}
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
       </div>
 
-      {/* Content */}
-      <div className="p-5">
-        <h3 className="text-base font-bold mb-2 line-clamp-2 group-hover:text-[var(--color-primary-light)] transition-colors">
-          {product.title}
-        </h3>
-        <p className="text-sm text-[var(--color-text-secondary)] mb-3 line-clamp-2">
+      <div className="flex flex-1 flex-col space-y-4 p-5">
+        <div>
+          <div className="mb-2 flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
+            <span className="inline-flex items-center gap-1">
+              <FaStar size={12} className="text-[var(--color-accent)]" />
+              <span className="font-semibold text-[var(--color-text-primary)]">
+                {product.rating.toFixed(1)}
+              </span>
+            </span>
+            <span>レビュー {product.reviewCount}件</span>
+          </div>
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <a
+              href={getGenreRoute(product.genre)}
+              className="chip chip-accent transition-colors hover:border-[var(--color-border-strong)]"
+            >
+              {genre?.name ?? genreMeta[product.genre]?.label ?? "作品"}
+            </a>
+            {review ? (
+              <span className="chip">補助メモあり</span>
+            ) : null}
+          </div>
+          <h3 className="line-clamp-3 text-lg font-semibold leading-tight text-[var(--color-text-primary)] transition-colors group-hover:text-white">
+            {review ? (
+              <a href={getReviewRoute(review.slug)} className="editorial-link">
+                {product.title}
+              </a>
+            ) : (
+              product.title
+            )}
+          </h3>
+          <p className="mt-2 text-xs leading-5 text-[var(--color-text-muted)]">
+            {getProductSupportLine(product)}
+          </p>
+        </div>
+
+        <p className="text-sm leading-7 text-[var(--color-text-secondary)] line-clamp-2">
           {product.description}
         </p>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-1.5 mb-3">
-          {product.tags.map((tag) => (
+        <div className="flex flex-wrap gap-2">
+          {product.tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className="px-2 py-0.5 rounded text-xs bg-white/5 text-[var(--color-text-secondary)] border border-white/5"
+              className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-xs text-[var(--color-text-secondary)]"
             >
               {tag}
             </span>
           ))}
         </div>
 
-        {/* Rating */}
-        <div className="flex items-center gap-2 mb-4">
-          <div className="flex items-center gap-1 text-yellow-400">
-            <FaStar size={14} />
-            <span className="text-sm font-bold">{product.rating}</span>
+        <div className="mt-auto flex items-end justify-between gap-3 border-t border-[var(--color-border)] pt-4">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+              Price
+            </p>
+            <div className="mt-1.5 flex flex-wrap items-center gap-2">
+              <p className="text-2xl font-semibold text-[var(--color-text-primary)]">
+                現価格 {formatPriceYen(currentPrice)}
+              </p>
+              {originalPrice ? (
+                <>
+                  <p className="text-xs text-[var(--color-text-muted)] line-through">
+                    元価格 {formatPriceYen(originalPrice)}
+                  </p>
+                  {discountPercent ? (
+                    <span className="rounded-full border border-[rgba(177,120,82,0.3)] bg-[rgba(177,120,82,0.12)] px-2 py-1 text-[11px] font-semibold text-[#e1b49d]">
+                      値引率 {discountPercent}%
+                    </span>
+                  ) : null}
+                </>
+              ) : null}
+            </div>
           </div>
-          <span className="text-xs text-[var(--color-text-secondary)]">
-            ({product.reviewCount}件)
-          </span>
-          {product.rating >= 4.7 && (
-            <span className="flex items-center gap-1 text-xs text-orange-400">
-              <FaFire size={12} /> 高評価
-            </span>
-          )}
-        </div>
 
-        {/* Price */}
-        <div className="flex items-end gap-2 mb-4">
-          {product.salePrice ? (
-            <>
-              <span className="text-2xl font-bold text-[var(--color-primary)]">
-                ¥{product.salePrice.toLocaleString()}
-              </span>
-              <span className="text-sm text-[var(--color-text-secondary)] line-through">
-                ¥{product.price.toLocaleString()}
-              </span>
-            </>
+          {review && hasAffiliateUrl ? (
+            <div className="grid gap-2 text-right">
+              <PrimaryCta href={product.affiliateUrl} external size="sm">
+                {getPrimaryFanzaCtaLabel(product)}
+              </PrimaryCta>
+              <a
+                href={getReviewRoute(review.slug)}
+                className="text-xs font-semibold text-[var(--color-text-secondary)] transition-colors hover:text-white"
+              >
+                補助メモを見る
+              </a>
+            </div>
+          ) : review ? (
+            <PrimaryCta href={getReviewRoute(review.slug)} size="sm" variant="outline">
+              補助メモを見る
+            </PrimaryCta>
+          ) : hasAffiliateUrl ? (
+            <PrimaryCta href={product.affiliateUrl} external size="sm">
+              {getPrimaryFanzaCtaLabel(product)}
+            </PrimaryCta>
           ) : (
-            <span className="text-2xl font-bold">
-              ¥{product.price.toLocaleString()}
+            <span className="inline-flex items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm text-[var(--color-text-muted)]">
+              リンク準備中
             </span>
           )}
         </div>
-
-        {/* CTA */}
-        {product.affiliateUrl ? (
-          <a
-            href={product.affiliateUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full text-center py-3 rounded-xl font-bold text-white bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] hover:from-[var(--color-primary-light)] hover:to-[var(--color-primary)] transition-all duration-300"
-          >
-            詳細を見る →
-          </a>
-        ) : (
-          <span className="block w-full text-center py-3 rounded-xl font-bold text-white/50 bg-white/5 border border-white/10 cursor-not-allowed">
-            準備中
-          </span>
-        )}
       </div>
     </motion.div>
   );

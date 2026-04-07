@@ -1,60 +1,152 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { FaSearch, FaArrowRight, FaDatabase } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
+import GenreRail from "@/components/GenreRail";
+import PrimaryCta from "@/components/PrimaryCta";
+import ProductGridSection from "@/components/ProductGridSection";
+import RelatedNavigation from "@/components/RelatedNavigation";
+import ReviewCard from "@/components/ReviewCard";
+import SectionIntro from "@/components/SectionIntro";
+import type { Product } from "@/data/products";
+import { genrePages } from "@/data/genres";
+import { reviews } from "@/data/reviews";
+import { loadNewProducts, loadRankingProducts, loadSaleProducts } from "@/lib/catalog";
+import { ROUTES, getGenreRoute } from "@/lib/site";
 
-export default function SearchPage() {
+const discoveryGenres = genrePages.filter((genre) =>
+  ["popular", "sale", "new-release", "vr"].includes(genre.slug)
+);
+
+function mergeDiscoveryProducts(collections: Product[][], limit: number): Product[] {
+  const merged = new Map<string, Product>();
+
+  collections.flat().forEach((product) => {
+    if (merged.size >= limit) {
+      return;
+    }
+    if (!product.affiliateUrl.trim() || merged.has(product.id)) {
+      return;
+    }
+    merged.set(product.id, product);
+  });
+
+  return Array.from(merged.values());
+}
+
+export default async function SearchPage() {
+  const [rankingProducts, saleProducts, newProducts] = await Promise.all([
+    loadRankingProducts({ limit: 3 }),
+    loadSaleProducts({ limit: 3 }),
+    loadNewProducts({ limit: 3 }),
+  ]);
+
+  const featuredProducts = mergeDiscoveryProducts(
+    [rankingProducts, saleProducts, newProducts],
+    8
+  );
+
   return (
-    <main className="max-w-6xl mx-auto px-4 py-8">
+    <main className="content-shell px-4 py-8">
       <Breadcrumb items={[{ label: "検索" }]} />
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-10"
-      >
-        <h1 className="text-3xl font-extrabold mb-6">
-          🔍 <span className="gradient-text">作品検索</span>
-        </h1>
-      </motion.div>
+      <section className="editorial-surface p-6 md:p-8">
+        <SectionIntro
+          eyebrow="Search Entry"
+          title="作品検索の入口"
+          description="静的サイトでも迷わず探せるように、人気、新着、セール、レビューへの入口を1ページにまとめています。まずは比較しやすい切り口から進み、そのまま作品詳細へ移動できます。"
+        />
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2 }}
-        className="glass-card p-8 md:p-12 text-center mb-12"
-      >
-        <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto mb-6">
-          <FaDatabase size={24} className="text-blue-400" />
-        </div>
-        <h2 className="text-xl font-bold mb-3">FANZA API連携 準備中</h2>
-        <p className="text-[var(--color-text-secondary)] mb-6 max-w-lg mx-auto leading-relaxed">
-          現在、FANZA公式APIとの連携を準備しています。
-          連携完了後、キーワード・ジャンル・女優名などでFANZAの作品をリアルタイム検索できるようになります。
-        </p>
-        <p className="text-sm text-[var(--color-text-secondary)] mb-6">
-          今すぐFANZAで検索したい方は公式サイトをご利用ください。
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <div className="grid gap-4 md:grid-cols-3">
           <a
-            href="https://www.dmm.co.jp/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] hover:opacity-90 transition-opacity"
+            href={getGenreRoute("popular")}
+            className="rounded-[22px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 transition-colors hover:border-[var(--color-border-strong)]"
           >
-            <FaSearch size={14} />
-            FANZA公式で検索 <FaArrowRight size={12} />
+            <p className="eyebrow">Popular</p>
+            <h2 className="mt-3 text-xl font-semibold text-[var(--color-text-primary)]">まずは人気から</h2>
+            <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
+              定番タイトルを軸に比較したいときの入口です。
+            </p>
           </a>
           <a
-            href="/articles"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-[var(--color-text-secondary)] bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+            href={getGenreRoute("sale")}
+            className="rounded-[22px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 transition-colors hover:border-[var(--color-border-strong)]"
           >
-            記事を読む <FaArrowRight size={12} />
+            <p className="eyebrow">Sale</p>
+            <h2 className="mt-3 text-xl font-semibold text-[var(--color-text-primary)]">割引から探す</h2>
+            <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
+              値下げ中の作品を優先して比較したいときに向いています。
+            </p>
+          </a>
+          <a
+            href={ROUTES.reviews}
+            className="rounded-[22px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 transition-colors hover:border-[var(--color-border-strong)]"
+          >
+            <p className="eyebrow">Review</p>
+            <h2 className="mt-3 text-xl font-semibold text-[var(--color-text-primary)]">レビューから探す</h2>
+            <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
+              選び方の基準を先に固めたいときはレビュー一覧から入れます。
+            </p>
           </a>
         </div>
-      </motion.div>
+      </section>
+
+      <section id="genre-discovery" className="mt-12">
+        <SectionIntro
+          eyebrow="Genre Access"
+          title="ジャンル別の入口"
+          description="検索フォームがなくても、よく使う切り口へ迷わず移動できるようにしています。"
+          action={
+            <PrimaryCta href={ROUTES.newReleases} size="sm" variant="outline">
+              新作を見る
+            </PrimaryCta>
+          }
+        />
+        <GenreRail genres={discoveryGenres} dense />
+      </section>
+
+      <section className="mt-12">
+        <SectionIntro
+          eyebrow="Review Route"
+          title="レビュー付きの入口"
+          description="代表的な切り口をレビュー経由で確かめてから商品ページへ進めます。"
+        />
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {reviews.map((review) => (
+            <ReviewCard key={review.slug} review={review} />
+          ))}
+        </div>
+      </section>
+
+      <ProductGridSection
+        eyebrow="Featured Titles"
+        title="入口ページからそのまま見られる作品"
+        description="人気、新作、セールを横断して、まず見ておきたい作品を拾えるようにしています。"
+        products={featuredProducts}
+      />
+
+      <RelatedNavigation
+        title="次の比較先"
+        description="検索入口から、さらに深く見たいページへそのまま移動できます。"
+        items={[
+          {
+            href: ROUTES.ranking,
+            title: "月間ランキングへ",
+            description: "今月動いている王道を先に見て基準を作れます。",
+            eyebrow: "Ranking",
+          },
+          {
+            href: ROUTES.sale,
+            title: "セール一覧へ",
+            description: "値引き作品だけで比較したいときの入口です。",
+            eyebrow: "Sale",
+          },
+          {
+            href: ROUTES.reviews,
+            title: "レビュー一覧へ",
+            description: "作風や向いている人を先に読みたいときに向いています。",
+            eyebrow: "Review",
+          },
+        ]}
+      />
 
       <Footer />
     </main>
