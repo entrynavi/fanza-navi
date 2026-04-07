@@ -13,7 +13,7 @@ const featuredGenres = genrePages.filter((genre) =>
 );
 
 export default async function SalePage() {
-  const products = await loadSaleProducts({ limit: 8 });
+  const products = await loadSaleProducts({ limit: 16 });
 
   return (
     <main className="content-shell px-4 py-8">

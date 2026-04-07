@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { FaStar } from "react-icons/fa";
 import PrimaryCta from "@/components/PrimaryCta";
@@ -38,12 +39,14 @@ export default function ProductCard({
   product: Product;
   index: number;
 }) {
+  const [imgError, setImgError] = useState(false);
   const genreColor = genreMeta[product.genre] ?? genreMeta.popular;
   const hasAffiliateUrl = product.affiliateUrl.trim().length > 0;
   const genre = getGenreBySlug(product.genre);
   const originalPrice = getPresentedOriginalPrice(product);
   const currentPrice = getPresentedCurrentPrice(product);
   const discountPercent = getDiscountPercent(product);
+  const showImage = product.imageUrl && !imgError;
 
   return (
     <motion.div
@@ -59,12 +62,13 @@ export default function ProductCard({
           background: `linear-gradient(135deg, ${genreColor.from}30, ${genreColor.to}18)`,
         }}
       >
-        {product.imageUrl ? (
+        {showImage ? (
           <img
             src={product.imageUrl}
             alt={product.title}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             loading="lazy"
+            onError={() => setImgError(true)}
           />
         ) : (
           <>

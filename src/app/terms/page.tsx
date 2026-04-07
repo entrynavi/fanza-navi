@@ -5,7 +5,7 @@ import { ROUTES } from "@/lib/site";
 export const metadata: Metadata = buildPageMetadata({
   title: "利用規約",
   description:
-    "オトナビの利用規約。年齢制限、免責事項、著作権、禁止事項などサイト利用に関する基本条件をまとめています。",
+    "FANZAオトナビの利用規約。年齢制限、免責事項、著作権、禁止事項などサイト利用に関する基本条件をまとめています。",
   path: ROUTES.terms,
 });
 
@@ -18,7 +18,7 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-lg font-bold text-white mb-3">第1条（適用）</h2>
-          <p>本規約は、オトナビ（以下「本サイト」）の利用に関する条件を定めるものです。利用者は、本サイトを利用することにより、本規約に同意したものとみなされます。</p>
+          <p>本規約は、FANZAオトナビ（以下「本サイト」）の利用に関する条件を定めるものです。利用者は、本サイトを利用することにより、本規約に同意したものとみなされます。</p>
         </section>
 
         <section>

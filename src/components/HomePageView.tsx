@@ -104,8 +104,8 @@ export default function HomePageView({
         </div>
       </section>
 
-      <section className="content-shell px-4 pb-8">
-        <div className="grid gap-4 lg:grid-cols-[1.14fr_0.86fr] lg:items-start">
+      <section className="content-shell px-4 pb-2">
+        <div className="grid gap-3 lg:grid-cols-[1.14fr_0.86fr] lg:items-start">
           <ProductGridSection
             eyebrow="セール注目作"
             title="値下げ中の作品"
@@ -117,9 +117,10 @@ export default function HomePageView({
             }
             products={salePreview}
             columns="grid-cols-1 sm:grid-cols-2"
+            compact
           />
 
-          <aside className="editorial-surface p-4 md:p-5 lg:self-start">
+          <aside className="editorial-surface p-4 md:p-5 lg:sticky lg:top-20">
             <p className="eyebrow">Buying Notes</p>
             <h2 className="mt-1.5 text-[1.5rem] font-semibold text-[var(--color-text-primary)]">
               セール前に見るお買い物ガイド

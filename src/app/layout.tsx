@@ -12,8 +12,8 @@ import { SITE_URL } from "@/lib/site";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "オトナビ — セール速報＆おすすめ作品ガイド",
-    template: "%s | オトナビ",
+    default: "FANZAオトナビ — セール速報＆おすすめ作品ガイド",
+    template: "%s | FANZAオトナビ",
   },
   description:
     "FANZAのセール速報・人気ランキング・新作情報を毎日更新。支払い方法からVRの始め方まで、初心者でも迷わないガイドも公開中。",
@@ -22,22 +22,22 @@ export const metadata: Metadata = {
     icon: "/favicon.svg",
   },
   openGraph: {
-    title: "オトナビ — セール速報＆おすすめ作品ガイド",
+    title: "FANZAオトナビ — セール速報＆おすすめ作品ガイド",
     description: "ランキング・セール・新作情報を厳選してお届け。初心者ガイドから支払い方法まで完全解説。",
     type: "website",
-    siteName: "オトナビ",
+    siteName: "FANZAオトナビ",
     images: [
       {
         url: `${SITE_URL}/images/ogp.svg`,
         width: 1200,
         height: 630,
-        alt: "オトナビ — セール速報＆おすすめ作品ガイド",
+        alt: "FANZAオトナビ — セール速報＆おすすめ作品ガイド",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "オトナビ — セール速報＆おすすめ作品ガイド",
+    title: "FANZAオトナビ — セール速報＆おすすめ作品ガイド",
     description: "ランキング・セール・新作情報を厳選してお届け。初心者ガイドから支払い方法まで完全解説。",
     images: [`${SITE_URL}/images/ogp.svg`],
   },

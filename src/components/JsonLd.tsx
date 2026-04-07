@@ -4,7 +4,7 @@ export default function JsonLd() {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "オトナビ",
+    name: "FANZAオトナビ",
     url: SITE_URL,
     description:
       "ランキング・セール速報・おすすめ作品をじっくり比較できるFANZA作品ガイド。",

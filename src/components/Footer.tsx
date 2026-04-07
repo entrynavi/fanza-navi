@@ -43,8 +43,8 @@ export default function Footer() {
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-strong)] text-white">
                 <FaFire size={13} />
               </span>
-              <span className="text-lg font-bold tracking-tight text-[var(--color-text-primary)]">
-                オト<span className="gradient-text">ナビ</span>
+              <span className="text-lg font-bold tracking-tight">
+                <span className="text-[var(--color-accent)]">FANZA</span><span className="gradient-text">オトナビ</span>
               </span>
             </a>
             <p className="mt-4 max-w-xs text-sm leading-7 text-[var(--color-text-secondary)]">
@@ -90,7 +90,7 @@ export default function Footer() {
 
         <div className="mt-8 flex flex-col items-center gap-3 border-t border-[var(--color-border)] pt-8 sm:flex-row sm:justify-between">
           <p className="text-xs text-[var(--color-text-muted)]">
-            © {new Date().getFullYear()} オトナビ
+            © {new Date().getFullYear()} FANZAオトナビ
           </p>
           <p className="text-[11px] text-[var(--color-text-muted)]">
             18歳以上向けコンテンツ

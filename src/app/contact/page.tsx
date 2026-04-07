@@ -6,7 +6,7 @@ import { ROUTES } from "@/lib/site";
 export const metadata: Metadata = buildPageMetadata({
   title: "お問い合わせ",
   description:
-    "オトナビへのお問い合わせはこちら。記事内容の誤りの報告やサイトに関するご意見をお待ちしています。",
+    "FANZAオトナビへのお問い合わせはこちら。記事内容の誤りの報告やサイトに関するご意見をお待ちしています。",
   path: ROUTES.contact,
 });
 

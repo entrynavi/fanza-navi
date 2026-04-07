@@ -40,11 +40,11 @@ export default function Header() {
                 <FaFire size={15} />
               </span>
               <div className="min-w-0">
-                <p className="truncate text-lg font-bold tracking-tight text-[var(--color-text-primary)]">
-                  オト<span className="gradient-text">ナビ</span>
+                <p className="truncate text-lg font-bold tracking-tight">
+                  <span className="text-[var(--color-accent)]">FANZA</span><span className="gradient-text">オトナビ</span>
                 </p>
                 <p className="truncate text-[10px] font-medium text-[var(--color-text-muted)]">
-                  セール速報＆おすすめ探し
+                  セール速報＆おすすめ作品ナビ
                 </p>
               </div>
             </div>

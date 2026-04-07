@@ -11,6 +11,7 @@ export default function ProductGridSection({
   products,
   emptyMessage = "表示できる作品がありません",
   columns = "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3",
+  compact = false,
 }: {
   eyebrow?: string;
   title: string;
@@ -19,9 +20,10 @@ export default function ProductGridSection({
   products: Product[];
   emptyMessage?: string;
   columns?: string;
+  compact?: boolean;
 }) {
   return (
-    <section className="mt-10">
+    <section className={compact ? "mt-0" : "mt-10"}>
       <SectionIntro
         eyebrow={eyebrow}
         title={title}
