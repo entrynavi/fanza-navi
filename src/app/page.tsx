@@ -1,7 +1,9 @@
 import HomePageView from "@/components/HomePageView";
 import { genrePages } from "@/data/genres";
 import { reviews } from "@/data/reviews";
-import { loadRankingProducts, loadSaleProducts } from "@/lib/catalog";
+import { loadNewProducts, loadRankingProducts, loadSaleProducts } from "@/lib/catalog";
+import { buildActressRanking } from "@/lib/actress-ranking";
+import type { Product } from "@/data/products";
 
 function sortSalePreview(products: Awaited<ReturnType<typeof loadSaleProducts>>) {
   return [...products].sort((left, right) => {
@@ -11,16 +13,34 @@ function sortSalePreview(products: Awaited<ReturnType<typeof loadSaleProducts>>)
   });
 }
 
+function pickDistinctProduct(products: Product[], excludedIds: string[] = []) {
+  const excluded = new Set(excludedIds);
+  return products.find((product) => !excluded.has(product.id) && product.affiliateUrl.trim()) ?? null;
+}
+
 export default async function HomePage() {
-  const [rankingPreview, salePreview] = await Promise.all([
+  const [rankingPreview, saleProducts, newPreview] = await Promise.all([
     loadRankingProducts({ limit: 6 }),
     loadSaleProducts({ limit: 4 }),
+    loadNewProducts({ limit: 4 }),
   ]);
+  const salePreview = sortSalePreview(saleProducts);
+  const leadProduct = rankingPreview[0];
+  const saleSpotlight = pickDistinctProduct(salePreview, leadProduct ? [leadProduct.id] : []);
+  const newSpotlight = pickDistinctProduct(newPreview, leadProduct ? [leadProduct.id] : []);
+  const topActresses = buildActressRanking(
+    [...rankingPreview, ...salePreview, ...newPreview],
+    5
+  );
 
   return (
     <HomePageView
+      leadProduct={leadProduct}
+      saleSpotlight={saleSpotlight}
+      newSpotlight={newSpotlight}
       rankingPreview={rankingPreview}
-      salePreview={sortSalePreview(salePreview)}
+      salePreview={salePreview}
+      topActresses={topActresses}
       featuredGenres={genrePages}
       featuredReviews={reviews.slice(0, 3)}
     />

@@ -22,7 +22,7 @@ export default function SectionIntro({
   return (
     <div
       className={cn(
-        "mb-7 flex flex-col gap-4",
+        "mb-5 flex flex-col gap-3",
         centered ? "items-center text-center" : "sm:flex-row sm:items-end sm:justify-between"
       )}
     >

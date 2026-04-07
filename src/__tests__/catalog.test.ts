@@ -13,6 +13,7 @@ vi.mock("@/lib/dmm-api", async () => {
     fetchNewReleases: vi.fn(),
     fetchSaleProducts: vi.fn(),
     fetchByGenre: vi.fn(),
+    searchProducts: vi.fn(),
   };
 });
 
@@ -21,9 +22,11 @@ import {
   fetchNewReleases,
   fetchRanking,
   fetchSaleProducts,
+  searchProducts,
   toProduct,
 } from "@/lib/dmm-api";
 import {
+  loadActressProducts,
   loadGenreProducts,
   loadNewProducts,
   loadRankingProducts,
@@ -142,5 +145,35 @@ describe("catalog loaders", () => {
     expect(products.every((product) => product.id !== "1")).toBe(true);
     expect(products.every((product) => product.genre === "popular")).toBe(true);
     expect(products.every((product) => product.affiliateUrl)).toBe(true);
+  });
+
+  it("falls back to actress-matched local products for actress pages", async () => {
+    vi.mocked(searchProducts).mockResolvedValueOnce([]);
+
+    const products = await loadActressProducts("瀬戸環奈", { limit: 3 });
+
+    expect(products).toHaveLength(3);
+    expect(products.every((product) => product.actresses?.includes("瀬戸環奈"))).toBe(true);
+    expect(products.every((product) => product.rank === undefined)).toBe(true);
+  });
+
+  it("uses seed products for actress pages when the curated fallback has no match", async () => {
+    vi.mocked(searchProducts).mockResolvedValueOnce([]);
+
+    const products = await loadActressProducts("波多野結衣", {
+      limit: 2,
+      seedProducts: [
+        {
+          ...sampleProducts[0],
+          id: "seed-1",
+          title: "波多野結衣の注目作",
+          actresses: ["波多野結衣"],
+        },
+      ],
+    });
+
+    expect(products).toHaveLength(1);
+    expect(products[0].id).toBe("seed-1");
+    expect(products[0].actresses?.includes("波多野結衣")).toBe(true);
   });
 });

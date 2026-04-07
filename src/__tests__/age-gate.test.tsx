@@ -69,8 +69,8 @@ describe("AgeGate", () => {
     );
 
     expect(html).toContain('id="app-shell" inert="" aria-hidden="true"');
-    expect(html).toContain('removeAttribute("inert")');
-    expect(html).toContain('removeAttribute("aria-hidden")');
+    expect(html.split('removeAttribute("inert")')).toHaveLength(2);
+    expect(html.split('removeAttribute("aria-hidden")')).toHaveLength(2);
   });
 
   it("skips the gate immediately when the accepted marker is present before render", () => {

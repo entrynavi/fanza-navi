@@ -92,7 +92,6 @@ export default function RootLayout({
         <JsonLd />
         <AgeGate />
         <div id="app-shell" inert={true} aria-hidden="true">
-          <script dangerouslySetInnerHTML={{ __html: AGE_GATE_BOOTSTRAP }} />
           <div className="sticky top-0 z-50">
             <DisclosureBar />
             <Header />

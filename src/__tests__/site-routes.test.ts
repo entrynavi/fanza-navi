@@ -4,6 +4,11 @@ import { describe, expect, it } from "vitest";
 import ArticlesPage from "@/app/articles/ArticlesPage";
 import NewReleasesPage from "@/app/new/NewReleasesPage";
 import { metadata as newRouteMetadata } from "@/app/new/page";
+import ActressPage, {
+  dynamicParams as actressDynamicParams,
+  generateMetadata as generateActressMetadata,
+  generateStaticParams as generateActressStaticParams,
+} from "@/app/actress/[slug]/page";
 import GenrePage, {
   dynamicParams as genreDynamicParams,
   generateMetadata as generateGenreMetadata,
@@ -25,16 +30,20 @@ import { genreSlugs } from "@/data/genres";
 import { reviewSlugs, reviews } from "@/data/reviews";
 import {
   ROUTES,
+  getActressRoute,
   getGenreRoute,
   getReviewRoute,
 } from "@/lib/site";
+import { decodeActressSlug } from "@/lib/actress-ranking";
 import { buildAffiliateUrl } from "@/lib/affiliate";
 
 describe("site routes", () => {
   it("builds root-relative routes for genres and reviews", () => {
     expect(ROUTES.genres).toBe("/genre");
     expect(ROUTES.reviews).toBe("/reviews");
+    expect(ROUTES.actresses).toBe("/actress");
     expect(getGenreRoute("vr")).toBe("/genre/vr");
+    expect(getActressRoute("瀬戸環奈")).toContain("/actress/");
     expect(getReviewRoute("popular-series-latest-review")).toBe(
       "/reviews/popular-series-latest-review"
     );
@@ -43,16 +52,24 @@ describe("site routes", () => {
   it("disables dynamic params and generates static params for every genre and review", async () => {
     const genreParams = await generateGenreStaticParams();
     const reviewParams = await generateReviewStaticParams();
+    const actressParams = await generateActressStaticParams();
 
     expect(genreDynamicParams).toBe(false);
     expect(reviewDynamicParams).toBe(false);
+    expect(actressDynamicParams).toBe(false);
     expect(genreParams).toEqual(genreSlugs.map((slug) => ({ slug })));
     expect(reviewParams).toEqual(reviewSlugs.map((slug) => ({ slug })));
+    expect(actressParams.length).toBeGreaterThan(0);
+    expect(decodeActressSlug(actressParams[0].slug).length).toBeGreaterThan(0);
   });
 
   it("generates canonical metadata for genre and review pages", async () => {
     const genreMetadata = await generateGenreMetadata({
       params: Promise.resolve({ slug: "vr" }),
+    });
+    const actressParams = await generateActressStaticParams();
+    const actressMetadata = await generateActressMetadata({
+      params: Promise.resolve({ slug: actressParams[0].slug }),
     });
     const reviewMetadata = await generateReviewMetadata({
       params: Promise.resolve({ slug: reviews[0].slug }),
@@ -62,6 +79,10 @@ describe("site routes", () => {
     expect(String(genreMetadata.title)).toContain("VR");
     expect(genreMetadata.description).toContain("VR");
     expect(genreMetadata.twitter?.card).toBe("summary_large_image");
+
+    expect(String(actressMetadata.title)).toContain("作品");
+    expect(String(actressMetadata.title)).toContain(decodeActressSlug(actressParams[0].slug));
+    expect(actressMetadata.twitter?.card).toBe("summary_large_image");
 
     expect(reviewMetadata.alternates?.canonical).toBe(getReviewRoute(reviews[0].slug));
     expect(String(reviewMetadata.title)).toContain(reviews[0].title);
@@ -100,12 +121,12 @@ describe("site routes", () => {
 
     expect(screen.getByRole("heading", { level: 1, name: /^VR$/ })).toBeInTheDocument();
     expect(screen.getAllByText(/視聴環境を整えてから選ぶと満足度が上がりやすい/i).length).toBeGreaterThan(0);
-    expect(screen.getByRole("link", { name: /レビューを読む/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /比較メモを見る/i })).toHaveAttribute(
       "href",
       getReviewRoute("vr-immersive-viewing-review")
     );
     expect(screen.queryByRole("link", { name: "ジャンル別" })).toBeNull();
-    expect(screen.getAllByRole("link", { name: /詳細を見る/i }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: /FANZAのレビューを見る|FANZAで詳細を見る/i }).length).toBeGreaterThan(0);
   });
 
   it("renders a static review page with affiliate CTA and related products", async () => {
@@ -133,7 +154,7 @@ describe("site routes", () => {
   it("renders a review index route for the articles funnel", () => {
     const { container } = render(React.createElement(ReviewsIndexPage));
 
-    expect(screen.getByRole("heading", { name: "レビュー一覧" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "比較メモ一覧" })).toBeInTheDocument();
     expect(container.querySelector(`a[href="${getReviewRoute(reviews[0].slug)}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${getGenreRoute("popular")}"]`)).not.toBeNull();
   });
@@ -142,11 +163,27 @@ describe("site routes", () => {
     const { container } = render(await RankingPage());
 
     expect(screen.getByRole("heading", { name: "月間ランキング" })).toBeInTheDocument();
-    expect(screen.getByText(/レビューから人気作の傾向をつかむ/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "人気女優ランキング" })).toBeInTheDocument();
+    expect(screen.getByText(/人気作で迷ったときの比較メモ/i)).toBeInTheDocument();
     expect(screen.queryByText(/準備中/i)).toBeNull();
     expect(container.querySelector(`a[href="${getReviewRoute(reviews[0].slug)}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${getGenreRoute("popular")}"]`)).not.toBeNull();
-    expect(screen.getAllByRole("link", { name: /詳細を見る/i }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: /FANZAのレビューを見る|FANZAで詳細を見る/i }).length).toBeGreaterThan(0);
+  });
+
+  it("renders a static actress page with product cards and ranking links", async () => {
+    const actressParams = await generateActressStaticParams();
+    const page = await ActressPage({
+      params: Promise.resolve({ slug: actressParams[0].slug }),
+    });
+
+    const { container } = render(page);
+    const actressName = decodeActressSlug(actressParams[0].slug);
+
+    expect(screen.getAllByRole("heading", { name: actressName }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: /代表作を見る|FANZAのレビューを見る|FANZAで詳細を見る/i }).length).toBeGreaterThan(0);
+    expect(container.querySelector(`a[href="${ROUTES.ranking}"]`)).not.toBeNull();
+    expect(container.querySelector(`a[href="${ROUTES.sale}"]`)).not.toBeNull();
   });
 
   it("renders a real sale page with monetized product cards and review links", async () => {
@@ -157,7 +194,7 @@ describe("site routes", () => {
     expect(screen.queryByText(/API連携/i)).toBeNull();
     expect(container.querySelector(`a[href="${getReviewRoute("sale-selection-buying-guide")}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${getGenreRoute("sale")}"]`)).not.toBeNull();
-    expect(screen.getAllByRole("link", { name: /詳細を見る/i }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: /FANZAのレビューを見る|FANZAで詳細を見る/i }).length).toBeGreaterThan(0);
   });
 
   it("renders a new releases page with product cards and paths into reviews and genres", async () => {
@@ -168,7 +205,7 @@ describe("site routes", () => {
     expect(container.querySelector(`a[href="${getGenreRoute("new-release")}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${getGenreRoute("vr")}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${ROUTES.reviews}"]`)).not.toBeNull();
-    expect(screen.getAllByRole("link", { name: /詳細を見る/i }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: /FANZAのレビューを見る|FANZAで詳細を見る/i }).length).toBeGreaterThan(0);
   });
 
   it("renders a static search-entry page with curated routes and monetized products", async () => {
@@ -180,7 +217,7 @@ describe("site routes", () => {
     expect(container.querySelector(`a[href="${getGenreRoute("popular")}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${getGenreRoute("sale")}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${ROUTES.reviews}"]`)).not.toBeNull();
-    expect(screen.getAllByRole("link", { name: /詳細を見る/i }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: /FANZAのレビューを見る|FANZAで詳細を見る/i }).length).toBeGreaterThan(0);
   });
 
   it("adds review funnel links to the articles discovery page", () => {

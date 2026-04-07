@@ -56,8 +56,8 @@ export interface DmmProduct {
   };
   date?: string;
   review?: {
-    count?: number;
-    average?: number;
+    count?: number | string;
+    average?: number | string;
   };
   iteminfo?: {
     genre?: { id: number; name: string }[];
@@ -205,6 +205,11 @@ export function toProduct(item: DmmProduct, rank?: number): Product {
   const price = parseInt(priceStr) || 0;
   const genres = item.iteminfo?.genre?.map((g) => g.name) || [];
   const genreKey = mapGenreLabelToKey(genres[0]);
+  const rating = Number(item.review?.average ?? 0) || 0;
+  const reviewCount = Number(item.review?.count ?? 0) || 0;
+  const actresses = item.iteminfo?.actress?.map((person) => person.name) || [];
+  const maker = item.iteminfo?.maker?.[0]?.name;
+  const label = item.iteminfo?.label?.[0]?.name;
 
   return {
     id: item.content_id,
@@ -213,10 +218,13 @@ export function toProduct(item: DmmProduct, rank?: number): Product {
     imageUrl: item.imageURL?.large || item.imageURL?.small || "",
     affiliateUrl: item.affiliateURL || (item.URL ? buildAffiliateUrl(item.URL) : ""),
     price: price,
-    rating: item.review?.average || 0,
-    reviewCount: item.review?.count || 0,
+    rating: rating,
+    reviewCount: reviewCount,
     genre: genreKey,
     tags: genres.slice(0, 3),
+    maker,
+    label,
+    actresses,
     rank: rank,
     isNew: isNewRelease(item.date),
     releaseDate: item.date || "",

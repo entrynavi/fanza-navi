@@ -1,4 +1,5 @@
 import { getSiteConfig } from "@/lib/env";
+import { getActressSlug } from "@/lib/actress-ranking";
 
 const SITE_CONFIG = getSiteConfig();
 
@@ -11,6 +12,7 @@ export const ROUTES = {
   newReleases: "/new",
   sale: "/sale",
   genres: "/genre",
+  actresses: "/actress",
   reviews: "/reviews",
   search: "/search",
   guide: "/guide",
@@ -31,6 +33,10 @@ export function toAbsoluteUrl(path = "") {
 
 export function getGenreRoute(slug: string) {
   return `${ROUTES.genres}/${slug}`;
+}
+
+export function getActressRoute(name: string) {
+  return `${ROUTES.actresses}/${getActressSlug(name)}`;
 }
 
 export function getReviewRoute(slug: string) {

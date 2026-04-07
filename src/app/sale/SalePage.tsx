@@ -61,14 +61,14 @@ export default async function SalePage() {
         </div>
       </section>
 
-      <section className="mt-12">
+      <section className="mt-10">
         <SectionIntro
-          eyebrow="Sale Reviews"
-          title="セール前に読むレビュー"
-          description="セット作品や大幅値引きを比較するときの見方を先に整理できます。"
+          eyebrow="Comparison Notes"
+          title="セール前に見る比較メモ"
+          description="割引率だけで決めたくないときに、見方を整理するための補助メモです。"
           action={
             <PrimaryCta href={getReviewRoute("sale-selection-buying-guide")} size="sm" variant="outline">
-              セールレビューへ
+              比較メモへ
             </PrimaryCta>
           }
         />
@@ -86,7 +86,7 @@ export default async function SalePage() {
         products={products}
       />
 
-      <section className="mt-12">
+      <section className="mt-10">
         <SectionIntro
           eyebrow="Related Genres"
           title="関連ジャンルへ広げる"

@@ -10,6 +10,9 @@ export interface Product {
   reviewCount: number;
   genre: string;
   tags: string[];
+  maker?: string;
+  label?: string;
+  actresses?: string[];
   rank?: number;
   isNew?: boolean;
   isSale?: boolean;
@@ -93,6 +96,7 @@ const fallbackProducts: Product[] = [
     reviewCount: 342,
     genre: "popular",
     tags: ["限定", "シリーズ", "特典付き"],
+    actresses: ["瀬戸環奈", "天使もえ"],
     rank: 1,
     isSale: true,
     releaseDate: "2026-03-28",
@@ -109,6 +113,7 @@ const fallbackProducts: Product[] = [
     reviewCount: 1287,
     genre: "popular",
     tags: ["ドラマ", "学園", "人気"],
+    actresses: ["瀬戸環奈", "河北彩花"],
     rank: 2,
     releaseDate: "2026-03-15",
   },
@@ -125,6 +130,7 @@ const fallbackProducts: Product[] = [
     reviewCount: 876,
     genre: "popular",
     tags: ["OL", "オフィス", "ドラマ"],
+    actresses: ["相沢みなみ", "石川澪"],
     rank: 3,
     isSale: true,
     releaseDate: "2026-02-28",
@@ -141,6 +147,7 @@ const fallbackProducts: Product[] = [
     reviewCount: 2341,
     genre: "popular",
     tags: ["温泉", "旅行", "癒し"],
+    actresses: ["河北彩花", "天使もえ"],
     rank: 4,
     releaseDate: "2026-02-10",
   },
@@ -157,6 +164,7 @@ const fallbackProducts: Product[] = [
     reviewCount: 534,
     genre: "popular",
     tags: ["シリーズ", "日常", "ルームシェア"],
+    actresses: ["石川澪", "三上悠亜"],
     rank: 5,
     isSale: true,
     releaseDate: "2026-01-25",
@@ -173,6 +181,7 @@ const fallbackProducts: Product[] = [
     reviewCount: 1503,
     genre: "popular",
     tags: ["フェチ", "ニーハイ", "コスプレ"],
+    actresses: ["相沢みなみ", "河北彩花"],
     rank: 6,
     releaseDate: "2026-01-18",
   },
@@ -188,6 +197,7 @@ const fallbackProducts: Product[] = [
     reviewCount: 3012,
     genre: "popular",
     tags: ["恋愛", "ドラマ", "話題"],
+    actresses: ["三上悠亜", "瀬戸環奈"],
     rank: 7,
     releaseDate: "2026-03-01",
   },
@@ -204,6 +214,7 @@ const fallbackProducts: Product[] = [
     reviewCount: 765,
     genre: "popular",
     tags: ["マッサージ", "テクニック", "完全版"],
+    actresses: ["天使もえ", "石川澪"],
     rank: 8,
     isSale: true,
     releaseDate: "2026-02-20",

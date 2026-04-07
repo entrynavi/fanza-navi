@@ -61,13 +61,13 @@ describe("ProductCard Component", () => {
   it("renders a disabled CTA when affiliateUrl is empty", () => {
     render(<ProductCard product={baseProduct} index={0} />);
     expect(screen.getAllByText("リンク準備中").length).toBeGreaterThan(0);
-    expect(screen.queryByRole("link", { name: "FANZAで詳細を見る" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "FANZAのレビューを見る" })).toBeNull();
   });
 
-  it("shows 'FANZAで詳細を見る' when affiliateUrl is set", () => {
+  it("shows the official FANZA review CTA when affiliateUrl is set", () => {
     const withUrl = { ...baseProduct, affiliateUrl: "https://example.com" };
     const { getAllByRole } = render(<ProductCard product={withUrl} index={0} />);
-    const links = getAllByRole("link", { name: /FANZAで詳細を見る/ });
+    const links = getAllByRole("link", { name: /FANZAのレビューを見る/ });
     expect(
       links.some((link) => link.getAttribute("href") === "https://example.com")
     ).toBe(true);

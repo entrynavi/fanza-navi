@@ -1,16 +1,19 @@
 "use client";
 
 import { FaArrowUp, FaBalanceScale, FaBookOpen, FaCoins, FaCreditCard } from "react-icons/fa";
+import ActressRankingSection from "@/components/ActressRankingSection";
 import Footer from "@/components/Footer";
 import GenreRail from "@/components/GenreRail";
 import HeroSection from "@/components/HeroSection";
 import PrimaryCta from "@/components/PrimaryCta";
+import ProductCard from "@/components/ProductCard";
 import ProductGridSection from "@/components/ProductGridSection";
 import RankingPodium from "@/components/RankingPodium";
 import RelatedNavigation from "@/components/RelatedNavigation";
 import ReviewCard from "@/components/ReviewCard";
 import SectionIntro from "@/components/SectionIntro";
 import StickyCTA from "@/components/StickyCTA";
+import type { ActressRankingEntry } from "@/lib/actress-ranking";
 import type { GenreLandingPage } from "@/data/genres";
 import type { Product } from "@/data/products";
 import type { Review } from "@/data/reviews";
@@ -44,13 +47,21 @@ const supportingGuides = [
 ];
 
 export default function HomePageView({
+  leadProduct,
+  saleSpotlight,
+  newSpotlight,
   rankingPreview,
   salePreview,
+  topActresses,
   featuredGenres,
   featuredReviews,
 }: {
+  leadProduct?: Product;
+  saleSpotlight?: Product | null;
+  newSpotlight?: Product | null;
   rankingPreview: Product[];
   salePreview: Product[];
+  topActresses: ActressRankingEntry[];
   featuredGenres: GenreLandingPage[];
   featuredReviews: Review[];
 }) {
@@ -60,35 +71,44 @@ export default function HomePageView({
 
   return (
     <main className="pb-24">
-      <HeroSection />
+      <HeroSection
+        leadProduct={leadProduct}
+        saleSpotlight={saleSpotlight ?? undefined}
+        newSpotlight={newSpotlight ?? undefined}
+      />
 
-      <section className="content-shell px-4 pb-18">
+      <section className="content-shell px-4 pb-8">
         <SectionIntro
           eyebrow="Monthly Ranking"
-          title="まず見ておきたい今月のランキング"
-          description="売れ筋を先に把握しておくと、ジャンル選びとレビューへの入り方が安定します。まずは上位3作の温度感を見て、必要なら詳細ページで掘り下げます。"
+          title="今月よく見られている作品"
+          description="上位から見ていくと、いま動いている作品がつかみやすいです。気になるものだけ詳細やレビューへ進めます。"
           action={
             <PrimaryCta href={ROUTES.ranking} size="sm" variant="outline">
               ランキング一覧へ
             </PrimaryCta>
           }
         />
-        <RankingPodium products={rankingSpotlight} />
-        <ProductGridSection
-          eyebrow="More From Ranking"
-          title="ランキングからそのまま見られる作品"
-          description="レビュー付きの作品を優先して、一覧から個別ページへつなげています。"
-          products={rankingMore}
-          columns="grid-cols-1 sm:grid-cols-2 xl:grid-cols-3"
-        />
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
+          <div>
+            <RankingPodium products={rankingSpotlight} />
+            {rankingMore.length > 0 ? (
+              <div className="mt-2.5 grid gap-3 md:grid-cols-3">
+                {rankingMore.map((product, index) => (
+                  <ProductCard key={product.id} product={product} index={index} />
+                ))}
+              </div>
+            ) : null}
+          </div>
+          <ActressRankingSection entries={topActresses} compact />
+        </div>
       </section>
 
-      <section className="content-shell px-4 pb-18">
-        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+      <section className="content-shell px-4 pb-8">
+        <div className="grid gap-4 lg:grid-cols-[1.14fr_0.86fr] lg:items-start">
           <ProductGridSection
             eyebrow="Sale Highlights"
-            title="いま見る理由があるセール"
-            description="値引き中の作品は、価格差だけでなくレビュー件数も一緒に見ておくと判断しやすくなります。"
+            title="値下げ中の作品"
+            description="価格差とレビュー件数を見ながら、いま買いやすい作品を拾えます。"
             action={
               <PrimaryCta href={ROUTES.sale} size="sm" variant="outline">
                 セール一覧へ
@@ -98,18 +118,18 @@ export default function HomePageView({
             columns="grid-cols-1 sm:grid-cols-2"
           />
 
-          <aside className="editorial-surface p-6 md:p-7">
+          <aside className="editorial-surface p-4 md:p-5">
             <p className="eyebrow">Buying Notes</p>
-            <h2 className="mt-3 text-2xl font-semibold text-[var(--color-text-primary)]">
-              セールは、安さより順番を決めると見やすくなります。
+            <h2 className="mt-1.5 text-[1.5rem] font-semibold text-[var(--color-text-primary)]">
+              セール前に見る比較メモ
             </h2>
-            <p className="mt-4 text-sm leading-7 text-[var(--color-text-secondary)]">
-              自分なら、まずランキングで王道を見て、そのあとにセールで価格差を確認します。最初からセールだけを見るより、比較の基準がぶれにくいです。
+            <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+              価格だけで決めにくいときの短い確認用です。
             </p>
-            <div className="mt-6 space-y-3">
+            <div className="mt-3 space-y-2.5">
               <a
                 href={ROUTES.articleSaveMoney}
-                className="block rounded-[22px] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-4 transition-colors hover:border-[var(--color-border-strong)]"
+                className="block rounded-[20px] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 transition-colors hover:border-[var(--color-border-strong)]"
               >
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--color-surface-highlight)] text-[var(--color-accent)]">
@@ -118,14 +138,14 @@ export default function HomePageView({
                   <div>
                     <p className="text-sm font-semibold text-[var(--color-text-primary)]">節約ガイドを読む</p>
                     <p className="mt-1 text-sm leading-6 text-[var(--color-text-secondary)]">
-                      クーポンやポイントの使い方を先に整理しておくと、まとめ買いでも失敗しにくいです。
+                      クーポンとポイントの使い分けだけ先に押さえられます。
                     </p>
                   </div>
                 </div>
               </a>
               <a
                 href={ROUTES.sale}
-                className="block rounded-[22px] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-4 transition-colors hover:border-[var(--color-border-strong)]"
+                className="block rounded-[20px] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 transition-colors hover:border-[var(--color-border-strong)]"
               >
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--color-surface-highlight)] text-[var(--color-accent)]">
@@ -134,7 +154,7 @@ export default function HomePageView({
                   <div>
                     <p className="text-sm font-semibold text-[var(--color-text-primary)]">セール会場へ進む</p>
                     <p className="mt-1 text-sm leading-6 text-[var(--color-text-secondary)]">
-                      値引き作品を一覧で見て、そのまま詳細ページやレビューへ移動できます。
+                      値引き作品を見て、そのまま詳細とレビューへ進めます。
                     </p>
                   </div>
                 </div>
@@ -144,11 +164,11 @@ export default function HomePageView({
         </div>
       </section>
 
-      <section id="genre-discovery" className="content-shell px-4 pb-18">
+      <section id="genre-discovery" className="content-shell px-4 pb-14">
         <SectionIntro
           eyebrow="Genre Navigation"
-          title="ジャンルから絞って、そのまま個別ページへ"
-          description="人気、セール、VRなどの導線を近い場所に集めています。レビュー付きのジャンルは、そのまま読み進めて判断しやすいようにしています。"
+          title="ジャンルから探す"
+          description="人気、セール、VRなど、見たい切り口からそのまま進めます。"
           action={
             <PrimaryCta href={ROUTES.search} size="sm" variant="outline">
               検索入口へ
@@ -158,14 +178,14 @@ export default function HomePageView({
         <GenreRail genres={featuredGenres} />
       </section>
 
-      <section className="content-shell px-4 pb-18">
+      <section className="content-shell px-4 pb-12">
         <SectionIntro
-          eyebrow="Editorial Reviews"
-          title="レビューから温度感をつかむ"
-          description="作品の雰囲気や向いている人を先に把握してから、詳細ページへ進めるレビューを並べています。"
+          eyebrow="Editorial Notes"
+          title="迷ったときの比較メモ"
+          description="買う前に少しだけ基準を整理したいときの補助入口です。主役は作品一覧で、ここは迷いを減らすための短いメモとして置いています。"
           action={
             <PrimaryCta href={ROUTES.reviews} size="sm" variant="outline">
-              レビュー一覧へ
+              比較メモ一覧へ
             </PrimaryCta>
           }
         />
@@ -176,10 +196,10 @@ export default function HomePageView({
         </div>
       </section>
 
-      <section className="content-shell px-4 pb-20">
+      <section className="content-shell px-4 pb-18">
         <RelatedNavigation
-          title="支払い方法や比較記事もまとめて見られます"
-          description="作品選びの途中で迷いやすい支払い、比較、節約のガイドも、回遊しやすい場所に置いています。"
+          title="支払い方法や比較記事も見ておけます"
+          description="作品を開く前に確認しておきたい情報だけをまとめています。"
           items={supportingGuides}
         />
       </section>

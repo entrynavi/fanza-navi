@@ -21,7 +21,7 @@ export default function ProductGridSection({
   columns?: string;
 }) {
   return (
-    <section className="mt-12">
+    <section className="mt-10">
       <SectionIntro
         eyebrow={eyebrow}
         title={title}
@@ -29,7 +29,7 @@ export default function ProductGridSection({
         action={action}
       />
       {products.length > 0 ? (
-        <div className={`grid gap-4 ${columns}`}>
+        <div className={`grid gap-3 ${columns}`}>
           {products.map((product, index) => (
             <ProductCard key={product.id} product={product} index={index} />
           ))}

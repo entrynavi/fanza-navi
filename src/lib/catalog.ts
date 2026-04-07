@@ -5,6 +5,7 @@ import {
   fetchRanking,
   fetchSaleProducts,
   mapGenreLabelToKey,
+  searchProducts,
   toProduct,
 } from "@/lib/dmm-api";
 import type { DmmProduct } from "@/lib/dmm-api";
@@ -19,6 +20,10 @@ export interface CatalogLoadOptions {
 export interface RelatedCatalogLoadOptions extends CatalogLoadOptions {
   currentId?: string;
   genre?: string;
+}
+
+export interface ActressCatalogLoadOptions extends CatalogLoadOptions {
+  seedProducts?: Product[];
 }
 
 function normalizeLimit(options: CatalogLoadOptions = {}): number {
@@ -108,6 +113,22 @@ function getCuratedRelated(
   });
 
   return sortByRank(related).slice(0, limit);
+}
+
+function getCuratedActress(name: string, limit: number): Product[] {
+  return sortByRank(
+    sampleProducts.filter((product) =>
+      product.actresses?.some((actress) => actress.trim() === name.trim())
+    )
+  ).slice(0, limit);
+}
+
+function getSeedActressProducts(products: Product[], name: string, limit: number): Product[] {
+  return sortByRank(
+    products.filter((product) =>
+      product.actresses?.some((actress) => actress.trim() === name.trim())
+    )
+  ).slice(0, limit);
 }
 
 function mapApiProducts(items: DmmProduct[] | undefined, preserveRank = false): Product[] {
@@ -219,4 +240,33 @@ export async function loadRelatedProducts(
   );
 
   return mergeProducts(apiProducts, fallback, limit, excludedIds);
+}
+
+export async function loadActressProducts(
+  actressName: string,
+  options: ActressCatalogLoadOptions = {}
+): Promise<Product[]> {
+  const normalizedName = actressName.trim();
+
+  if (!normalizedName) {
+    return [];
+  }
+
+  const limit = normalizeLimit(options);
+  const hits = options.hits ?? Math.max(limit, 12);
+  const fallback = mergeProducts(
+    getSeedActressProducts(options.seedProducts ?? [], normalizedName, limit),
+    getCuratedActress(normalizedName, limit),
+    limit
+  );
+  const apiProducts = mapApiProducts(
+    await searchProducts(normalizedName, hits, options.offset ?? 1),
+    false
+  );
+  const exactMatches = apiProducts.filter((product) =>
+    product.actresses?.some((actress) => actress.trim() === normalizedName)
+  );
+  const primary = exactMatches.length > 0 ? exactMatches : apiProducts;
+
+  return mergeProducts(primary, fallback, limit);
 }

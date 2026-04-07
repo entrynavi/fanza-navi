@@ -6,6 +6,7 @@ import PrimaryCta from "@/components/PrimaryCta";
 import { getGenreBySlug } from "@/data/genres";
 import { getReviewByProductId } from "@/data/reviews";
 import type { Product } from "@/data/products";
+import { getPrimaryFanzaCtaLabel, getProductSupportLine } from "@/lib/product-presenter";
 import { getReviewRoute, getGenreRoute } from "@/lib/site";
 
 const rankColors: Record<number, string> = {
@@ -44,7 +45,7 @@ export default function ProductCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.1, duration: 0.5 }}
-      className="glass-card group relative overflow-hidden"
+      className="glass-card group relative flex h-full flex-col overflow-hidden"
     >
       <div
         className="relative aspect-[4/3] overflow-hidden"
@@ -111,7 +112,7 @@ export default function ProductCard({
         </div>
       </div>
 
-      <div className="space-y-4 p-5">
+      <div className="flex flex-1 flex-col space-y-4 p-5">
         <div>
           <div className="mb-2 flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
             <span className="inline-flex items-center gap-1">
@@ -133,7 +134,7 @@ export default function ProductCard({
               <span className="chip">レビューあり</span>
             ) : null}
           </div>
-          <h3 className="text-lg font-semibold leading-tight text-[var(--color-text-primary)] transition-colors group-hover:text-white">
+          <h3 className="line-clamp-3 text-lg font-semibold leading-tight text-[var(--color-text-primary)] transition-colors group-hover:text-white">
             {review ? (
               <a href={getReviewRoute(review.slug)} className="editorial-link">
                 {product.title}
@@ -142,14 +143,17 @@ export default function ProductCard({
               product.title
             )}
           </h3>
+          <p className="mt-2 text-xs leading-5 text-[var(--color-text-muted)]">
+            {getProductSupportLine(product)}
+          </p>
         </div>
 
-        <p className="text-sm leading-7 text-[var(--color-text-secondary)] line-clamp-3">
+        <p className="text-sm leading-7 text-[var(--color-text-secondary)] line-clamp-2">
           {product.description}
         </p>
 
         <div className="flex flex-wrap gap-2">
-          {product.tags.map((tag) => (
+          {product.tags.slice(0, 3).map((tag) => (
             <span
               key={tag}
               className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-xs text-[var(--color-text-secondary)]"
@@ -159,7 +163,7 @@ export default function ProductCard({
           ))}
         </div>
 
-        <div className="flex items-end justify-between gap-3 border-t border-[var(--color-border)] pt-4">
+        <div className="mt-auto flex items-end justify-between gap-3 border-t border-[var(--color-border)] pt-4">
           <div>
             <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
               Price
@@ -180,20 +184,25 @@ export default function ProductCard({
             )}
           </div>
 
-          {review ? (
-            <div className="grid gap-2">
-              <PrimaryCta href={getReviewRoute(review.slug)} size="sm">
-                レビューを見る
+          {review && hasAffiliateUrl ? (
+            <div className="grid gap-2 text-right">
+              <PrimaryCta href={product.affiliateUrl} external size="sm">
+                {getPrimaryFanzaCtaLabel(product)}
               </PrimaryCta>
-              {hasAffiliateUrl ? (
-                <PrimaryCta href={product.affiliateUrl} external size="sm" variant="outline">
-                  FANZAで詳細を見る
-                </PrimaryCta>
-              ) : null}
+              <a
+                href={getReviewRoute(review.slug)}
+                className="text-xs font-semibold text-[var(--color-text-secondary)] transition-colors hover:text-white"
+              >
+                比較メモを見る
+              </a>
             </div>
+          ) : review ? (
+            <PrimaryCta href={getReviewRoute(review.slug)} size="sm" variant="outline">
+              比較メモを見る
+            </PrimaryCta>
           ) : hasAffiliateUrl ? (
             <PrimaryCta href={product.affiliateUrl} external size="sm">
-              FANZAで詳細を見る
+              {getPrimaryFanzaCtaLabel(product)}
             </PrimaryCta>
           ) : (
             <span className="inline-flex items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm text-[var(--color-text-muted)]">
