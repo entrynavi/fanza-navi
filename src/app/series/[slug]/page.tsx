@@ -8,14 +8,13 @@ import ProductGridSection from "@/components/ProductGridSection";
 import RelatedNavigation from "@/components/RelatedNavigation";
 import SectionIntro from "@/components/SectionIntro";
 import { genrePages } from "@/data/genres";
-import { loadEntityDiscoveryCatalog, loadMakerProducts } from "@/lib/catalog";
+import { loadEntityDiscoveryCatalog, loadSeriesProducts } from "@/lib/catalog";
 import {
   buildActressCandidates,
-  buildSeriesCandidates,
+  buildMakerCandidates,
   decodeEntitySlug,
   getEntitySlug,
   normalizeEntityName,
-  type EntityCandidate,
 } from "@/lib/entity-ranking";
 import { buildPageMetadata } from "@/lib/metadata";
 import {
@@ -54,18 +53,17 @@ function averageRating(products: Product[]): number {
   );
 }
 
-const loadMakerContext = cache(async () => {
-  const catalog = await loadEntityDiscoveryCatalog({ limit: 8 });
+const loadSeriesContext = cache(async () => {
+  const catalog = await loadEntityDiscoveryCatalog({ limit: 24 });
 
   return {
-    sourceProducts: catalog.sourceProducts,
-    makers: catalog.makers,
+    seriesEntries: catalog.series,
   };
 });
 
 export async function generateStaticParams() {
-  const { makers } = await loadMakerContext();
-  return makers.map((entry) => ({ slug: getEntitySlug(entry.name) }));
+  const { seriesEntries } = await loadSeriesContext();
+  return seriesEntries.map((entry) => ({ slug: getEntitySlug(entry.name) }));
 }
 
 export async function generateMetadata({
@@ -74,41 +72,43 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const makerName = decodeEntitySlug(slug);
+  const seriesName = decodeEntitySlug(slug);
 
-  if (!makerName) {
+  if (!seriesName) {
     return {};
   }
 
   return buildPageMetadata({
-    title: `${makerName}の作品一覧`,
-    description: `${makerName}で見られている作品を、レビュー件数と価格差が見やすい順で整理しています。`,
-    path: getMakerRoute(makerName),
-    imageAlt: `${makerName}ページのOG画像`,
+    title: `${seriesName}シリーズの作品一覧`,
+    description: `${seriesName}系の作品を、レビュー件数と価格差が見やすい順で整理しています。`,
+    path: getSeriesRoute(seriesName),
+    imageAlt: `${seriesName}ページのOG画像`,
   });
 }
 
-export default async function MakerPage({
+export default async function SeriesPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const makerName = decodeEntitySlug(slug);
-  const normalizedMakerName = normalizeEntityName(makerName);
+  const seriesName = decodeEntitySlug(slug);
+  const normalizedSeriesName = normalizeEntityName(seriesName);
 
-  if (!normalizedMakerName) {
+  if (!normalizedSeriesName) {
     notFound();
   }
 
-  const { makers, sourceProducts } = await loadMakerContext();
-  const makerEntry = makers.find((entry) => normalizeEntityName(entry.name) === normalizedMakerName);
+  const { seriesEntries } = await loadSeriesContext();
+  const seriesEntry = seriesEntries.find(
+    (entry) => normalizeEntityName(entry.name) === normalizedSeriesName
+  );
 
-  if (!makerEntry) {
+  if (!seriesEntry) {
     notFound();
   }
 
-  const products = await loadMakerProducts(normalizedMakerName, {
+  const products = await loadSeriesProducts(normalizedSeriesName, {
     limit: 8,
   });
 
@@ -118,27 +118,27 @@ export default async function MakerPage({
 
   const leadProduct = pickLeadProduct(products);
   const totalReviewCount = products.reduce((total, product) => total + product.reviewCount, 0);
-  const saleCount = products.filter((product) => product.isSale).length;
   const relatedGenres = genrePages.filter((genre) =>
     products.some((product) => product.genre === genre.slug)
   );
   const actressCandidates = buildActressCandidates(products, 2);
-  const seriesCandidates = buildSeriesCandidates(products, 2);
+  const makerCandidates = buildMakerCandidates(products, 2);
+  const newCount = products.filter((product) => product.isNew).length;
 
   return (
     <main className="content-shell px-4 py-8">
       <Breadcrumb
         items={[
-          { label: "メーカー別", href: ROUTES.ranking },
-          { label: normalizedMakerName },
+          { label: "シリーズ別", href: ROUTES.ranking },
+          { label: normalizedSeriesName },
         ]}
       />
 
       <section className="editorial-surface p-6 md:p-8">
         <SectionIntro
-          eyebrow="メーカー情報"
-          title={normalizedMakerName}
-          description={`${normalizedMakerName}で動いている作品を、レビュー件数と値下げ状況が見やすい形でまとめています。`}
+          eyebrow="シリーズ情報"
+          title={normalizedSeriesName}
+          description={`${normalizedSeriesName}系の作品を、レビュー件数と価格差が見やすい順でまとめています。`}
           action={
             <PrimaryCta href={ROUTES.ranking} size="sm" variant="outline">
               月間ランキングへ
@@ -151,8 +151,8 @@ export default async function MakerPage({
             <p className="eyebrow">Representative Work</p>
             <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
               {leadProduct
-                ? `まずは「${leadProduct.title}」から入ると、このメーカーの空気が掴みやすいです。`
-                : "代表作から入ると雰囲気を掴みやすくなります。"}
+                ? `まずは「${leadProduct.title}」から入ると、このシリーズの傾向が掴みやすいです。`
+                : "代表作から入るとシリーズの傾向が掴みやすくなります。"}
             </p>
           </div>
           <div className="rounded-[22px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
@@ -162,18 +162,18 @@ export default async function MakerPage({
             </p>
           </div>
           <div className="rounded-[22px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-            <p className="eyebrow">Now on Sale</p>
+            <p className="eyebrow">Recent Releases</p>
             <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
-              値下げ中 {saleCount}件。割引率だけでなく、件数が多い作品から見ると判断しやすくなります。
+              新着 {newCount}件。シリーズで追うときは、最新作から入るか、件数の多い定番作から入るかで見え方が変わります。
             </p>
           </div>
         </div>
       </section>
 
       <ProductGridSection
-        eyebrow="メーカー作品"
-        title={`${normalizedMakerName}で見られている作品`}
-        description="件数が動いている作品から先に並べています。気になった作品はそのまま公式レビューへ進めます。"
+        eyebrow="シリーズ作品"
+        title={`${normalizedSeriesName}シリーズの注目作`}
+        description="シリーズの空気感が分かりやすい順に見やすくしています。気になった作品はそのまま公式レビューへ進めます。"
         products={products}
       />
 
@@ -182,7 +182,7 @@ export default async function MakerPage({
           <SectionIntro
             eyebrow="関連ジャンル"
             title="近いジャンルも一緒に見る"
-            description="同じメーカーでも作風の違いが出やすいので、ジャンル側から見ると比較しやすくなります。"
+            description="同じシリーズでもジャンルの傾向を掴むと、次に見る作品を選びやすくなります。"
           />
           <GenreRail genres={relatedGenres.slice(0, 4)} dense />
         </section>
@@ -190,7 +190,7 @@ export default async function MakerPage({
 
       <RelatedNavigation
         title="次に見るページ"
-        description="メーカー単位で掴んだあとに、女優やシリーズへそのまま広げられます。"
+        description="シリーズで掴んだあとに、メーカーや女優へそのまま広げられます。"
         items={[
           {
             href: ROUTES.ranking,
@@ -201,22 +201,22 @@ export default async function MakerPage({
           {
             href: ROUTES.sale,
             title: "セール一覧へ",
-            description: "同じメーカーの値下げ作品を先に見たいときに向いています。",
+            description: "値下げ中の近い作品から見たいときに向いています。",
             eyebrow: "セール",
           },
-          actressCandidates[0]
+          makerCandidates[0]
             ? {
-                href: getActressRoute(actressCandidates[0].name),
-                title: `${actressCandidates[0].name}ページへ`,
-                description: "出演者から作品の傾向を追い直せます。",
-                eyebrow: "女優",
+                href: getMakerRoute(makerCandidates[0].name),
+                title: `${makerCandidates[0].name}ページへ`,
+                description: "同じメーカーの他作品から広げられます。",
+                eyebrow: "メーカー",
               }
-            : seriesCandidates[0]
+            : actressCandidates[0]
               ? {
-                  href: getSeriesRoute(seriesCandidates[0].name),
-                  title: `${seriesCandidates[0].name}シリーズへ`,
-                  description: "同じシリーズの流れで見たいときの入口です。",
-                  eyebrow: "シリーズ",
+                  href: getActressRoute(actressCandidates[0].name),
+                  title: `${actressCandidates[0].name}ページへ`,
+                  description: "出演者から近い作品を追い直せます。",
+                  eyebrow: "女優",
                 }
               : {
                   href: relatedGenres[0] ? getGenreRoute(relatedGenres[0].slug) : ROUTES.search,

@@ -83,7 +83,7 @@ export default function Header() {
             <a
               href={ROUTES.search}
               className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)] transition-all duration-200 hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)] hover:shadow-lg hover:shadow-[rgba(143,29,70,0.1)]"
-              aria-label="作品を検索"
+              aria-label="検索入口"
             >
               <FaSearch size={13} />
             </a>

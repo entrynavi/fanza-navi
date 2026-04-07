@@ -64,6 +64,7 @@ export interface DmmProduct {
     maker?: { id: number; name: string }[];
     actress?: { id: number; name: string }[];
     label?: { id: number; name: string }[];
+    series?: { id: number; name: string }[];
   };
 }
 
@@ -210,6 +211,7 @@ export function toProduct(item: DmmProduct, rank?: number): Product {
   const actresses = item.iteminfo?.actress?.map((person) => person.name) || [];
   const maker = item.iteminfo?.maker?.[0]?.name;
   const label = item.iteminfo?.label?.[0]?.name;
+  const series = item.iteminfo?.series?.[0]?.name ?? label;
 
   return {
     id: item.content_id,
@@ -224,6 +226,7 @@ export function toProduct(item: DmmProduct, rank?: number): Product {
     tags: genres.slice(0, 3),
     maker,
     label,
+    series,
     actresses,
     rank: rank,
     isNew: isNewRelease(item.date),

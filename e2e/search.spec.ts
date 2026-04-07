@@ -1,8 +1,12 @@
 import { test, expect } from "@playwright/test";
+import { dismissAgeGate, prepareAgeGateBypass } from "./helpers";
 
 test.describe("検索ページ", () => {
   test.beforeEach(async ({ page }) => {
+    await prepareAgeGateBypass(page);
     await page.goto("/search");
+    await page.waitForLoadState("networkidle");
+    await dismissAgeGate(page);
   });
 
   test("検索入力欄が表示される", async ({ page }) => {

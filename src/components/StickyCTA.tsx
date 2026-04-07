@@ -35,7 +35,7 @@ export default function StickyCTA() {
               </span>
               <div className="min-w-0">
                 <p className="font-bold text-sm text-[var(--color-text-primary)] truncate">
-                  セール＆お得情報をチェック
+                  今回はセール対象を先に見たい人向け
                 </p>
                 <p className="text-xs text-[var(--color-text-muted)] hidden sm:block">
                   初めての方向けガイドも公開中
@@ -43,12 +43,12 @@ export default function StickyCTA() {
               </div>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <a
-                href="/sale"
-                className="px-4 py-2 rounded-full text-sm font-bold text-white bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent-strong)] hover:opacity-90 transition-opacity whitespace-nowrap shadow-lg shadow-[rgba(143,29,70,0.2)]"
-              >
-                セールを見る
-              </a>
+                <a
+                  href="/sale"
+                  className="px-4 py-2 rounded-full text-sm font-bold text-white bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent-strong)] hover:opacity-90 transition-opacity whitespace-nowrap shadow-lg shadow-[rgba(143,29,70,0.2)]"
+                >
+                  セール一覧を見る
+                </a>
               <a
                 href="/guide"
                 className="hidden sm:inline-flex px-3.5 py-2 rounded-full text-sm font-medium text-[var(--color-text-secondary)] border border-[var(--color-border)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)] transition-colors whitespace-nowrap"

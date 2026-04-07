@@ -137,6 +137,7 @@ describe("DMM API Client", () => {
 
       expect(result.maker).toBe("MOODYZ");
       expect(result.label).toBe("みんなのランキング");
+      expect(result.series).toBe("みんなのランキング");
       expect(result.actresses).toEqual(["瀬戸環奈", "石川澪"]);
     });
 

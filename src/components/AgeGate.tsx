@@ -13,7 +13,10 @@ export default function AgeGate() {
       return true;
     }
 
-    return document.documentElement.dataset.ageGateAccepted !== "1";
+    return (
+      document.documentElement.dataset.ageGateAccepted !== "1" &&
+      window.localStorage.getItem(STORAGE_KEY) !== "1"
+    );
   });
   const previousOverflow = useRef("");
   const acceptButtonRef = useRef<HTMLButtonElement>(null);

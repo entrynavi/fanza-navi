@@ -27,11 +27,14 @@ import {
 } from "@/lib/dmm-api";
 import {
   loadActressProducts,
+  loadEntityDiscoveryCatalog,
   loadGenreProducts,
+  loadMakerProducts,
   loadNewProducts,
   loadRankingProducts,
   loadRelatedProducts,
   loadSaleProducts,
+  loadSeriesProducts,
 } from "@/lib/catalog";
 
 const makeApiProduct = (overrides: Partial<DmmProduct> = {}): DmmProduct => ({
@@ -175,5 +178,39 @@ describe("catalog loaders", () => {
     expect(products).toHaveLength(1);
     expect(products[0].id).toBe("seed-1");
     expect(products[0].actresses?.includes("波多野結衣")).toBe(true);
+  });
+
+  it("builds maker and series discovery entries from fallback ranking products", async () => {
+    vi.mocked(fetchRanking).mockResolvedValue([]);
+
+    const catalog = await loadEntityDiscoveryCatalog({ limit: 8 });
+
+    expect(catalog.makers.length).toBeGreaterThan(0);
+    expect(catalog.series.length).toBeGreaterThan(0);
+    expect(catalog.makers[0].count).toBeGreaterThan(0);
+    expect(catalog.series[0].count).toBeGreaterThan(0);
+  });
+
+  it("loads fallback maker and series products for discovery pages", async () => {
+    vi.mocked(fetchRanking).mockResolvedValue([]);
+
+    const catalog = await loadEntityDiscoveryCatalog({ limit: 8 });
+    const makerName = catalog.makers[0]?.name;
+    const seriesName = catalog.series[0]?.name;
+
+    expect(makerName).toBeTruthy();
+    expect(seriesName).toBeTruthy();
+
+    const [makerProducts, seriesProducts] = await Promise.all([
+      loadMakerProducts(makerName!, { limit: 2 }),
+      loadSeriesProducts(seriesName!, { limit: 2 }),
+    ]);
+
+    expect(makerProducts).toHaveLength(2);
+    expect(makerProducts.every((product) => product.maker === makerName)).toBe(true);
+    expect(seriesProducts).toHaveLength(2);
+    expect(seriesProducts.every((product) => (product.series ?? product.label) === seriesName)).toBe(
+      true
+    );
   });
 });

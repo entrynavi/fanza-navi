@@ -1,9 +1,12 @@
 import { test, expect } from "@playwright/test";
+import { dismissAgeGate, prepareAgeGateBypass } from "./helpers";
 
 test.describe("ホームページ", () => {
   test.beforeEach(async ({ page }) => {
+    await prepareAgeGateBypass(page);
     await page.goto("/");
     await page.waitForLoadState("networkidle");
+    await dismissAgeGate(page);
   });
 
   test("ページタイトルにFANZAナビが含まれる", async ({ page }) => {
@@ -56,6 +59,6 @@ test.describe("ホームページ", () => {
   });
 
   test("PR表記バーが表示される", async ({ page }) => {
-    await expect(page.getByText("アフィリエイト広告").first()).toBeVisible();
+    await expect(page.getByText("DMMアフィリエイト").first()).toBeVisible();
   });
 });

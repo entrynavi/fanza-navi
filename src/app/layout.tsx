@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import AgeGate from "@/components/AgeGate";
+import DisclosureBar from "@/components/DisclosureBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
@@ -8,6 +10,7 @@ import ErrorTracker from "@/components/ErrorTracker";
 import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "FANZAナビ — セール速報＆作品レビュー",
     template: "%s | FANZAナビ",
@@ -49,19 +52,32 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const unlockAcceptedShellScript = `(() => {
+    const accepted =
+      document.documentElement.dataset.ageGateAccepted === "1" ||
+      window.localStorage?.getItem("fanza-age-gate-accepted") === "1";
+    if (!accepted) return;
+    document.documentElement.dataset.ageGateAccepted = "1";
+    const appShell = document.getElementById("app-shell");
+    if (!appShell) return;
+    appShell.removeAttribute("inert");
+    appShell.removeAttribute("aria-hidden");
+  })();`;
+
   return (
     <html lang="ja">
       <body className="antialiased min-h-screen">
         <Analytics />
         <ErrorTracker />
         <JsonLd />
-        {/* ステマ規制対応 PR表記 (2023年10月施行 景品表示法) */}
-        <div className="bg-[#1a1a2e] border-b border-[var(--color-border)] py-1.5 text-center text-[11px] text-[var(--color-text-secondary)]">
-          当サイトはアフィリエイト広告（PR）を利用しています
+        <DisclosureBar />
+        <div id="app-shell" inert aria-hidden="true">
+          <Header />
+          {children}
+          <Footer />
         </div>
-        <Header />
-        {children}
-        <Footer />
+        <AgeGate />
+        <script dangerouslySetInnerHTML={{ __html: unlockAcceptedShellScript }} />
       </body>
     </html>
   );

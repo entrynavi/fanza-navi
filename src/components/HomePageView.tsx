@@ -2,7 +2,6 @@
 
 import { FaArrowUp, FaBalanceScale, FaBookOpen, FaCoins, FaCreditCard } from "react-icons/fa";
 import ActressRankingSection from "@/components/ActressRankingSection";
-import Footer from "@/components/Footer";
 import GenreRail from "@/components/GenreRail";
 import HeroSection from "@/components/HeroSection";
 import PrimaryCta from "@/components/PrimaryCta";
@@ -21,28 +20,34 @@ import { ROUTES } from "@/lib/site";
 
 const supportingGuides = [
   {
+    href: ROUTES.articles,
+    title: "記事一覧",
+    description: "支払い方法や節約記事をまとめて見返せます。",
+    eyebrow: "記事",
+  },
+  {
     href: ROUTES.guide,
     title: "FANZA完全ガイド",
     description: "最初の登録から購入までの流れを短時間で確認できます。",
-    eyebrow: "Guide",
+    eyebrow: "ガイド",
   },
   {
     href: ROUTES.compare,
     title: "VR・通常作品の比較",
     description: "視聴スタイルごとの違いを整理して無駄買いを減らします。",
-    eyebrow: "Compare",
+    eyebrow: "比較",
   },
   {
     href: ROUTES.articleFanzaPayment,
     title: "支払い方法ガイド",
     description: "クレカ、PayPay、ポイントの使い分けをまとめています。",
-    eyebrow: "Payment",
+    eyebrow: "支払い",
   },
   {
     href: ROUTES.articleSaveMoney,
     title: "セール攻略法",
     description: "クーポンとポイント活用で購入単価を抑える記事です。",
-    eyebrow: "Sale Tips",
+    eyebrow: "セール術",
   },
 ];
 
@@ -79,7 +84,7 @@ export default function HomePageView({
 
       <section className="content-shell px-4 pb-8">
         <SectionIntro
-          eyebrow="Monthly Ranking"
+          eyebrow="月間ランキング"
           title="今月よく見られている作品"
           description="上位から見ていくと、いま動いている作品がつかみやすいです。気になるものだけ詳細やレビューへ進めます。"
           action={
@@ -106,7 +111,7 @@ export default function HomePageView({
       <section className="content-shell px-4 pb-8">
         <div className="grid gap-4 lg:grid-cols-[1.14fr_0.86fr] lg:items-start">
           <ProductGridSection
-            eyebrow="Sale Highlights"
+            eyebrow="セール注目作"
             title="値下げ中の作品"
             description="価格差とレビュー件数を見ながら、いま買いやすい作品を拾えます。"
             action={
@@ -166,7 +171,7 @@ export default function HomePageView({
 
       <section id="genre-discovery" className="content-shell px-4 pb-14">
         <SectionIntro
-          eyebrow="Genre Navigation"
+          eyebrow="ジャンル別"
           title="ジャンルから探す"
           description="人気、セール、VRなど、見たい切り口からそのまま進めます。"
           action={
@@ -180,7 +185,7 @@ export default function HomePageView({
 
       <section className="content-shell px-4 pb-12">
         <SectionIntro
-          eyebrow="Editorial Notes"
+          eyebrow="比較メモ"
           title="迷ったときの比較メモ"
           description="買う前に少しだけ基準を整理したいときの補助入口です。主役は作品一覧で、ここは迷いを減らすための短いメモとして置いています。"
           action={
@@ -203,8 +208,6 @@ export default function HomePageView({
           items={supportingGuides}
         />
       </section>
-
-      <Footer />
 
       <StickyCTA />
 

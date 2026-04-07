@@ -81,6 +81,45 @@ export const genres: Genre[] = [
  * affiliateUrl は安全な DMM/FANZA の直接リンクか、同一ドメインのフォールバックを使う。
  */
 const FALLBACK_OUTBOUND_URL = "https://www.dmm.co.jp/digital/videoa/";
+const FALLBACK_MAKERS = [
+  "S1 NO.1 STYLE",
+  "MOODYZ",
+  "FALENO",
+  "PREMIUM",
+  "Madonna",
+  "kawaii*",
+  "Attackers",
+  "E-BODY",
+] as const;
+const FALLBACK_LABELS = [
+  "S1 Collection",
+  "MOODYZ Fresh",
+  "FALENO Star",
+  "PREMIUM Luxe",
+  "Madonna Gold",
+  "kawaii* Bloom",
+  "Attackers Black",
+  "E-BODY Heat",
+] as const;
+const FALLBACK_SERIES = [
+  "王道ヒットコレクション",
+  "濃密ドラマセレクション",
+  "没入シチュエーション特集",
+  "週末ご褒美シアター",
+] as const;
+
+function getFallbackBrand(index: number) {
+  const makerIndex = index % FALLBACK_MAKERS.length;
+
+  return {
+    maker: FALLBACK_MAKERS[makerIndex],
+    label: FALLBACK_LABELS[makerIndex],
+  };
+}
+
+function getFallbackSeries(index: number) {
+  return FALLBACK_SERIES[index % FALLBACK_SERIES.length];
+}
 
 const fallbackProducts: Product[] = [
   // ── popular（人気作品）──
@@ -903,7 +942,14 @@ const fallbackProducts: Product[] = [
   },
 ];
 
-export const sampleProducts: Product[] = fallbackProducts.map((product) => ({
-  ...product,
-  affiliateUrl: product.affiliateUrl || FALLBACK_OUTBOUND_URL,
-}));
+export const sampleProducts: Product[] = fallbackProducts.map((product, index) => {
+  const brand = getFallbackBrand(index);
+
+  return {
+    ...product,
+    maker: product.maker ?? brand.maker,
+    label: product.label ?? brand.label,
+    series: product.series ?? getFallbackSeries(index),
+    affiliateUrl: product.affiliateUrl || FALLBACK_OUTBOUND_URL,
+  };
+});

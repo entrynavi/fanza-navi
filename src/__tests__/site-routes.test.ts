@@ -9,6 +9,11 @@ import ActressPage, {
   generateMetadata as generateActressMetadata,
   generateStaticParams as generateActressStaticParams,
 } from "@/app/actress/[slug]/page";
+import MakerPage, {
+  dynamicParams as makerDynamicParams,
+  generateMetadata as generateMakerMetadata,
+  generateStaticParams as generateMakerStaticParams,
+} from "@/app/maker/[slug]/page";
 import GenrePage, {
   dynamicParams as genreDynamicParams,
   generateMetadata as generateGenreMetadata,
@@ -22,17 +27,24 @@ import ReviewPage, {
   generateMetadata as generateReviewMetadata,
   generateStaticParams as generateReviewStaticParams,
 } from "@/app/reviews/[slug]/page";
+import SeriesPage, {
+  dynamicParams as seriesDynamicParams,
+  generateMetadata as generateSeriesMetadata,
+  generateStaticParams as generateSeriesStaticParams,
+} from "@/app/series/[slug]/page";
 import SalePage from "@/app/sale/SalePage";
 import { metadata as saleRouteMetadata } from "@/app/sale/page";
-import SearchPage from "@/app/search/SearchPage";
-import { metadata as searchRouteMetadata } from "@/app/search/page";
+import SearchRoutePage, { metadata as searchRouteMetadata } from "@/app/search/page";
 import { genreSlugs } from "@/data/genres";
 import { reviewSlugs, reviews } from "@/data/reviews";
+import { decodeEntitySlug } from "@/lib/entity-ranking";
 import {
   ROUTES,
   getActressRoute,
   getGenreRoute,
+  getMakerRoute,
   getReviewRoute,
+  getSeriesRoute,
 } from "@/lib/site";
 import { decodeActressSlug } from "@/lib/actress-ranking";
 import { buildAffiliateUrl } from "@/lib/affiliate";
@@ -42,8 +54,12 @@ describe("site routes", () => {
     expect(ROUTES.genres).toBe("/genre");
     expect(ROUTES.reviews).toBe("/reviews");
     expect(ROUTES.actresses).toBe("/actress");
+    expect(ROUTES.makers).toBe("/maker");
+    expect(ROUTES.series).toBe("/series");
     expect(getGenreRoute("vr")).toBe("/genre/vr");
     expect(getActressRoute("瀬戸環奈")).toContain("/actress/");
+    expect(getMakerRoute("MOODYZ")).toContain("/maker/");
+    expect(getSeriesRoute("王道ヒットコレクション")).toContain("/series/");
     expect(getReviewRoute("popular-series-latest-review")).toBe(
       "/reviews/popular-series-latest-review"
     );
@@ -53,14 +69,22 @@ describe("site routes", () => {
     const genreParams = await generateGenreStaticParams();
     const reviewParams = await generateReviewStaticParams();
     const actressParams = await generateActressStaticParams();
+    const makerParams = await generateMakerStaticParams();
+    const seriesParams = await generateSeriesStaticParams();
 
     expect(genreDynamicParams).toBe(false);
     expect(reviewDynamicParams).toBe(false);
     expect(actressDynamicParams).toBe(false);
+    expect(makerDynamicParams).toBe(false);
+    expect(seriesDynamicParams).toBe(false);
     expect(genreParams).toEqual(genreSlugs.map((slug) => ({ slug })));
     expect(reviewParams).toEqual(reviewSlugs.map((slug) => ({ slug })));
     expect(actressParams.length).toBeGreaterThan(0);
+    expect(makerParams.length).toBeGreaterThan(0);
+    expect(seriesParams.length).toBeGreaterThan(0);
     expect(decodeActressSlug(actressParams[0].slug).length).toBeGreaterThan(0);
+    expect(decodeEntitySlug(makerParams[0].slug).length).toBeGreaterThan(0);
+    expect(decodeEntitySlug(seriesParams[0].slug).length).toBeGreaterThan(0);
   });
 
   it("generates canonical metadata for genre and review pages", async () => {
@@ -68,8 +92,16 @@ describe("site routes", () => {
       params: Promise.resolve({ slug: "vr" }),
     });
     const actressParams = await generateActressStaticParams();
+    const makerParams = await generateMakerStaticParams();
+    const seriesParams = await generateSeriesStaticParams();
     const actressMetadata = await generateActressMetadata({
       params: Promise.resolve({ slug: actressParams[0].slug }),
+    });
+    const makerMetadata = await generateMakerMetadata({
+      params: Promise.resolve({ slug: makerParams[0].slug }),
+    });
+    const seriesMetadata = await generateSeriesMetadata({
+      params: Promise.resolve({ slug: seriesParams[0].slug }),
     });
     const reviewMetadata = await generateReviewMetadata({
       params: Promise.resolve({ slug: reviews[0].slug }),
@@ -83,6 +115,18 @@ describe("site routes", () => {
     expect(String(actressMetadata.title)).toContain("作品");
     expect(String(actressMetadata.title)).toContain(decodeActressSlug(actressParams[0].slug));
     expect(actressMetadata.twitter?.card).toBe("summary_large_image");
+
+    expect(makerMetadata.alternates?.canonical).toBe(
+      getMakerRoute(decodeEntitySlug(makerParams[0].slug))
+    );
+    expect(String(makerMetadata.title)).toContain(decodeEntitySlug(makerParams[0].slug));
+    expect(makerMetadata.twitter?.card).toBe("summary_large_image");
+
+    expect(seriesMetadata.alternates?.canonical).toBe(
+      getSeriesRoute(decodeEntitySlug(seriesParams[0].slug))
+    );
+    expect(String(seriesMetadata.title)).toContain(decodeEntitySlug(seriesParams[0].slug));
+    expect(seriesMetadata.twitter?.card).toBe("summary_large_image");
 
     expect(reviewMetadata.alternates?.canonical).toBe(getReviewRoute(reviews[0].slug));
     expect(String(reviewMetadata.title)).toContain(reviews[0].title);
@@ -107,8 +151,8 @@ describe("site routes", () => {
     expect(newRouteMetadata.alternates?.canonical).toBe(ROUTES.newReleases);
 
     expect(String(searchRouteMetadata.title)).toContain("検索");
-    expect(searchRouteMetadata.description).toContain("入口");
-    expect(searchRouteMetadata.description).not.toContain("キーワード");
+    expect(searchRouteMetadata.description).toContain("価格帯");
+    expect(searchRouteMetadata.description).toContain("検索");
     expect(searchRouteMetadata.alternates?.canonical).toBe(ROUTES.search);
   });
 
@@ -121,11 +165,10 @@ describe("site routes", () => {
 
     expect(screen.getByRole("heading", { level: 1, name: /^VR$/ })).toBeInTheDocument();
     expect(screen.getAllByText(/視聴環境を整えてから選ぶと満足度が上がりやすい/i).length).toBeGreaterThan(0);
-    expect(screen.getByRole("link", { name: /比較メモを見る/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /比較メモを読む/i })).toHaveAttribute(
       "href",
       getReviewRoute("vr-immersive-viewing-review")
     );
-    expect(screen.queryByRole("link", { name: "ジャンル別" })).toBeNull();
     expect(screen.getAllByRole("link", { name: /FANZAのレビューを見る|FANZAで詳細を見る/i }).length).toBeGreaterThan(0);
   });
 
@@ -164,7 +207,7 @@ describe("site routes", () => {
 
     expect(screen.getByRole("heading", { name: "月間ランキング" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "人気女優ランキング" })).toBeInTheDocument();
-    expect(screen.getByText(/人気作で迷ったときの比較メモ/i)).toBeInTheDocument();
+    expect(screen.getByText(/女優・メーカー・レーベルで絞る/i)).toBeInTheDocument();
     expect(screen.queryByText(/準備中/i)).toBeNull();
     expect(container.querySelector(`a[href="${getReviewRoute(reviews[0].slug)}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${getGenreRoute("popular")}"]`)).not.toBeNull();
@@ -186,6 +229,36 @@ describe("site routes", () => {
     expect(container.querySelector(`a[href="${ROUTES.sale}"]`)).not.toBeNull();
   });
 
+  it("renders static maker and series pages with discovery links", async () => {
+    const [makerParams, seriesParams] = await Promise.all([
+      generateMakerStaticParams(),
+      generateSeriesStaticParams(),
+    ]);
+    const makerName = decodeEntitySlug(makerParams[0].slug);
+    const seriesName = decodeEntitySlug(seriesParams[0].slug);
+
+    const makerView = render(
+      await MakerPage({
+        params: Promise.resolve({ slug: makerParams[0].slug }),
+      })
+    );
+
+    expect(screen.getAllByRole("heading", { name: makerName }).length).toBeGreaterThan(0);
+    expect(makerView.container.querySelector(`a[href="${ROUTES.ranking}"]`)).not.toBeNull();
+    expect(makerView.container.querySelector(`a[href="${ROUTES.sale}"]`)).not.toBeNull();
+    makerView.unmount();
+
+    const seriesView = render(
+      await SeriesPage({
+        params: Promise.resolve({ slug: seriesParams[0].slug }),
+      })
+    );
+
+    expect(screen.getAllByRole("heading", { name: seriesName }).length).toBeGreaterThan(0);
+    expect(seriesView.container.querySelector(`a[href="${ROUTES.ranking}"]`)).not.toBeNull();
+    expect(seriesView.container.querySelector(`a[href="${ROUTES.sale}"]`)).not.toBeNull();
+  });
+
   it("renders a real sale page with monetized product cards and review links", async () => {
     const { container } = render(await SalePage());
 
@@ -201,7 +274,7 @@ describe("site routes", () => {
     const { container } = render(await NewReleasesPage());
 
     expect(screen.getByRole("heading", { name: /新着リリース/i })).toBeInTheDocument();
-    expect(screen.getByText(/配信直後の作品をまとめて追える新着導線/i)).toBeInTheDocument();
+    expect(screen.getByText(/配信直後の作品を、反応の早さと件数で追いやすく並べています/i)).toBeInTheDocument();
     expect(container.querySelector(`a[href="${getGenreRoute("new-release")}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${getGenreRoute("vr")}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${ROUTES.reviews}"]`)).not.toBeNull();
@@ -209,14 +282,13 @@ describe("site routes", () => {
   });
 
   it("renders a static search-entry page with curated routes and monetized products", async () => {
-    const { container } = render(await SearchPage());
+    const { container } = render(React.createElement(SearchRoutePage));
 
-    expect(screen.getByRole("heading", { name: /作品検索の入口/i })).toBeInTheDocument();
-    expect(screen.getByText(/静的サイトでも迷わず探せるように/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /気になる作品を見つけよう/i })).toBeInTheDocument();
+    expect(screen.getByText(/キーワード・ジャンル・価格帯で絞り込めます/i)).toBeInTheDocument();
     expect(screen.queryByText(/準備中/i)).toBeNull();
-    expect(container.querySelector(`a[href="${getGenreRoute("popular")}"]`)).not.toBeNull();
-    expect(container.querySelector(`a[href="${getGenreRoute("sale")}"]`)).not.toBeNull();
-    expect(container.querySelector(`a[href="${ROUTES.reviews}"]`)).not.toBeNull();
+    expect(container.querySelector(`input[placeholder*="検索"]`)).not.toBeNull();
+    expect(container.querySelector(`button`)).not.toBeNull();
     expect(screen.getAllByRole("link", { name: /FANZAのレビューを見る|FANZAで詳細を見る/i }).length).toBeGreaterThan(0);
   });
 

@@ -28,6 +28,11 @@ export interface ActressCatalogLoadOptions extends CatalogLoadOptions {
   seedProducts?: Product[];
 }
 
+interface EntityCatalogLoadOptions extends CatalogLoadOptions {
+  excludedIds?: Set<string>;
+  seedProducts?: Product[];
+}
+
 function normalizeLimit(options: CatalogLoadOptions = {}): number {
   const limit = options.limit ?? options.hits ?? 20;
   return limit > 0 ? limit : 0;
@@ -131,6 +136,47 @@ function getSeedActressProducts(products: Product[], name: string, limit: number
       product.actresses?.some((actress) => actress.trim() === name.trim())
     )
   ).slice(0, limit);
+}
+
+function matchesEntityName(value: string | undefined, expectedName: string): boolean {
+  return normalizeEntityName(value) === normalizeEntityName(expectedName);
+}
+
+function getSeedEntityProducts(
+  products: Product[],
+  expectedName: string,
+  getEntityName: (product: Product) => string | undefined,
+  limit: number,
+  excludedIds: Set<string>
+): Product[] {
+  return sortByRank(
+    products.filter(
+      (product) =>
+        !excludedIds.has(product.id) && matchesEntityName(getEntityName(product), expectedName)
+    )
+  ).slice(0, limit);
+}
+
+function getCuratedMakerProducts(
+  makerName: string,
+  limit: number,
+  excludedIds: Set<string>
+): Product[] {
+  return getSeedEntityProducts(sampleProducts, makerName, (product) => product.maker, limit, excludedIds);
+}
+
+function getCuratedSeriesProducts(
+  seriesName: string,
+  limit: number,
+  excludedIds: Set<string>
+): Product[] {
+  return getSeedEntityProducts(
+    sampleProducts,
+    seriesName,
+    (product) => product.series ?? product.label,
+    limit,
+    excludedIds
+  );
 }
 
 function mapApiProducts(items: DmmProduct[] | undefined, preserveRank = false): Product[] {
@@ -275,28 +321,32 @@ export async function loadActressProducts(
 
 export async function loadSeriesProducts(
   seriesName: string,
-  options: { limit?: number; excludedIds?: Set<string> } = {}
+  options: EntityCatalogLoadOptions = {}
 ): Promise<Product[]> {
-  const normalizedName = seriesName.trim();
-  
+  const normalizedName = normalizeEntityName(seriesName);
+
   if (!normalizedName) {
     return [];
   }
 
   const limit = normalizeLimit(options);
-  const excludedIds = options.excludedIds ?? new Set();
-  
-  // Get products from the sample set that match the series
-  const fallback = sampleProducts
-    .filter(
-      (product) =>
-        product.series &&
-        normalizeEntityName(product.series) === normalizeEntityName(normalizedName) &&
-        !excludedIds.has(product.id)
-    )
-    .slice(0, limit);
+  if (limit === 0) {
+    return [];
+  }
 
-  return fallback;
+  const excludedIds = options.excludedIds ?? new Set();
+  const seedProducts =
+    options.seedProducts ?? (await loadRankingProducts({ limit: Math.max(limit * 4, 24) }));
+  const primary = getSeedEntityProducts(
+    seedProducts,
+    normalizedName,
+    (product) => product.series ?? product.label,
+    limit,
+    excludedIds
+  );
+  const fallback = getCuratedSeriesProducts(normalizedName, limit, excludedIds);
+
+  return mergeProducts(primary, fallback, limit, excludedIds);
 }
 
 export function buildMakerCandidates(
@@ -336,14 +386,19 @@ export async function loadEntityDiscoveryCatalog(
   const genreCounts = new Map<string, number>();
 
   sourceProducts.forEach((product) => {
-    if (product.maker) {
-      makerCounts.set(product.maker, (makerCounts.get(product.maker) ?? 0) + 1);
+    const makerName = normalizeEntityName(product.maker);
+    if (makerName) {
+      makerCounts.set(makerName, (makerCounts.get(makerName) ?? 0) + 1);
     }
     product.actresses?.forEach((actress) => {
-      actressCounts.set(actress, (actressCounts.get(actress) ?? 0) + 1);
+      const actressName = normalizeEntityName(actress);
+      if (actressName) {
+        actressCounts.set(actressName, (actressCounts.get(actressName) ?? 0) + 1);
+      }
     });
-    if (product.series) {
-      seriesCounts.set(product.series, (seriesCounts.get(product.series) ?? 0) + 1);
+    const seriesName = normalizeEntityName(product.series ?? product.label);
+    if (seriesName) {
+      seriesCounts.set(seriesName, (seriesCounts.get(seriesName) ?? 0) + 1);
     }
     if (product.genre) {
       genreCounts.set(product.genre, (genreCounts.get(product.genre) ?? 0) + 1);
@@ -377,26 +432,30 @@ export async function loadEntityDiscoveryCatalog(
 
 export async function loadMakerProducts(
   makerName: string,
-  options: { limit?: number; excludedIds?: Set<string> } = {}
+  options: EntityCatalogLoadOptions = {}
 ): Promise<Product[]> {
-  const normalizedName = makerName.trim();
-  
+  const normalizedName = normalizeEntityName(makerName);
+
   if (!normalizedName) {
     return [];
   }
 
   const limit = normalizeLimit(options);
-  const excludedIds = options.excludedIds ?? new Set();
-  
-  // Get products from the sample set that match the maker
-  const fallback = sampleProducts
-    .filter(
-      (product) =>
-        product.maker &&
-        normalizeEntityName(product.maker) === normalizeEntityName(normalizedName) &&
-        !excludedIds.has(product.id)
-    )
-    .slice(0, limit);
+  if (limit === 0) {
+    return [];
+  }
 
-  return fallback;
+  const excludedIds = options.excludedIds ?? new Set();
+  const seedProducts =
+    options.seedProducts ?? (await loadRankingProducts({ limit: Math.max(limit * 4, 24) }));
+  const primary = getSeedEntityProducts(
+    seedProducts,
+    normalizedName,
+    (product) => product.maker,
+    limit,
+    excludedIds
+  );
+  const fallback = getCuratedMakerProducts(normalizedName, limit, excludedIds);
+
+  return mergeProducts(primary, fallback, limit, excludedIds);
 }
