@@ -97,6 +97,11 @@ cp .env.example .env.local
 - Build command: `npm run build`
 - Build output directory: `out`
 
+補足:
+
+- Cloudflare Pages の Git 連携ビルドはクリーンインストール前提です。`package.json` を変更したら、`package-lock.json` も必ず更新して一緒に commit してください。
+- 依存追加後は `npm install` または `npm install --package-lock-only` を実行し、`npm ci && npm run build` が通る状態にしてから push してください。
+
 必要な環境変数:
 
 - `SITE_URL`
