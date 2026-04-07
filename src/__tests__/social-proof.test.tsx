@@ -6,9 +6,9 @@ describe("SocialProof Component", () => {
   it("renders honest feature descriptions", () => {
     render(<SocialProof />);
 
-    expect(screen.getByText("自動更新")).toBeInTheDocument();
-    expect(screen.getByText(/6ジャンル/)).toBeInTheDocument();
-    expect(screen.getByText("FANZA公式データ連携")).toBeInTheDocument();
+    expect(screen.getByText("月間ランキング")).toBeInTheDocument();
+    expect(screen.getByText("セール比較")).toBeInTheDocument();
+    expect(screen.getByText("ジャンル回遊")).toBeInTheDocument();
   });
 
   it("does NOT contain fake viewer counts", () => {

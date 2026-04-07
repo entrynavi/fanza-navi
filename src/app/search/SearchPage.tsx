@@ -50,7 +50,7 @@ export default async function SearchPage() {
 
       <section className="editorial-surface p-6 md:p-8">
         <SectionIntro
-          eyebrow="Search Entry"
+          eyebrow="作品検索"
           title="作品検索の入口"
           description="静的サイトでも迷わず探せるように、人気、新着、セール、レビューへの入口を1ページにまとめています。まずは比較しやすい切り口から進み、そのまま作品詳細へ移動できます。"
         />
@@ -91,7 +91,7 @@ export default async function SearchPage() {
 
       <section id="genre-discovery" className="mt-12">
         <SectionIntro
-          eyebrow="Genre Access"
+          eyebrow="ジャンル一覧"
           title="ジャンル別の入口"
           description="検索フォームがなくても、よく使う切り口へ迷わず移動できるようにしています。"
           action={
@@ -105,7 +105,7 @@ export default async function SearchPage() {
 
       <section className="mt-12">
         <SectionIntro
-          eyebrow="Review Route"
+          eyebrow="レビュー"
           title="レビュー付きの入口"
           description="代表的な切り口をレビュー経由で確かめてから商品ページへ進めます。"
         />
@@ -117,7 +117,7 @@ export default async function SearchPage() {
       </section>
 
       <ProductGridSection
-        eyebrow="Featured Titles"
+        eyebrow="注目作品"
         title="入口ページからそのまま見られる作品"
         description="人気、新作、セールを横断して、まず見ておきたい作品を拾えるようにしています。"
         products={featuredProducts}

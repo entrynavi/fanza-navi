@@ -28,7 +28,7 @@ export function ReviewCardInner({
       <div className={`space-y-4 ${compact ? "p-4" : "p-5"}`}>
         <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--color-text-secondary)]">
           <span className="rounded-full border border-[var(--color-border-strong)] bg-[var(--color-surface-highlight)] px-2 py-1 font-semibold text-[var(--color-accent)]">
-            補助メモ
+            レビュー
           </span>
           <span className="flex items-center gap-1 text-[var(--color-accent)]">
             <FaStar size={11} />
@@ -55,8 +55,8 @@ export function ReviewCardInner({
         <div
           className={`rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] ${compact ? "p-3.5" : "p-4"}`}
         >
-          <p className="text-xs font-semibold tracking-[0.1em] text-[var(--color-text-muted)] uppercase">
-            短く確認
+          <p className="text-xs font-semibold tracking-[0.06em] text-[var(--color-text-muted)]">
+            ひとことまとめ
           </p>
           <p
             className={`mt-2 text-sm text-[var(--color-text-secondary)] ${compact ? "line-clamp-3 leading-6" : "leading-7"}`}
@@ -85,11 +85,11 @@ export function ReviewCardInner({
           </a>
           <PrimaryCta
             href={getReviewRoute(review.slug)}
-            aria-label={`${review.title}の補助メモを見る`}
+            aria-label={`${review.title}のレビューを見る`}
             variant="outline"
             size="sm"
           >
-            補助メモを見る
+            レビューを読む
           </PrimaryCta>
         </div>
       </div>

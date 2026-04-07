@@ -12,7 +12,7 @@ import { buildPageMetadata } from "@/lib/metadata";
 import { ROUTES } from "@/lib/site";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "比較メモ一覧",
+  title: "レビュー一覧",
   description:
     "FANZA作品を比べるときの短い補助レビューを一覧で確認。ジャンル別ページへの導線付きで気になる作品を探せます。",
   path: ROUTES.reviews,
@@ -29,8 +29,8 @@ export default function ReviewsIndexPage() {
 
       <section className="editorial-surface p-6 md:p-8">
         <SectionIntro
-          eyebrow="Editorial Notes"
-          title="比較メモ一覧"
+          eyebrow="レビュー"
+          title="レビュー一覧"
           description="迷ったときだけ開く補助ページです。最終判断は公式ページで確認できます。"
           action={
             <PrimaryCta href={ROUTES.ranking} size="sm" variant="outline">
@@ -42,9 +42,9 @@ export default function ReviewsIndexPage() {
 
       <section className="mt-12">
         <SectionIntro
-          eyebrow="Published Notes"
-          title="公開中の補助メモ"
-          description="作風や選び方を短く整理したいときだけ開けます。"
+          eyebrow="レビュー一覧"
+          title="公開中のレビュー"
+          description="気になる作品の特徴やポイントを短くまとめています。"
         />
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {reviews.map((review) => (

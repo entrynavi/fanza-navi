@@ -47,7 +47,7 @@ export default function ContactPage() {
               <FaEnvelope size={16} />
             </div>
             <p className="mt-4 text-xs font-medium tracking-[0.14em] text-[var(--color-text-muted)] uppercase">
-              Mail Form
+              お問い合わせ
             </p>
             <h2 className="mt-2 text-xl font-semibold text-[var(--color-text-primary)]">
               メーラー起動型
@@ -92,7 +92,7 @@ export default function ContactPage() {
       <section className="mt-12 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="editorial-panel p-6 md:p-7">
           <SectionIntro
-            eyebrow="Mail Form"
+            eyebrow="お問い合わせ"
             title="連絡内容を入力してください"
             description="お名前、連絡先、件名、本文を入れると、内容を反映したメール作成画面が開きます。"
           />
@@ -200,7 +200,7 @@ export default function ContactPage() {
 
         <aside className="editorial-surface p-6 md:p-7">
           <SectionIntro
-            eyebrow="Before You Send"
+            eyebrow="送信前に"
             title="送信前に確認しておきたいこと"
             description="問い合わせ内容によって、当サイトで対応できるものと、公式サポートが必要なものがあります。"
           />

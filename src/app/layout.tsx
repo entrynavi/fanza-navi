@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import JsonLd from "@/components/JsonLd";
 import Analytics from "@/components/Analytics";
 import ErrorTracker from "@/components/ErrorTracker";
@@ -57,6 +58,7 @@ export default function RootLayout({
         </div>
         <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );

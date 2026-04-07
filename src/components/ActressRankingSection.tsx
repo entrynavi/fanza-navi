@@ -25,7 +25,7 @@ export default function ActressRankingSection({
   return (
     <section className={compact ? "editorial-surface p-4 md:p-5" : ""}>
       <SectionIntro
-        eyebrow="Actress Focus"
+        eyebrow="注目女優"
         title="人気女優ランキング"
         description="いま上位に出ている作品から、よく名前を見る出演者を短く整理しています。"
       />
@@ -62,7 +62,7 @@ export default function ActressRankingSection({
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="section-eyebrow">Rank #{index + 1}</p>
+                      <p className="section-eyebrow">第{index + 1}位</p>
                       <h3 className="mt-1 line-clamp-2 text-sm font-semibold leading-tight text-[var(--color-text-primary)] md:text-base">
                         <a href={getActressRoute(entry.name)} className="editorial-link">
                           {entry.name}

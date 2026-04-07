@@ -138,7 +138,7 @@ export default function ProductCard({
               {genre?.name ?? genreMeta[product.genre]?.label ?? "作品"}
             </a>
             {review ? (
-              <span className="chip">補助メモあり</span>
+              <span className="chip">レビューあり</span>
             ) : null}
           </div>
           <h3 className="line-clamp-3 text-lg font-semibold leading-tight text-[var(--color-text-primary)] transition-colors group-hover:text-white">
@@ -172,21 +172,21 @@ export default function ProductCard({
 
         <div className="mt-auto flex items-end justify-between gap-3 border-t border-[var(--color-border)] pt-4">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
-              Price
+            <p className="text-[11px] tracking-[0.08em] text-[var(--color-text-muted)]">
+              価格
             </p>
             <div className="mt-1.5 flex flex-wrap items-center gap-2">
               <p className="text-2xl font-semibold text-[var(--color-text-primary)]">
-                現価格 {formatPriceYen(currentPrice)}
+                {formatPriceYen(currentPrice)}
               </p>
               {originalPrice ? (
                 <>
                   <p className="text-xs text-[var(--color-text-muted)] line-through">
-                    元価格 {formatPriceYen(originalPrice)}
+                    {formatPriceYen(originalPrice)}
                   </p>
                   {discountPercent ? (
                     <span className="rounded-full border border-[rgba(177,120,82,0.3)] bg-[rgba(177,120,82,0.12)] px-2 py-1 text-[11px] font-semibold text-[#e1b49d]">
-                      値引率 {discountPercent}%
+                      {discountPercent}%OFF
                     </span>
                   ) : null}
                 </>
@@ -203,12 +203,12 @@ export default function ProductCard({
                 href={getReviewRoute(review.slug)}
                 className="text-xs font-semibold text-[var(--color-text-secondary)] transition-colors hover:text-white"
               >
-                補助メモを見る
+                レビューを見る
               </a>
             </div>
           ) : review ? (
             <PrimaryCta href={getReviewRoute(review.slug)} size="sm" variant="outline">
-              補助メモを見る
+              レビューを見る
             </PrimaryCta>
           ) : hasAffiliateUrl ? (
             <PrimaryCta href={product.affiliateUrl} external size="sm">

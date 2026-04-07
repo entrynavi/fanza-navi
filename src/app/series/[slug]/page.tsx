@@ -139,7 +139,7 @@ export default async function SeriesPage({
 
       <section className="editorial-surface p-6 md:p-8">
         <SectionIntro
-          eyebrow="Series Focus"
+          eyebrow="シリーズ情報"
           title={normalizedSeriesName}
           description={`${normalizedSeriesName}系の作品を、レビュー件数と価格差が見やすい順でまとめています。`}
           action={
@@ -174,7 +174,7 @@ export default async function SeriesPage({
       </section>
 
       <ProductGridSection
-        eyebrow="Series Titles"
+        eyebrow="シリーズ作品"
         title={`${normalizedSeriesName}シリーズの注目作`}
         description="シリーズの流れが分かりやすい順に見やすくしています。気になった作品はそのまま公式レビューへ進めます。"
         products={products}
@@ -183,7 +183,7 @@ export default async function SeriesPage({
       {relatedGenres.length > 0 ? (
         <section className="mt-10">
           <SectionIntro
-            eyebrow="Related Genres"
+            eyebrow="関連ジャンル"
             title="近いジャンルも一緒に見る"
             description="同じシリーズでもジャンルの傾向を掴むと、次に見る作品を選びやすくなります。"
           />

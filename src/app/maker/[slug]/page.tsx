@@ -138,7 +138,7 @@ export default async function MakerPage({
 
       <section className="editorial-surface p-6 md:p-8">
         <SectionIntro
-          eyebrow="Maker Focus"
+          eyebrow="メーカー情報"
           title={normalizedMakerName}
           description={`${normalizedMakerName}で動いている作品を、レビュー件数と値下げ状況が見やすい形でまとめています。`}
           action={
@@ -173,7 +173,7 @@ export default async function MakerPage({
       </section>
 
       <ProductGridSection
-        eyebrow="Maker Titles"
+        eyebrow="メーカー作品"
         title={`${normalizedMakerName}で見られている作品`}
         description="件数が動いている作品から先に並べています。気になった作品はそのまま公式レビューへ進めます。"
         products={products}
@@ -182,7 +182,7 @@ export default async function MakerPage({
       {relatedGenres.length > 0 ? (
         <section className="mt-10">
           <SectionIntro
-            eyebrow="Related Genres"
+            eyebrow="関連ジャンル"
             title="近いジャンルも一緒に見る"
             description="同じメーカーでも作風の違いが出やすいので、ジャンル側から見ると比較しやすくなります。"
           />

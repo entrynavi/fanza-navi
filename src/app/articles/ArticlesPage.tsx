@@ -64,7 +64,7 @@ const articles = [
     title: "FANZAで損しないセール・クーポン・ポイント活用術まとめ【2026年版】",
     description:
       "セール時期、クーポン、ポイント活用をまとめて見て、無駄買いを減らしたい人向けです。",
-    tag: "Sale Tips",
+    tag: "節約術",
     date: "2026.04.01",
     readTime: "13分",
   },
@@ -83,7 +83,7 @@ export default function ArticlesPage() {
 
       <section className="editorial-surface p-6 md:p-8">
         <SectionIntro
-          eyebrow="Guide Library"
+          eyebrow="ガイド一覧"
           title="記事一覧"
           description="支払い方法、比較、VRの準備、セールの見方など、作品を見る前後で迷いやすい情報をまとめています。レビュー導線やジャンル導線と行き来しやすい構成です。"
           action={
@@ -117,7 +117,7 @@ export default function ArticlesPage() {
 
       <section className="mt-12">
         <SectionIntro
-          eyebrow="Published Guides"
+          eyebrow="公開中ガイド"
           title="公開中のガイド記事"
           description="まずは迷っているポイントに近いテーマから読むと、作品比較の前提を整えやすくなります。"
         />
@@ -163,7 +163,7 @@ export default function ArticlesPage() {
 
       <section className="mt-12">
         <SectionIntro
-          eyebrow="Review Route"
+          eyebrow="レビュー"
           title="記事のあとに見やすいレビュー"
           description="読み物で判断軸を作ったあと、そのまま作品レビューへ進める導線を近くに置いています。"
         />
@@ -176,7 +176,7 @@ export default function ArticlesPage() {
 
       <section className="mt-12">
         <SectionIntro
-          eyebrow="Genre Route"
+          eyebrow="ジャンル"
           title="ジャンルから比較に戻る"
           description="記事で基準を作ったあとに、人気作、セール、VRなどの切り口へ戻りやすくしています。"
         />

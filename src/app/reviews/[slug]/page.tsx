@@ -154,7 +154,7 @@ export default async function ReviewPage({
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(211,175,111,0.14),transparent_28%)]" />
             <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(163,55,88,0.18),transparent_48%)]" />
             <div className="relative max-w-3xl">
-              <p className="eyebrow mb-3">Review / {review.productTitle}</p>
+              <p className="eyebrow mb-3">レビュー / {review.productTitle}</p>
               <h1 className="text-3xl font-semibold leading-tight text-[var(--color-text-primary)] md:text-5xl">
                 {review.title}
               </h1>
@@ -216,7 +216,7 @@ export default async function ReviewPage({
 
           <aside className="space-y-5">
             <div className="editorial-panel p-5">
-              <p className="eyebrow mb-2">Review Route</p>
+              <p className="eyebrow mb-2">レビュー</p>
               <h2 className="text-xl font-semibold text-[var(--color-text-primary)]">
                 次に見たいページ
               </h2>
@@ -260,7 +260,7 @@ export default async function ReviewPage({
       </article>
 
       <ProductGridSection
-        eyebrow="Related Works"
+        eyebrow="関連作品"
         title="流れが近い関連作品"
         description="同じ温度感で選びやすい作品を並べています。レビューを読んだあとに比較対象として見やすい順です。"
         products={sortedRelatedProducts}

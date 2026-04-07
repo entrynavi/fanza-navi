@@ -4,10 +4,6 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaTimes, FaBookOpen } from "react-icons/fa";
 
-/**
- * 離脱時に役立つコンテンツを提案するポップアップ。
- * 偽のセール訴求ではなく、ガイド記事・ジャンル一覧など有用な情報を提示。
- */
 export default function ExitPopup() {
   const [show, setShow] = useState(false);
 
@@ -48,7 +44,7 @@ export default function ExitPopup() {
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.8, y: 40 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="relative bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-3xl p-8 max-w-md w-full text-center"
+            className="relative bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-3xl p-8 max-w-md w-full text-center shadow-[0_40px_120px_rgba(143,29,70,0.2)]"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -59,15 +55,15 @@ export default function ExitPopup() {
               <FaTimes size={14} />
             </button>
 
-            <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto mb-4">
-              <FaBookOpen size={28} className="text-blue-400" />
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)]/15 to-[var(--color-accent)]/10 flex items-center justify-center mx-auto mb-4">
+              <FaBookOpen size={28} className="text-[var(--color-accent)]" />
             </div>
 
-            <h3 className="text-xl font-extrabold mb-2">
-              お探しの作品が見つかりませんでしたか？
+            <h3 className="text-xl font-extrabold text-[var(--color-text-primary)] mb-2">
+              お探しの作品は見つかりましたか？
             </h3>
-            <p className="text-[var(--color-text-secondary)] text-sm mb-4 leading-relaxed">
-              初めての方には<span className="text-white font-bold">完全ガイド</span>がおすすめです。
+            <p className="text-[var(--color-text-secondary)] text-sm mb-5 leading-relaxed">
+              初めての方には<span className="text-[var(--color-accent)] font-bold">完全ガイド</span>がおすすめです。
               登録方法からお得な使い方まで解説しています。
             </p>
 
@@ -75,14 +71,14 @@ export default function ExitPopup() {
               <a
                 href="/guide"
                 onClick={() => setShow(false)}
-                className="block w-full py-3 rounded-xl font-bold text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:opacity-90 transition-opacity"
+                className="block w-full py-3 rounded-xl font-bold text-white bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent-strong)] hover:opacity-90 transition-opacity shadow-lg shadow-[rgba(143,29,70,0.2)]"
               >
                 📚 初心者ガイドを読む
               </a>
               <a
                 href="/search"
                 onClick={() => setShow(false)}
-                className="block w-full py-3 rounded-xl font-bold text-white bg-white/5 border border-[var(--color-border)] hover:bg-white/10 transition-colors"
+                className="block w-full py-3 rounded-xl font-bold text-[var(--color-text-primary)] bg-white/5 border border-[var(--color-border)] hover:bg-white/10 transition-colors"
               >
                 🔍 作品を検索する
               </a>

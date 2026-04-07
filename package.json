@@ -10,7 +10,8 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test"
   },
   "keywords": [],
   "author": "",
@@ -33,10 +34,12 @@
     "typescript": "^6.0.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@vitejs/plugin-react": "^6.0.1",
     "jsdom": "^29.0.1",
+    "serve": "^14.2.6",
     "vitest": "^4.1.2"
   }
 }

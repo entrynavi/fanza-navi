@@ -29,7 +29,7 @@ export default async function SalePage() {
 
       <section className="editorial-surface p-6 md:p-8">
         <SectionIntro
-          eyebrow="Sale Discovery"
+          eyebrow="セール情報"
           title="セール作品"
           description="今値下げされている作品を、価格差とレビュー件数で見比べます。"
           action={
@@ -48,12 +48,12 @@ export default async function SalePage() {
 
       <section className="mt-10">
         <SectionIntro
-          eyebrow="Comparison Notes"
-          title="比較メモは補助"
+          eyebrow="作品レビュー"
+          title="作品レビュー"
           description="気になる作品の見方だけ短く確認したいときに使います。"
           action={
             <PrimaryCta href={getReviewRoute("sale-selection-buying-guide")} size="sm" variant="outline">
-              比較メモへ
+              レビューへ
             </PrimaryCta>
           }
         />
@@ -65,7 +65,7 @@ export default async function SalePage() {
       </section>
 
       <ProductGridSection
-        eyebrow="Sale Picks"
+        eyebrow="セール作品"
         title="割引中の注目作品"
         description="割引率だけでなくレビューと収録内容も見ながら、候補を絞れます。"
         products={products}
@@ -73,7 +73,7 @@ export default async function SalePage() {
 
       <section className="mt-10">
         <SectionIntro
-          eyebrow="Related Genres"
+          eyebrow="関連ジャンル"
           title="関連ジャンルへ広げる"
           description="近い条件の作品を、別の切り口でも確認できます。"
         />

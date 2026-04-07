@@ -123,7 +123,7 @@ export default async function GenrePage({
       </section>
 
       <ProductGridSection
-        eyebrow="Genre Picks"
+        eyebrow="ジャンル作品"
         title={`${genre.name}のおすすめ作品`}
         description="このジャンルでよく見られている作品を、比較しやすい密度で並べています。"
         products={products}
@@ -131,7 +131,7 @@ export default async function GenrePage({
 
       <section className="mt-12">
         <SectionIntro
-          eyebrow="Neighbor Genres"
+          eyebrow="近いジャンル"
           title="近いジャンルにも広げる"
           description="作風が近いページへ横移動すると、比較の視野が広がります。"
         />

@@ -89,7 +89,7 @@ export default async function ActressPage({
 
       <section className="editorial-surface p-6 md:p-8">
         <SectionIntro
-          eyebrow="Actress Focus"
+          eyebrow="注目女優"
           title={actressName}
           description={`${actressName}が気になるときに、そのまま代表作と近いジャンルへ進める入口です。ランキングでよく見られている作品を中心に並べています。`}
           action={
@@ -126,7 +126,7 @@ export default async function ActressPage({
       </section>
 
       <ProductGridSection
-        eyebrow="Featured Titles"
+        eyebrow="注目作品"
         title={`${actressName}で見られている作品`}
         description="まずはレビュー件数が動いている作品から見て、そのあと近いジャンルへ広げると比較しやすいです。"
         products={products}
@@ -135,7 +135,7 @@ export default async function ActressPage({
       {relatedGenres.length > 0 ? (
         <section className="mt-10">
           <SectionIntro
-            eyebrow="Related Genres"
+            eyebrow="関連ジャンル"
             title="近いジャンルへ広げる"
             description="出演作の傾向が近いジャンルもそのまま比較できます。"
           />

@@ -29,7 +29,7 @@ export default async function NewReleasesPage() {
 
       <section className="editorial-surface p-6 md:p-8">
         <SectionIntro
-          eyebrow="New Arrival Guide"
+          eyebrow="新作情報"
           title="新着リリース"
           description="配信直後の作品を、反応の早さと件数で追いやすく並べています。"
           action={
@@ -48,8 +48,8 @@ export default async function NewReleasesPage() {
 
       <section className="mt-12">
         <SectionIntro
-          eyebrow="Related Reviews"
-          title="比較メモは補助"
+          eyebrow="関連レビュー"
+          title="作品レビュー"
           description="新作で迷ったときだけ、短い確認用として使えます。"
         />
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -60,7 +60,7 @@ export default async function NewReleasesPage() {
       </section>
 
       <ProductGridSection
-        eyebrow="New Titles"
+        eyebrow="新作一覧"
         title="新着で見られている作品"
         description="配信直後の作品を、そのまま比較しやすい密度で並べています。"
         products={products}
@@ -68,7 +68,7 @@ export default async function NewReleasesPage() {
 
       <section className="mt-12">
         <SectionIntro
-          eyebrow="Neighbor Genres"
+          eyebrow="近いジャンル"
           title="新着から広げる導線"
           description="近いジャンルへ広げて比べやすくしています。"
         />

@@ -91,9 +91,9 @@ export default function HeroSection({
       <div className="content-shell relative">
         <div className="grid gap-7 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
           <div className="order-2 lg:order-1">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border-strong)] bg-[var(--color-surface-highlight)] px-4 py-2 text-xs font-semibold tracking-[0.14em] text-[var(--color-accent)] uppercase">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border-strong)] bg-[var(--color-surface-highlight)] px-4 py-2 text-xs font-semibold tracking-[0.08em] text-[var(--color-accent)]">
               <FaShieldAlt size={11} />
-              Start Here
+              まずはここから
             </div>
 
             <h1 className="mt-4 text-[2.55rem] font-semibold leading-[1.03] tracking-[-0.04em] text-[var(--color-text-primary)] md:text-[3.35rem] xl:text-[3.7rem]">
@@ -160,8 +160,8 @@ export default function HeroSection({
                 </div>
 
                 <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
-                    Weekly Focus
+                  <p className="text-xs font-semibold tracking-[0.08em] text-white/70">
+                    今週の注目作品
                   </p>
                   <h2 className="mt-2 max-w-3xl text-2xl font-semibold leading-tight text-white md:text-[2rem]">
                     {leadProduct?.title ?? "まず見ておきたい人気作品"}
@@ -173,7 +173,7 @@ export default function HeroSection({
                   <div className="mt-5 flex flex-wrap items-end justify-between gap-4">
                     <div className="flex flex-wrap items-end gap-3">
                       <div>
-                        <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">Price</p>
+                        <p className="text-[11px] tracking-[0.08em] text-white/55">価格</p>
                         <p className="mt-1 text-2xl font-semibold text-white">
                           {leadProduct ? formatPrice(leadProduct) : "¥1,980"}
                         </p>

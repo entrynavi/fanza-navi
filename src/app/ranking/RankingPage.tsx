@@ -35,7 +35,7 @@ export default async function RankingPage() {
 
       <section>
         <SectionIntro
-          eyebrow="Monthly Discovery"
+          eyebrow="月間ランキング"
           title="月間ランキング"
           description="今月よく見られている作品を、評価、件数、価格差ごとに見比べやすくまとめています。"
           action={
@@ -47,7 +47,7 @@ export default async function RankingPage() {
         <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-[var(--color-text-secondary)]">
           <span className="chip">上位3作で温度感を掴む</span>
           <span className="chip">レビュー件数で迷いを減らす</span>
-          <span className="chip">ジャンルと比較メモへ横移動</span>
+          <span className="chip">ジャンルとレビューも見る</span>
         </div>
       </section>
 
@@ -79,12 +79,12 @@ export default async function RankingPage() {
 
       <section className="mt-6">
         <SectionIntro
-          eyebrow="Comparison Notes"
-          title="比較メモは補助"
-          description="人気作で迷ったときの比較メモを短く置いています。"
+          eyebrow="レビュー"
+          title="作品レビュー"
+          description="人気作品のレビューを読んで購入の参考にできます。"
           action={
             <PrimaryCta href={getReviewRoute(reviews[0].slug)} size="sm" variant="outline">
-              比較メモへ
+              レビューへ
             </PrimaryCta>
           }
         />
@@ -97,7 +97,7 @@ export default async function RankingPage() {
 
       <section className="mt-7">
         <SectionIntro
-          eyebrow="Related Genres"
+          eyebrow="関連ジャンル"
           title="ランキング周辺の探し方"
           description="月間上位から近いジャンルへ広げて、取りこぼしを減らせます。"
         />

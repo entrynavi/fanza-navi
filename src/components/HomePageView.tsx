@@ -3,7 +3,6 @@
 import { FaArrowUp } from "react-icons/fa";
 import ActressRankingSection from "@/components/ActressRankingSection";
 import EntityDiscoveryBand from "@/components/EntityDiscoveryBand";
-import Footer from "@/components/Footer";
 import GenreRail from "@/components/GenreRail";
 import HeroSection from "@/components/HeroSection";
 import PrimaryCta from "@/components/PrimaryCta";
@@ -25,25 +24,25 @@ const supportingGuides = [
     href: ROUTES.guide,
     title: "FANZA完全ガイド",
     description: "最初の登録から購入までの流れを短時間で確認できます。",
-    eyebrow: "Guide",
+    eyebrow: "ガイド",
   },
   {
     href: ROUTES.compare,
     title: "VR・通常作品の比較",
     description: "視聴スタイルごとの違いを整理して無駄買いを減らします。",
-    eyebrow: "Compare",
+    eyebrow: "比較",
   },
   {
     href: ROUTES.articleFanzaPayment,
     title: "支払い方法ガイド",
     description: "クレカ、PayPay、ポイントの使い分けをまとめています。",
-    eyebrow: "Payment",
+    eyebrow: "決済",
   },
   {
     href: ROUTES.articleSaveMoney,
     title: "セール攻略法",
     description: "クーポンとポイント活用で購入単価を抑える記事です。",
-    eyebrow: "Sale Tips",
+    eyebrow: "節約術",
   },
 ];
 
@@ -81,7 +80,7 @@ export default function HomePageView({
 
       <section className="content-shell px-4 pb-7">
         <SectionIntro
-          eyebrow="Monthly Ranking"
+          eyebrow="人気ランキング"
           title="今月よく見られている作品"
           description="上位から見て、気になる作品だけ詳細やレビューへ進めます。"
           action={
@@ -115,7 +114,7 @@ export default function HomePageView({
 
       <section className="content-shell px-4 pb-8">
         <ProductGridSection
-          eyebrow="Sale Highlights"
+          eyebrow="セール情報"
           title="値下げ中の作品"
           description="価格差とレビュー件数を見ながら、いま買いやすい作品を拾えます。"
           action={
@@ -130,12 +129,12 @@ export default function HomePageView({
 
       <section id="genre-discovery" className="content-shell px-4 pb-14">
         <SectionIntro
-          eyebrow="Genre Navigation"
+          eyebrow="ジャンル一覧"
           title="ジャンルから探す"
           description="人気、セール、VRなど、見たい切り口からそのまま進めます。"
           action={
             <PrimaryCta href={ROUTES.search} size="sm" variant="outline">
-              検索入口へ
+              作品を検索
             </PrimaryCta>
           }
         />
@@ -144,12 +143,12 @@ export default function HomePageView({
 
       <section className="content-shell px-4 pb-10">
         <SectionIntro
-          eyebrow="Editorial Notes"
-          title="比較メモは補助"
-          description="買う前に少しだけ基準を整理したいときの短い入口です。"
+          eyebrow="レビュー"
+          title="作品レビュー"
+          description="購入前に読んでおきたいポイントを短くまとめています。"
           action={
             <PrimaryCta href={ROUTES.reviews} size="sm" variant="outline">
-              比較メモ一覧へ
+              レビュー一覧へ
             </PrimaryCta>
           }
         />
@@ -167,8 +166,6 @@ export default function HomePageView({
           items={supportingGuides}
         />
       </section>
-
-      <Footer />
 
       <StickyCTA />
 

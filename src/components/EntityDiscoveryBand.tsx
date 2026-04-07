@@ -126,7 +126,7 @@ export default function EntityDiscoveryBand({
     <section className={compact ? "editorial-surface p-4 md:p-5" : "editorial-surface p-5 md:p-6"}>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="section-eyebrow">Discovery</p>
+          <p className="section-eyebrow">作品を発見</p>
           <h2 className="mt-1.5 text-[1.35rem] font-semibold leading-tight text-[var(--color-text-primary)] md:text-[1.55rem]">
             {title}
           </h2>

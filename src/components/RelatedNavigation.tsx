@@ -21,7 +21,7 @@ export default function RelatedNavigation({
   return (
     <section className="mt-12 editorial-surface p-6 md:p-7">
       <div className="mb-5 max-w-2xl">
-        <p className="section-eyebrow">Related Routes</p>
+        <p className="section-eyebrow">関連コンテンツ</p>
         <h2 className="section-title text-[1.6rem]">{title}</h2>
         {description ? <p className="section-description">{description}</p> : null}
       </div>
