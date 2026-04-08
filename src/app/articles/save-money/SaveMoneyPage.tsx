@@ -22,6 +22,7 @@ import {
   FaGift,
 } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
+import { ROUTES } from "@/lib/site";
 
 /* ───────────────────────── data ───────────────────────── */
 
@@ -880,7 +881,7 @@ export default function SaveMoneyPage() {
           <h2 className="text-xl font-bold mb-4 text-center">📚 関連記事</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <a
-              href="/articles/cost-saving"
+              href={ROUTES.articleCostSaving}
               className="glass-card p-5 hover:border-[var(--color-primary)]/50 transition-colors block"
             >
               <h3 className="font-bold text-sm mb-1">
@@ -891,7 +892,7 @@ export default function SaveMoneyPage() {
               </p>
             </a>
             <a
-              href="/articles/sale-calendar"
+              href={ROUTES.articleSaleCalendar}
               className="glass-card p-5 hover:border-[var(--color-primary)]/50 transition-colors block"
             >
               <h3 className="font-bold text-sm mb-1">

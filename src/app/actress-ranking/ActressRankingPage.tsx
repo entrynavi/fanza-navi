@@ -38,7 +38,7 @@ export default function ActressRankingPage({
 
       <section className="editorial-surface p-6 md:p-8 mb-8">
         <SectionIntro
-          eyebrow="Actress Ranking"
+          eyebrow="女優ランキング"
           title="人気女優ランキング"
           description="ランキング上位作品への出演回数・平均評価・レビュー数をもとに集計した女優ランキングです。"
           action={

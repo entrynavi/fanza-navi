@@ -1,34 +1,39 @@
 "use client";
 
 import { FaChartLine, FaTags, FaCompass, FaBookOpen, FaArrowRight, FaGift } from "react-icons/fa";
-import { ROUTES, getGenreRoute } from "@/lib/site";
+import { ROUTES } from "@/lib/site";
 
 const navSections = [
   {
+    title: "独自ツール",
+    links: [
+      { href: ROUTES.discover, label: "シチュエーション検索", icon: <FaCompass size={10} /> },
+      { href: ROUTES.customRanking, label: "独自ランキング", icon: <FaChartLine size={10} /> },
+      { href: ROUTES.simulator, label: "コスト比較", icon: null },
+      { href: ROUTES.communityRanking, label: "みんなの推し", icon: null },
+      { href: ROUTES.weeklySale, label: "週間セールまとめ", icon: <FaTags size={10} /> },
+    ],
+  },
+  {
     title: "探す",
     links: [
-      { href: ROUTES.ranking, label: "ランキング", icon: <FaChartLine size={10} /> },
-      { href: ROUTES.sale, label: "セール", icon: <FaTags size={10} /> },
-      { href: getGenreRoute("popular"), label: "ジャンル別", icon: <FaCompass size={10} /> },
+      { href: ROUTES.ranking, label: "人気ランキング", icon: null },
+      { href: ROUTES.sale, label: "セール作品", icon: null },
+      { href: ROUTES.actressRanking, label: "女優ランキング", icon: null },
+      { href: ROUTES.makerRanking, label: "メーカー比較", icon: null },
       { href: ROUTES.newReleases, label: "新作", icon: null },
     ],
   },
   {
     title: "読む",
     links: [
-      { href: ROUTES.articles, label: "記事一覧", icon: <FaBookOpen size={10} /> },
-      { href: ROUTES.guide, label: "初心者ガイド", icon: null },
-      { href: ROUTES.compare, label: "VR比較", icon: null },
-      { href: ROUTES.articleSaveMoney, label: "セール攻略", icon: null },
-    ],
-  },
-  {
-    title: "サイト情報",
-    links: [
+      { href: ROUTES.guide, label: "初心者ガイド", icon: <FaBookOpen size={10} /> },
+      { href: ROUTES.articles, label: "記事一覧", icon: null },
+      { href: ROUTES.compare, label: "サービス比較", icon: null },
+      { href: ROUTES.articleSaveMoney, label: "節約術", icon: null },
       { href: ROUTES.about, label: "運営者情報", icon: null },
       { href: ROUTES.privacy, label: "プライバシーポリシー", icon: null },
       { href: ROUTES.terms, label: "利用規約", icon: null },
-      { href: ROUTES.contact, label: "お問い合わせ", icon: null },
     ],
   },
 ];
@@ -63,9 +68,19 @@ export default function Footer() {
         <div className="grid gap-10 md:grid-cols-[1.2fr_1fr_1fr_1fr] md:gap-8">
           <div>
             <a href={ROUTES.home} className="inline-flex items-center gap-2.5 group">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-strong)] text-white">
-                <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
-                  <path d="M5 20V4h3.5l7 9.5V4H19v16h-3.5L8.5 10.5V20H5z" fill="currentColor" />
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[rgba(14,10,18,0.9)] border border-[var(--color-border-strong)]">
+                <svg viewBox="0 0 64 64" fill="none" className="h-6 w-6">
+                  <defs>
+                    <linearGradient id="ftr-accent" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#e34a6e"/>
+                      <stop offset="1" stopColor="#d3af6f"/>
+                    </linearGradient>
+                  </defs>
+                  <circle cx="26" cy="26" r="10" fill="none" stroke="url(#ftr-accent)" strokeWidth="3" strokeLinecap="round"/>
+                  <line x1="33" y1="33" x2="42" y2="42" stroke="url(#ftr-accent)" strokeWidth="3" strokeLinecap="round"/>
+                  <rect x="21" y="28" width="3" height="5" rx="1" fill="#e34a6e" opacity="0.9"/>
+                  <rect x="25" y="24" width="3" height="9" rx="1" fill="#d3af6f" opacity="0.9"/>
+                  <rect x="29" y="20" width="3" height="13" rx="1" fill="#e34a6e" opacity="0.9"/>
                 </svg>
               </span>
               <span className="text-lg font-bold tracking-tight">
@@ -73,8 +88,9 @@ export default function Footer() {
               </span>
             </a>
             <p className="mt-4 max-w-xs text-sm leading-7 text-[var(--color-text-secondary)]">
-              FANZAの人気作品・セール情報・おすすめ作品を<br className="hidden sm:block" />
-              まとめた比較ガイドサイトです。
+              公式FANZAにない切り口で作品を探せる<br className="hidden sm:block" />
+              無料ツール集。シチュ検索・独自ランキング・<br className="hidden sm:block" />
+              セール解析で、もっとお得に楽しめます。
             </p>
           </div>
 

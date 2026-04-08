@@ -1,4 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="64" fill="#0a0a0f"/>
-  <text x="256" y="320" font-size="280" font-weight="bold" fill="#8f1d46" text-anchor="middle" font-family="sans-serif">F</text>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1a0a12"/>
+      <stop offset="1" stop-color="#0d0d14"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e34a6e"/>
+      <stop offset="1" stop-color="#d3af6f"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <rect x="16" y="16" width="480" height="480" rx="80" fill="none" stroke="url(#accent)" stroke-width="6" stroke-opacity="0.3"/>
+  <!-- Magnifying glass + chart = search & discover -->
+  <circle cx="210" cy="210" r="80" fill="none" stroke="url(#accent)" stroke-width="24" stroke-linecap="round"/>
+  <line x1="268" y1="268" x2="338" y2="338" stroke="url(#accent)" stroke-width="24" stroke-linecap="round"/>
+  <!-- Rising bars in lens -->
+  <rect x="170" y="230" width="22" height="38" rx="6" fill="#e34a6e" opacity="0.9"/>
+  <rect x="200" y="198" width="22" height="70" rx="6" fill="#d3af6f" opacity="0.9"/>
+  <rect x="230" y="166" width="22" height="102" rx="6" fill="#e34a6e" opacity="0.9"/>
+  <!-- "N" for Navi -->
+  <text x="375" y="440" font-family="'Helvetica Neue',Arial,sans-serif" font-size="130" font-weight="800" fill="url(#accent)">N</text>
 </svg>

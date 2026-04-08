@@ -21,6 +21,7 @@ import {
 } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
 import PrimaryCta from "@/components/PrimaryCta";
+import { ROUTES } from "@/lib/site";
 
 /* ───────────────────────── data ───────────────────────── */
 
@@ -368,7 +369,7 @@ export default function SaleCalendarPage() {
             <p className="text-sm text-[var(--color-text-secondary)] mb-4">
               最新のセール対象作品を今すぐチェックしませんか？
             </p>
-            <PrimaryCta href="/sale" size="lg">
+            <PrimaryCta href={ROUTES.sale} size="lg">
               最新のセール情報をチェック
             </PrimaryCta>
           </motion.div>
@@ -527,10 +528,10 @@ export default function SaleCalendarPage() {
               まだFANZA未登録の方は初回クーポンももらえるので、まずは登録から始めましょう。
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <PrimaryCta href="/sale" size="lg">
+              <PrimaryCta href={ROUTES.sale} size="lg">
                 今すぐセール会場へ
               </PrimaryCta>
-              <PrimaryCta href="/guide" size="lg" variant="outline">
+              <PrimaryCta href={ROUTES.guide} size="lg" variant="outline">
                 FANZA登録ガイドを見る
               </PrimaryCta>
             </div>
@@ -542,7 +543,7 @@ export default function SaleCalendarPage() {
           <h2 className="text-xl font-bold mb-4 text-center">📚 関連記事</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <a
-              href="/articles/cost-saving"
+              href={ROUTES.articleCostSaving}
               className="glass-card p-5 hover:border-[var(--color-primary)]/50 transition-colors block"
             >
               <h3 className="font-bold text-sm mb-1">
@@ -553,7 +554,7 @@ export default function SaleCalendarPage() {
               </p>
             </a>
             <a
-              href="/guide"
+              href={ROUTES.guide}
               className="glass-card p-5 hover:border-[var(--color-primary)]/50 transition-colors block"
             >
               <h3 className="font-bold text-sm mb-1">📖 FANZA完全ガイド</h3>

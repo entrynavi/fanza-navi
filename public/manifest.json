@@ -1,14 +1,13 @@
 {
   "name": "FANZAオトナビ",
   "short_name": "オトナビ",
-  "description": "FANZAのセール・ランキング・お得情報を毎日更新",
+  "description": "セール解析・シチュ検索・独自ランキング — 公式FANZAにない探し方",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0f",
   "theme_color": "#8f1d46",
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
   ]
 }

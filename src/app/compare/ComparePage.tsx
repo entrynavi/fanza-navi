@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { FaCheck, FaTimes, FaArrowRight, FaChevronDown } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
 import PrimaryCta from "@/components/PrimaryCta";
+import { ROUTES } from "@/lib/site";
 
 const vrComparison = [
   { feature: "没入感", vr: "◎ 圧倒的", normal: "△ 画面視聴" },
@@ -218,7 +219,7 @@ export default function ComparePage() {
         </div>
         <div className="text-center mt-6">
           <a
-            href="/ranking"
+            href={ROUTES.ranking}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-purple-500 to-blue-500 hover:opacity-90 transition-opacity"
           >
             VR作品ランキングを見る <FaArrowRight size={12} />
@@ -407,7 +408,7 @@ export default function ComparePage() {
         transition={{ delay: 0.25 }}
         className="text-center mb-8"
       >
-        <PrimaryCta href="/guide" size="lg">
+        <PrimaryCta href={ROUTES.guide} size="lg">
           FANZAを始めてみる
         </PrimaryCta>
       </motion.section>

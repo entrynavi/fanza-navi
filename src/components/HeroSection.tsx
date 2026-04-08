@@ -97,36 +97,36 @@ export default function HeroSection({
             </div>
 
             <h1 className="mt-4 text-[2.55rem] font-semibold leading-[1.03] tracking-[-0.04em] text-[var(--color-text-primary)] md:text-[3.35rem] xl:text-[3.7rem]">
-              <span className="block">人気作から探す。</span>
-              <span className="mt-1 block">安い日はセールへ。</span>
+              <span className="block">公式にない探し方で</span>
+              <span className="mt-1 block">もっとお得に。</span>
             </h1>
 
             <p className="mt-3 text-base font-semibold text-[var(--color-accent)] md:text-lg">
-              新作チェックも、ここからそのまま進めます。
+              シチュ検索・独自ランキング・セール解析、ここだけのツール。
             </p>
 
             <p className="mt-4 max-w-[34rem] text-[15px] leading-7 text-[var(--color-text-secondary)] md:text-[17px]">
-              人気1位、値下げ中、新着を最初に並べています。どこから入るかだけ決めれば、
-              そのまま一覧や作品詳細へ進めます。
+              気分で逆引き検索、コスパ最強ランキング、週間セール自動まとめ。
+              公式FANZAにはない切り口で、あなたの「次に見たい作品」が見つかります。
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <PrimaryCta href={ROUTES.ranking} size="lg">
-                ランキングから見る
+              <PrimaryCta href={ROUTES.discover} size="lg">
+                シチュ検索を使う
               </PrimaryCta>
-              <PrimaryCta href={ROUTES.sale} size="lg" variant="outline">
-                セールから見る
+              <PrimaryCta href={ROUTES.customRanking} size="lg" variant="outline">
+                独自ランキング
               </PrimaryCta>
-              <PrimaryCta href={ROUTES.newReleases} size="lg" variant="ghost">
-                新作を見る
+              <PrimaryCta href={ROUTES.weeklySale} size="lg" variant="ghost">
+                週間セール
               </PrimaryCta>
             </div>
 
             <div className="mt-5 flex flex-wrap gap-6 text-sm">
               {[
-                { num: "56+", label: "厳選作品" },
-                { num: "10+", label: "ジャンル対応" },
-                { num: "毎日", label: "情報更新" },
+                { num: "7+", label: "独自ツール" },
+                { num: "4種", label: "独自ランキング" },
+                { num: "毎日", label: "セール自動解析" },
               ].map((s) => (
                 <div key={s.label}>
                   <span className="font-bold text-[var(--color-accent)]">{s.num}</span>{" "}
@@ -227,17 +227,17 @@ export default function HeroSection({
 
             <div className="mt-4 flex flex-wrap gap-2">
               <a
-                href={ROUTES.search}
+                href={ROUTES.simulator}
                 className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/[0.04] px-4 py-2 text-sm text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-border-strong)] hover:text-white"
               >
                 <FaCompass size={12} />
-                ジャンルから絞る
+                コスト比較シミュレーター
               </a>
               <a
-                href={ROUTES.articles}
+                href={ROUTES.guide}
                 className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/[0.04] px-4 py-2 text-sm text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-border-strong)] hover:text-white"
               >
-                ガイド記事を読む
+                初めての方はこちら
               </a>
             </div>
           </div>

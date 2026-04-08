@@ -15,33 +15,29 @@ describe("HomePage", () => {
       heading.textContent?.replace(/\s+/g, " ").trim()
     );
 
+    expect(headings).toContain("公式FANZAにない、ここだけのツール");
     expect(headings).toContain("今月よく見られている作品");
     expect(headings).toContain("値下げ中の作品");
     expect(headings).toContain("ジャンルから探す");
-    expect(headings).toContain("支払い方法や比較記事も見ておけます");
 
-    expect(screen.getByText(/人気作から探す/)).toBeInTheDocument();
+    expect(screen.getByText(/公式にない探し方で/)).toBeInTheDocument();
     expect(screen.getByText(/人気女優ランキング/)).toBeInTheDocument();
-    expect(screen.getAllByText(/人気1位/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/値下げ中/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/新着/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/【FANZA限定】人気シリーズ最新作 Vol\.28/).length).toBeGreaterThan(0);
     expect(
-      screen.getByRole("link", { name: /ランキングから見る/ })
-    ).toHaveAttribute("href", ROUTES.ranking);
-    expect(screen.getByRole("link", { name: /セールから見る/ })).toHaveAttribute(
-      "href",
-      ROUTES.sale
-    );
-    expect(screen.getByRole("link", { name: /新作を見る/ })).toHaveAttribute(
-      "href",
-      ROUTES.newReleases
-    );
+      screen.getByRole("link", { name: /シチュ検索を使う/ })
+    ).toHaveAttribute("href", ROUTES.discover);
+    expect(
+      container.querySelector(`a[href="${ROUTES.customRanking}"]`)
+    ).not.toBeNull();
+    expect(
+      container.querySelector(`a[href="${ROUTES.weeklySale}"]`)
+    ).not.toBeNull();
     expect(screen.getByText(/18歳以上向け/)).toBeInTheDocument();
     expect(screen.getByText(/最新の価格・配信状況はFANZA公式サイトで確認/)).toBeInTheDocument();
     expect(container.querySelector(`a[href="${ROUTES.sale}"]`)).not.toBeNull();
     expect(container.querySelector(`a[href="${getGenreRoute("popular")}"]`)).not.toBeNull();
-    expect(container.querySelector(`a[href="${ROUTES.articles}"]`)).not.toBeNull();
     expect(
       screen.getAllByRole("link", { name: /FANZAで見る|FANZAで詳細を見る|FANZAで見る/ }).length
     ).toBeGreaterThan(0);

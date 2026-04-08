@@ -13,18 +13,18 @@ import InstallBanner from "@/components/InstallBanner";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "FANZAオトナビ — セール速報＆おすすめ作品ガイド",
+    default: "FANZAオトナビ — セール解析・シチュ検索・独自ランキング",
     template: "%s | FANZAオトナビ",
   },
   description:
-    "FANZAのセール速報・人気ランキング・新作情報を毎日更新。支払い方法からVRの始め方まで、初心者でも迷わないガイドも公開中。",
-  keywords: ["FANZA", "DMM", "セール", "ランキング", "おすすめ", "VR", "支払い方法", "お得", "新作"],
+    "公式FANZAにない切り口で作品を探せる。シチュエーション検索・独自ランキング・週間セール解析・コスト比較シミュレーターなど、もっとお得に楽しむための無料ツール集。",
+  keywords: ["FANZA", "DMM", "セール", "ランキング", "シチュエーション検索", "コスト比較", "VR", "独自ランキング", "週間セール"],
   icons: {
     icon: "/favicon.svg",
   },
   openGraph: {
-    title: "FANZAオトナビ — セール速報＆おすすめ作品ガイド",
-    description: "ランキング・セール・新作情報を厳選してお届け。初心者ガイドから支払い方法まで完全解説。",
+    title: "FANZAオトナビ — セール解析・シチュ検索・独自ランキング",
+    description: "公式FANZAにない切り口で作品を探せる無料ツール集。シチュエーション検索・独自ランキング・週間セール解析・コスト比較。",
     type: "website",
     siteName: "FANZAオトナビ",
     images: [
@@ -32,14 +32,14 @@ export const metadata: Metadata = {
         url: `${SITE_URL}/images/ogp.svg`,
         width: 1200,
         height: 630,
-        alt: "FANZAオトナビ — セール速報＆おすすめ作品ガイド",
+        alt: "FANZAオトナビ — セール解析・シチュ検索・独自ランキング",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "FANZAオトナビ — セール速報＆おすすめ作品ガイド",
-    description: "ランキング・セール・新作情報を厳選してお届け。初心者ガイドから支払い方法まで完全解説。",
+    title: "FANZAオトナビ — セール解析・シチュ検索・独自ランキング",
+    description: "公式FANZAにない切り口で作品を探せる無料ツール集。シチュエーション検索・独自ランキング・週間セール解析・コスト比較。",
     images: [`${SITE_URL}/images/ogp.svg`],
   },
   manifest: "/manifest.json",

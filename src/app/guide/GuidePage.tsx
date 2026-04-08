@@ -12,6 +12,7 @@ import {
   FaGift,
 } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
+import { ROUTES } from "@/lib/site";
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                               */
@@ -418,7 +419,7 @@ export default function GuidePage() {
           </div>
           <div className="text-center">
             <a
-              href="/articles/vr-setup"
+              href={ROUTES.articleVrSetup}
               className="inline-flex items-center gap-2 text-sm text-[var(--color-primary)] hover:underline font-semibold"
             >
               <FaVrCardboard size={14} />
@@ -463,7 +464,7 @@ export default function GuidePage() {
         <h2 className="text-xl font-bold mb-4 text-center">📚 関連記事</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <a
-            href="/articles/cost-saving"
+            href={ROUTES.articleCostSaving}
             className="glass-card p-5 hover:border-[var(--color-primary)]/50 transition-colors block"
           >
             <h3 className="font-bold text-sm mb-1">
@@ -474,7 +475,7 @@ export default function GuidePage() {
             </p>
           </a>
           <a
-            href="/articles/sale-calendar"
+            href={ROUTES.articleSaleCalendar}
             className="glass-card p-5 hover:border-[var(--color-primary)]/50 transition-colors block"
           >
             <h3 className="font-bold text-sm mb-1">
@@ -503,7 +504,7 @@ export default function GuidePage() {
         <CtaButton label="今すぐ無料登録する" />
         <p className="text-xs text-[var(--color-text-secondary)] mt-6">
           <a
-            href="/articles/save-money"
+            href={ROUTES.articleSaveMoney}
             className="text-[var(--color-primary)] hover:underline"
           >
             もっとお得に買いたい方はこちら →

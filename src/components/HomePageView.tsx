@@ -1,6 +1,10 @@
 "use client";
 
-import { FaArrowUp, FaCoins, FaGift, FaPercentage, FaTicketAlt, FaTags } from "react-icons/fa";
+import {
+  FaArrowUp, FaCoins, FaGift, FaPercentage, FaTicketAlt, FaTags,
+  FaTheaterMasks, FaChartLine, FaCalculator, FaThumbsUp, FaCalendarAlt,
+  FaUserFriends, FaIndustry, FaArrowRight,
+} from "react-icons/fa";
 import ActressRankingSection from "@/components/ActressRankingSection";
 import GenreRail from "@/components/GenreRail";
 import HeroSection from "@/components/HeroSection";
@@ -15,6 +19,57 @@ import type { ActressRankingEntry } from "@/lib/actress-ranking";
 import type { GenreLandingPage } from "@/data/genres";
 import type { Product } from "@/data/products";
 import { ROUTES } from "@/lib/site";
+
+const uniqueTools = [
+  {
+    href: ROUTES.discover,
+    title: "シチュエーション検索",
+    description: "「癒されたい」「刺激的な」など気分で作品を逆引き。公式にはない検索軸。",
+    icon: <FaTheaterMasks size={20} />,
+    accent: true,
+    badge: "人気",
+  },
+  {
+    href: ROUTES.customRanking,
+    title: "独自ランキング",
+    description: "コスパ最強・隠れた名作・大幅値下げ・新人注目の4つの独自切り口。",
+    icon: <FaChartLine size={20} />,
+    accent: false,
+    badge: "独自",
+  },
+  {
+    href: ROUTES.weeklySale,
+    title: "週間セールまとめ",
+    description: "今週の値下げ作品を自動集計。割引率・件数・最大割引が一目でわかる。",
+    icon: <FaCalendarAlt size={20} />,
+    accent: false,
+    badge: "毎週更新",
+  },
+  {
+    href: ROUTES.simulator,
+    title: "コスト比較シミュレーター",
+    description: "月額見放題 vs 単品購入、あなたの視聴スタイルでどちらがお得か即計算。",
+    icon: <FaCalculator size={20} />,
+    accent: false,
+    badge: null,
+  },
+  {
+    href: ROUTES.communityRanking,
+    title: "みんなの推しランキング",
+    description: "ユーザー投票で決まるリアルなランキング。売上だけじゃわからない人気作品。",
+    icon: <FaThumbsUp size={20} />,
+    accent: false,
+    badge: "参加型",
+  },
+  {
+    href: ROUTES.actressRanking,
+    title: "女優ランキング",
+    description: "作品数・レビュー評価で分析した人気女優データベース。",
+    icon: <FaUserFriends size={20} />,
+    accent: false,
+    badge: null,
+  },
+];
 
 const supportingGuides = [
   {
@@ -78,11 +133,63 @@ export default function HomePageView({
         newSpotlight={newSpotlight ?? undefined}
       />
 
+      {/* ★ UNIQUE TOOLS — Main Feature of This Site */}
+      <section className="content-shell px-4 pb-10">
+        <SectionIntro
+          eyebrow="オトナビ独自機能"
+          title="公式FANZAにない、ここだけのツール"
+          description="シチュエーション検索・独自ランキング・コスト比較など、公式サイトではできない探し方・使い方ができます。"
+        />
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {uniqueTools.map((tool) => (
+            <a
+              key={tool.href}
+              href={tool.href}
+              className={`group relative overflow-hidden rounded-[20px] border p-5 transition-all duration-200 hover:shadow-lg ${
+                tool.accent
+                  ? "border-[var(--color-accent)]/25 bg-gradient-to-br from-[var(--color-accent)]/8 to-transparent hover:border-[var(--color-accent)]/40 hover:shadow-[var(--color-accent)]/5"
+                  : "border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-border-strong)]"
+              }`}
+            >
+              <div className="flex items-start gap-4">
+                <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${
+                  tool.accent
+                    ? "bg-[var(--color-accent)]/15 text-[var(--color-accent)]"
+                    : "bg-[var(--color-surface-highlight)] text-[var(--color-primary-light)]"
+                }`}>
+                  {tool.icon}
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-bold text-[var(--color-text-primary)]">{tool.title}</p>
+                    {tool.badge && (
+                      <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                        tool.accent
+                          ? "bg-[var(--color-accent)]/20 text-[var(--color-accent)]"
+                          : "bg-[var(--color-primary)]/15 text-[var(--color-primary-light)]"
+                      }`}>
+                        {tool.badge}
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1.5 text-xs leading-5 text-[var(--color-text-secondary)]">
+                    {tool.description}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[var(--color-primary-light)] opacity-0 transition-opacity group-hover:opacity-100">
+                使ってみる <FaArrowRight size={9} />
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
       <section className="content-shell px-4 pb-8">
         <SectionIntro
           eyebrow="月間ランキング"
           title="今月よく見られている作品"
-          description="上位から見ていくと、いま動いている作品がつかみやすいです。気になるものだけ詳細やレビューへ進めます。"
+          description="上位から見ていくと、いま動いている作品がつかみやすいです。"
           action={
             <PrimaryCta href={ROUTES.ranking} size="sm" variant="outline">
               ランキング一覧へ

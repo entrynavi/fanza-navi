@@ -355,3 +355,123 @@ curl https://your-worker.workers.dev/api/cron-test
 3. メルマガ/LINE配信の検討
 4. APIデータを使ったAI推薦機能
 5. 多言語対応（英語・中国語）の検討
+
+---
+
+## 最初の1週間の運用フロー（詳細）
+
+### Day 1（公開初日）
+**やること：**
+1. Cloudflare Pagesのデプロイ確認 — fanza-navi.pages.dev にアクセスして全ページ表示確認
+2. 環境変数確認 — `DMM_API_ID`, `DMM_AFFILIATE_ID` がCloudflare Pagesに設定されていること
+3. Google Search Console にサイトを登録、sitemap.xml を送信
+4. Google Analytics (GA4) のトラッキングコードを追加（`src/components/Analytics.tsx`）
+5. Twitter/Xアカウント作成（@fanza_otonavi など）
+
+**SNS投稿（2件）：**
+- 投稿1:「🎉 FANZAオトナビ、オープンしました！シチュエーション検索・独自ランキング・セール解析など、公式にはないツールが使えます → [URL]」
+- 投稿2:「💰 今週のFANZAセール、最大○○%OFFの作品をまとめました。週間セールまとめページで一覧チェック → [URL]/weekly-sale」
+
+### Day 2
+**やること：**
+1. Workers デプロイ（価格トラッカー・セール通知bot） — `cd workers && npx wrangler deploy`
+2. D1データベース作成 — `npx wrangler d1 create fanza-otonavi-db`
+3. GitLab CI/CDでスケジュールビルド設定（毎日6:00 JST）
+
+**GitLab CI設定方法:**
+GitLab → Settings → CI/CD → Pipeline schedules → New schedule
+- Description: Daily build
+- Interval: `0 21 * * *`（UTC 21:00 = JST 06:00）
+- Target branch: main
+
+**SNS投稿（2件）：**
+- 「🔍 公式FANZAにはない『シチュエーション検索』を作りました。「癒されたい」「ドキドキしたい」など、気分から作品を逆引きできます → [URL]/discover」
+- 「📊 売上だけじゃない独自ランキング！コスパ最強・隠れた名作・大幅値下げ・新人注目の4つの切り口で選べます → [URL]/custom-ranking」
+
+### Day 3
+**やること：**
+1. アクセス解析確認 — GA4で流入数・直帰率をチェック
+2. 人気ページの把握 → SNS投稿の方向性を調整
+3. ページ表示速度チェック — PageSpeed Insights で全主要ページをテスト
+
+**SNS投稿（2件）：**
+- 「💡 FANZAで安く買う7つの方法、知ってた？初回クーポン、ポイント還元、セールの使い方をまとめました → [URL]/articles/save-money」
+- 「🆚 月額見放題 vs 単品購入、どっちが得？あなたの視聴スタイルでシミュレーション → [URL]/simulator」
+
+### Day 4
+**やること：**
+1. Workers cronが動作しているか確認（D1テーブルにデータが入っているか）
+2. コミュニティランキングへの投票テスト
+3. 検索ランキングのモニタリング開始（Search Console）
+
+**SNS投稿（2件）：**
+- 「📅 FANZAのセールはいつ来る？年間セールカレンダーで傾向をまとめました。次のセールを逃さない → [URL]/articles/sale-calendar」
+- 「🏆 みんなの推しランキング、投票受付中！あなたの推し作品に1票入れよう → [URL]/community-ranking」
+
+### Day 5
+**やること：**
+1. 週間セールデータの更新確認
+2. アクセスデータの初期分析 — どのページが人気か、離脱率が高いページは
+3. SNSフォロワー数の確認と施策調整
+
+**SNS投稿（2件）：**
+- 「👩 人気女優ランキング、作品数×レビュー評価で独自分析！意外なあの女優が上位に → [URL]/actress-ranking」
+- 「🎯 はじめてFANZAを使う人向けの完全ガイド。登録→支払い→購入まで4ステップで解説 → [URL]/guide」
+
+### Day 6-7（週末）
+**やること：**
+1. 1週間の振り返り — PV数、人気コンテンツ、SNSエンゲージメント
+2. 翌週のSNS投稿案を作成
+3. 新しい記事コンテンツの企画（公式にない切り口で）
+4. ユーザーフィードバックがあれば機能改善
+
+---
+
+## AIへの指示テンプレート（運用自動化用）
+
+### 週間セールまとめ記事のSNS投稿文を作成
+```
+以下のデータを元に、Twitter/X用の投稿文（140文字以内）を3パターン作って。
+・今週のセール対象数: ○○件
+・最大割引率: ○○%OFF
+・注目作品: [タイトル]
+・サイトURL: https://fanza-navi.pages.dev/weekly-sale
+ハッシュタグ不要。数字と具体性で目を引く文面にして。
+```
+
+### 新規記事コンテンツの作成
+```
+FANZAアフィリエイトサイト用の記事を書いて。
+テーマ: [テーマ名]
+ターゲットキーワード: [キーワード]
+文字数: 3000〜5000字
+構成:
+- リード文（課題提起）
+- 本文（具体的な解説、比較表を含む）
+- まとめ（CTAへの誘導）
+全てのFANZAへのリンクにアフィリエイトIDを含めること。
+```
+
+### DMM APIデータの分析
+```
+DMM Web API v3 の ItemList エンドポイントで取得した以下のデータを分析して。
+[APIレスポンスを貼り付け]
+・割引率が高い順にTOP10をリストアップ
+・ジャンル別の平均割引率
+・SNS投稿用の「今週のお得情報」サマリーを作成
+```
+
+### サイト改善の依頼
+```
+/Users/thisdevice/dmm-affiliate-site を開いて、以下の改善を行って:
+1. [具体的な改善内容]
+2. [具体的な改善内容]
+ビルド（npm run build）とテスト（npx vitest run）が通ることを確認して、GitLabにpushして。
+```
+
+### Cloudflare Workers の更新
+```
+/Users/thisdevice/dmm-affiliate-site/workers を開いて、以下の機能を追加して:
+1. [機能の説明]
+テスト後に `cd workers && npx wrangler deploy` でデプロイして。
+```

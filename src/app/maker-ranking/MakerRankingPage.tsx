@@ -100,7 +100,7 @@ export default function MakerRankingPage({
 
       <section className="editorial-surface p-6 md:p-8 mb-8">
         <SectionIntro
-          eyebrow="Maker Comparison"
+          eyebrow="メーカー比較"
           title="メーカー比較ガイド"
           description="ランキング上位作品からメーカーごとの特徴を集計。作品数・価格帯・評価・レビュー数で比較できます。"
           action={
@@ -113,7 +113,7 @@ export default function MakerRankingPage({
 
       <section className="mb-10">
         <SectionIntro
-          eyebrow="Stats Table"
+          eyebrow="比較統計"
           title="メーカー別スタッツ"
           description="人気作品への登場回数が多い順に並べています。"
         />

@@ -11,19 +11,25 @@ import {
   FaTags,
   FaTimes,
   FaBolt,
+  FaCalculator,
+  FaThumbsUp,
+  FaCalendarAlt,
+  FaTheaterMasks,
+  FaUserFriends,
 } from "react-icons/fa";
 import { ROUTES } from "@/lib/site";
 
 const primaryLinks = [
-  { href: ROUTES.ranking, label: "ランキング", icon: <FaChartLine size={12} />, accent: false },
-  { href: ROUTES.sale, label: "セール", icon: <FaTags size={12} />, accent: true },
-  { href: ROUTES.discover, label: "シチュ検索", icon: <FaCompass size={12} />, accent: false },
-  { href: ROUTES.articles, label: "記事", icon: <FaBookOpen size={12} />, accent: false },
+  { href: ROUTES.discover, label: "シチュ検索", icon: <FaTheaterMasks size={12} />, accent: true },
+  { href: ROUTES.customRanking, label: "独自ランキング", icon: <FaChartLine size={12} />, accent: false },
+  { href: ROUTES.sale, label: "セール", icon: <FaTags size={12} />, accent: false },
+  { href: ROUTES.ranking, label: "人気作", icon: <FaBolt size={12} />, accent: false },
 ];
 
 const utilityLinks = [
-  { href: ROUTES.weeklySale, label: "週間セール", icon: <FaTags size={11} /> },
-  { href: ROUTES.newReleases, label: "新作", icon: <FaBolt size={11} /> },
+  { href: ROUTES.weeklySale, label: "週間セール", icon: <FaCalendarAlt size={11} /> },
+  { href: ROUTES.simulator, label: "コスト比較", icon: <FaCalculator size={11} /> },
+  { href: ROUTES.communityRanking, label: "みんなの推し", icon: <FaThumbsUp size={11} /> },
   { href: ROUTES.guide, label: "初心者ガイド", icon: <FaBookOpen size={11} /> },
 ];
 
@@ -36,9 +42,20 @@ export default function Header() {
         <div className="flex min-h-[64px] items-center justify-between gap-4 py-3">
           <a href={ROUTES.home} className="group min-w-0">
             <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--color-border-strong)] bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-strong)] text-white shadow-lg shadow-[rgba(143,29,70,0.2)] transition-transform duration-200 group-hover:scale-105">
-                <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
-                  <path d="M5 20V4h3.5l7 9.5V4H19v16h-3.5L8.5 10.5V20H5z" fill="currentColor" />
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--color-border-strong)] bg-[rgba(14,10,18,0.9)] shadow-lg shadow-[rgba(227,74,110,0.15)] transition-transform duration-200 group-hover:scale-105">
+                <svg viewBox="0 0 64 64" fill="none" className="h-7 w-7">
+                  <defs>
+                    <linearGradient id="hdr-accent" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#e34a6e"/>
+                      <stop offset="1" stopColor="#d3af6f"/>
+                    </linearGradient>
+                  </defs>
+                  <circle cx="26" cy="26" r="10" fill="none" stroke="url(#hdr-accent)" strokeWidth="3" strokeLinecap="round"/>
+                  <line x1="33" y1="33" x2="42" y2="42" stroke="url(#hdr-accent)" strokeWidth="3" strokeLinecap="round"/>
+                  <rect x="21" y="28" width="3" height="5" rx="1" fill="#e34a6e" opacity="0.9"/>
+                  <rect x="25" y="24" width="3" height="9" rx="1" fill="#d3af6f" opacity="0.9"/>
+                  <rect x="29" y="20" width="3" height="13" rx="1" fill="#e34a6e" opacity="0.9"/>
+                  <text x="47" y="56" fontFamily="sans-serif" fontSize="16" fontWeight="800" fill="url(#hdr-accent)">N</text>
                 </svg>
               </span>
               <div className="min-w-0">
@@ -46,7 +63,7 @@ export default function Header() {
                   <span className="text-[var(--color-accent)]">FANZA</span><span className="gradient-text">オトナビ</span>
                 </p>
                 <p className="truncate text-[10px] font-medium text-[var(--color-text-muted)]">
-                  セール速報＆おすすめ作品ナビ
+                  セール解析 × シチュ検索 × 独自ランキング
                 </p>
               </div>
             </div>
@@ -130,7 +147,7 @@ export default function Header() {
           >
             <div className="content-shell py-4 space-y-3">
               <p className="text-xs font-semibold tracking-[0.12em] text-[var(--color-text-muted)] uppercase">
-                目的から探す
+                メイン機能
               </p>
               <div className="grid grid-cols-2 gap-2">
                 {primaryLinks.map((link) => (
@@ -145,7 +162,10 @@ export default function Header() {
                   </a>
                 ))}
               </div>
-              <div className="flex flex-wrap gap-2 pt-1">
+              <p className="pt-2 text-xs font-semibold tracking-[0.12em] text-[var(--color-text-muted)] uppercase">
+                ツール・ガイド
+              </p>
+              <div className="flex flex-wrap gap-2">
                 {utilityLinks.map((link) => (
                   <a
                     key={link.href}
@@ -158,12 +178,28 @@ export default function Header() {
                   </a>
                 ))}
                 <a
+                  href={ROUTES.actressRanking}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] px-3 py-2 text-sm text-[var(--color-text-secondary)]"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <FaUserFriends size={11} />
+                  女優ランキング
+                </a>
+                <a
+                  href={ROUTES.articles}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] px-3 py-2 text-sm text-[var(--color-text-secondary)]"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <FaBookOpen size={11} />
+                  記事
+                </a>
+                <a
                   href={ROUTES.search}
                   className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] px-3 py-2 text-sm text-[var(--color-text-secondary)]"
                   onClick={() => setMobileOpen(false)}
                 >
                   <FaSearch size={11} />
-                  検索
+                  作品検索
                 </a>
               </div>
             </div>

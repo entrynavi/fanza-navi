@@ -17,6 +17,7 @@ import {
 } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
 import PrimaryCta from "@/components/PrimaryCta";
+import { ROUTES } from "@/lib/site";
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                          */
@@ -511,7 +512,7 @@ export default function SimulatorPage() {
           >
             月額見放題を始める
           </PrimaryCta>
-          <PrimaryCta href="/guide" variant="outline" size="lg">
+          <PrimaryCta href={ROUTES.guide} variant="outline" size="lg">
             まずは無料登録
           </PrimaryCta>
         </div>

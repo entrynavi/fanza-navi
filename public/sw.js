@@ -1,5 +1,17 @@
-const CACHE_NAME = 'fanza-otonavi-v1';
-const PRECACHE = ['/', '/ranking', '/sale', '/guide'];
+const CACHE_NAME = 'fanza-otonavi-v2';
+const PRECACHE = [
+  '/',
+  '/ranking',
+  '/sale',
+  '/guide',
+  '/discover',
+  '/custom-ranking',
+  '/weekly-sale',
+  '/simulator',
+  '/community-ranking',
+  '/actress-ranking',
+  '/maker-ranking',
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(PRECACHE)));
@@ -24,8 +36,8 @@ self.addEventListener('push', e => {
   e.waitUntil(
     self.registration.showNotification(data.title || 'FANZAオトナビ', {
       body: data.body || '新しいセール情報があります',
-      icon: '/icon-192.png',
-      badge: '/icon-192.png',
+      icon: '/icon.svg',
+      badge: '/icon.svg',
       data: { url: data.url || '/' }
     })
   );

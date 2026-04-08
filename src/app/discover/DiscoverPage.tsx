@@ -151,7 +151,7 @@ export default function DiscoverPage({
 
       <section className="editorial-surface p-6 md:p-8 mb-8">
         <div className="max-w-3xl">
-          <p className="section-eyebrow">Discover</p>
+          <p className="section-eyebrow">シチュエーション検索</p>
           <h1 className="section-title gradient-text text-3xl md:text-4xl">
             気分で作品を探す
           </h1>
