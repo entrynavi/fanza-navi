@@ -38,7 +38,7 @@ describe("RootLayout disclosure shell", () => {
     expect(markup).toContain("セール");
     expect(markup).toContain("シチュ検索");
     expect(markup).toContain("今夜の1本診断");
-    expect(markup).toContain("買い時判定ツール");
+    expect(markup).toContain("買い時判定");
     expect(markup).toContain("記事一覧");
     expect(markup).toContain("初心者ガイド");
     expect(markup).toContain("検索入口");

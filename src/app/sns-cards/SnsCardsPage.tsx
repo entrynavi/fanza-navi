@@ -4,8 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaShareAlt,
-  FaTwitter,
-  FaCopy,
   FaPalette,
   FaStar,
   FaCheck,
@@ -19,6 +17,7 @@ import {
 } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
 import ProductPoolToolbar from "@/components/ProductPoolToolbar";
+import ShareMenu from "@/components/ShareMenu";
 import { useFavorites } from "@/hooks/useFavorites";
 import { ROUTES } from "@/lib/site";
 import type { Product } from "@/data/products";
@@ -27,6 +26,7 @@ import {
   getProductPoolOptions,
   type ProductPoolSource,
 } from "@/lib/product-pool";
+import { getRarity } from "@/lib/share-utils";
 
 /* ------------------------------------------------------------------ */
 /*  Card Templates                                                     */
@@ -110,19 +110,30 @@ function CardPreview({
   const discountPercent = hasDiscount
     ? Math.round(((product.price - product.salePrice!) / product.price) * 100)
     : 0;
+  const rarity = getRarity(product.rating);
 
   return (
     <div
       className="relative overflow-hidden rounded-2xl border border-white/10 p-5"
       style={{ background: template.bgGradient, width: "100%", maxWidth: 420 }}
     >
-      {/* Template badge */}
-      <div
-        className="mb-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold text-white"
-        style={{ background: template.accentColor }}
-      >
-        {template.icon}
-        {template.label}
+      {/* Template + Rarity badges */}
+      <div className="mb-3 flex items-center gap-2">
+        <span
+          className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold text-white"
+          style={{ background: template.accentColor }}
+        >
+          {template.icon}
+          {template.label}
+        </span>
+        {product.rating > 0 && (
+          <span
+            className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-black text-white"
+            style={{ background: `${rarity.color}cc` }}
+          >
+            {rarity.emoji} {rarity.short}
+          </span>
+        )}
       </div>
 
       <div className="flex gap-4">
@@ -246,15 +257,6 @@ export default function SnsCardsPage({ products }: Props) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
-  }, [selectedProduct]);
-
-  const handleShareX = useCallback(() => {
-    if (!selectedProduct) return;
-    const displayPrice = selectedProduct.salePrice ?? selectedProduct.price;
-    const text = encodeURIComponent(
-      `${selectedProduct.title}\n¥${displayPrice.toLocaleString()}~\n${selectedProduct.affiliateUrl}\n#FANZA #FANZAトクナビ`
-    );
-    window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank");
   }, [selectedProduct]);
 
   return (
@@ -399,24 +401,16 @@ export default function SnsCardsPage({ products }: Props) {
           </div>
 
           {/* Share buttons */}
-          <div className="flex gap-3">
-            <button
-              onClick={handleCopyText}
-              disabled={!selectedProduct}
-              className="flex flex-1 items-center justify-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-xs font-bold text-[var(--color-text-secondary)] transition-colors hover:text-white disabled:opacity-40 disabled:hover:text-[var(--color-text-secondary)]"
-            >
-              {copied ? <FaCheck size={12} className="text-[var(--color-accent)]" /> : <FaCopy size={12} />}
-              {copied ? "コピーしました" : "コピーしてシェア"}
-            </button>
-            <button
-              onClick={handleShareX}
-              disabled={!selectedProduct}
-              className="flex flex-1 items-center justify-center gap-2 rounded-full bg-[var(--color-primary)] px-4 py-3 text-xs font-bold text-white transition-colors hover:bg-[var(--color-primary-dark)] disabled:opacity-40"
-            >
-              <FaTwitter size={12} />
-              Xでシェア
-            </button>
-          </div>
+          {selectedProduct && (
+            <div className="mt-4">
+              <ShareMenu
+                product={selectedProduct}
+                context="recommend"
+                variant="full"
+                siteUrl={typeof window !== "undefined" ? window.location.origin + "/sns-cards" : ""}
+              />
+            </div>
+          )}
         </motion.div>
       </div>
     </main>

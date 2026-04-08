@@ -10,58 +10,57 @@ import {
   FaGift,
   FaShoppingCart,
   FaTags,
-  FaUser,
 } from "react-icons/fa";
 import { ROUTES } from "@/lib/site";
 
 const navSections = [
   {
-    title: "独自ツール",
+    title: "探す・出会う",
     links: [
       { href: ROUTES.discover, label: "シチュエーション検索", icon: <FaCompass size={10} /> },
       { href: `${ROUTES.discover}#night-diagnosis`, label: "今夜の1本診断", icon: null },
-      { href: ROUTES.customRanking, label: "独自ランキング", icon: <FaChartLine size={10} /> },
-      { href: ROUTES.buyTiming, label: "買い時判定ツール", icon: <FaShoppingCart size={10} /> },
-      { href: ROUTES.watchlist, label: "ウォッチリスト", icon: <FaBookmark size={10} /> },
-      { href: ROUTES.weeklySale, label: "週間セールまとめ", icon: <FaTags size={10} /> },
-    ],
-  },
-  {
-    title: "便利機能",
-    links: [
       { href: ROUTES.dailyPick, label: "今日のおすすめ", icon: null },
       { href: ROUTES.gacha, label: "ガチャレコメンド", icon: null },
-      { href: ROUTES.personalized, label: "パーソナライズフィード", icon: <FaUser size={10} /> },
+      { href: ROUTES.personalized, label: "パーソナライズフィード", icon: null },
       { href: ROUTES.deepDive, label: "同じ系統を深掘り", icon: null },
-      { href: ROUTES.reviews, label: "みんなのおすすめ作品レビュー", icon: null },
-      { href: ROUTES.priceHistory, label: "価格履歴チャート", icon: null },
-      { href: ROUTES.salePredict, label: "セール予測カレンダー", icon: null },
-      { href: ROUTES.seriesGuide, label: "シリーズ完走ガイド", icon: null },
-      { href: ROUTES.cospaCalc, label: "コスパ計算機", icon: null },
-      { href: ROUTES.snsCards, label: "SNS共有カード生成", icon: null },
     ],
   },
   {
-    title: "ガイド/比較",
+    title: "比べる・ランキング",
     links: [
+      { href: ROUTES.customRanking, label: "独自ランキング", icon: <FaChartLine size={10} /> },
+      { href: ROUTES.communityRanking, label: "みんなの推し", icon: null },
+      { href: ROUTES.actressRanking, label: "女優ランキング", icon: null },
+      { href: ROUTES.makerRanking, label: "メーカー比較", icon: null },
       { href: ROUTES.rankingBattle, label: "ランキングバトル", icon: null },
+      { href: ROUTES.cospaCalc, label: "コスパ計算機", icon: null },
+      { href: ROUTES.simulator, label: "コスト比較", icon: null },
+    ],
+  },
+  {
+    title: "セール・買い時",
+    links: [
+      { href: ROUTES.weeklySale, label: "週間セールまとめ", icon: <FaTags size={10} /> },
+      { href: ROUTES.buyTiming, label: "買い時判定", icon: <FaShoppingCart size={10} /> },
+      { href: ROUTES.salePredict, label: "セール予測", icon: null },
+      { href: ROUTES.priceHistory, label: "価格履歴チャート", icon: null },
+      { href: ROUTES.sale, label: "セール作品一覧", icon: null },
+      { href: ROUTES.ranking, label: "人気ランキング", icon: null },
+    ],
+  },
+  {
+    title: "管理・共有・ガイド",
+    links: [
+      { href: ROUTES.watchlist, label: "ウォッチリスト", icon: <FaBookmark size={10} /> },
+      { href: ROUTES.reviews, label: "みんなのレビュー", icon: null },
+      { href: ROUTES.snsCards, label: "SNS共有カード", icon: null },
+      { href: ROUTES.seriesGuide, label: "シリーズガイド", icon: null },
       { href: ROUTES.guide, label: "初心者ガイド", icon: <FaBookOpen size={10} /> },
       { href: ROUTES.articles, label: "記事一覧", icon: null },
-      { href: ROUTES.compare, label: "サービス比較", icon: null },
-      { href: ROUTES.articleSaveMoney, label: "節約術", icon: null },
-      { href: ROUTES.about, label: "運営者情報", icon: null },
       { href: ROUTES.contact, label: "お問い合わせ", icon: <FaEnvelope size={10} /> },
+      { href: ROUTES.about, label: "運営者情報", icon: null },
       { href: ROUTES.privacy, label: "プライバシーポリシー", icon: null },
       { href: ROUTES.terms, label: "利用規約", icon: null },
-    ],
-  },
-  {
-    title: "探す",
-    links: [
-      { href: ROUTES.ranking, label: "人気ランキング", icon: null },
-      { href: ROUTES.sale, label: "セール作品", icon: null },
-      { href: ROUTES.search, label: "作品検索", icon: null },
-      { href: ROUTES.communityRanking, label: "みんなの推し", icon: null },
     ],
   },
 ];

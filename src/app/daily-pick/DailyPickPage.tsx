@@ -6,7 +6,6 @@ import {
   FaStar,
   FaCalendarDay,
   FaCrown,
-  FaShareAlt,
   FaArrowRight,
   FaHistory,
 } from "react-icons/fa";
@@ -14,6 +13,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import FavoriteButton from "@/components/FavoriteButton";
 import PrimaryCta from "@/components/PrimaryCta";
 import ProductPoolToolbar from "@/components/ProductPoolToolbar";
+import ShareMenu from "@/components/ShareMenu";
 import { useFavorites } from "@/hooks/useFavorites";
 import { ROUTES } from "@/lib/site";
 import type { Product } from "@/data/products";
@@ -79,15 +79,6 @@ export default function DailyPickPage({
     }
     return picks;
   }, [filteredProducts]);
-
-  const handleShare = (product: Product) => {
-    const text = `今日のFANZAおすすめ: ${product.title} ${formatPriceYen(getPresentedCurrentPrice(product))}~`;
-    if (navigator.share) {
-      navigator.share({ title: "今日のおすすめ", text, url: window.location.href });
-    } else {
-      navigator.clipboard.writeText(text);
-    }
-  };
 
   return (
     <main className="content-shell px-4 py-8">
@@ -214,13 +205,11 @@ export default function DailyPickPage({
                     </span>
                   </PrimaryCta>
                 )}
-                <button
-                  onClick={() => handleShare(todayPick)}
-                  className="inline-flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2.5 text-sm text-[var(--color-text-secondary)] transition-colors hover:text-white"
-                >
-                  <FaShareAlt size={14} />
-                  シェア
-                </button>
+                <ShareMenu
+                  product={todayPick}
+                  context="daily"
+                  siteUrl={typeof window !== "undefined" ? window.location.origin + "/daily-pick" : ""}
+                />
               </div>
             </div>
           </div>
@@ -339,20 +328,13 @@ export default function DailyPickPage({
           毎日新しいおすすめ作品をピックアップ。ブックマークしていつでもチェック。
         </p>
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-          <button
-            onClick={() => {
-              const text = `FANZAトクナビの今日のおすすめをチェック！ ${window.location.href}`;
-              if (navigator.share) {
-                navigator.share({ title: "FANZAトクナビ デイリーピック", text, url: window.location.href });
-              } else {
-                navigator.clipboard.writeText(text);
-              }
-            }}
-            className="inline-flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-2.5 text-sm font-semibold text-[var(--color-text-primary)] transition-colors hover:text-white"
-          >
-            <FaShareAlt size={14} />
-            友達にシェアする
-          </button>
+          {todayPick && (
+            <ShareMenu
+              product={todayPick}
+              context="daily"
+              siteUrl={typeof window !== "undefined" ? window.location.origin + "/daily-pick" : ""}
+            />
+          )}
           <PrimaryCta href={ROUTES.ranking} size="md" variant="outline">
             ランキングも見る
           </PrimaryCta>

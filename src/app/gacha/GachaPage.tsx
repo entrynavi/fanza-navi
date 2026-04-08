@@ -6,7 +6,6 @@ import {
   FaRandom,
   FaDice,
   FaStar,
-  FaShareAlt,
   FaRedo,
   FaFilter,
   FaHistory,
@@ -16,6 +15,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import FavoriteButton from "@/components/FavoriteButton";
 import PrimaryCta from "@/components/PrimaryCta";
 import ProductPoolToolbar from "@/components/ProductPoolToolbar";
+import ShareMenu from "@/components/ShareMenu";
 import { useFavorites } from "@/hooks/useFavorites";
 import { ROUTES } from "@/lib/site";
 import type { Product } from "@/data/products";
@@ -29,6 +29,7 @@ import {
   getPresentedCurrentPrice,
   getPrimaryFanzaCtaLabel,
 } from "@/lib/product-presenter";
+import { getRarity } from "@/lib/share-utils";
 import { getRecommendationWeight } from "@/lib/toolkit-insights";
 
 function pickWeightedProduct(products: Product[]): Product {
@@ -113,20 +114,8 @@ export default function GachaPage({
     }, 1500);
   }, [filteredProducts, isSpinning]);
 
-  const handleShare = (product: Product) => {
-    const price = formatPriceYen(getPresentedCurrentPrice(product));
-    const rating = product.rating > 0 ? `★${product.rating.toFixed(1)}` : "";
-    const saleTag = product.isSale ? "🔥セール中 " : "";
-    const text = `🎰 FANZAガチャ結果\n\n${saleTag}「${product.title}」\n${price}~ ${rating}\n\n#FANZAトクナビ #FANZAガチャ\n→ `;
-    const shareUrl = typeof window !== "undefined" ? window.location.origin + "/gacha" : "";
-    
-    if (navigator.share) {
-      navigator.share({ title: "FANZAガチャ結果", text, url: shareUrl });
-    } else {
-      const xUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(text + shareUrl)}`;
-      window.open(xUrl, "_blank");
-    }
-  };
+  /* -- rarity for current result -- */
+  const resultRarity = result ? getRarity(result.rating) : null;
 
   return (
     <main className="content-shell px-4 py-8">
@@ -306,14 +295,35 @@ export default function GachaPage({
                     className="h-10 w-10 bg-black/30 backdrop-blur-sm hover:bg-black/50"
                   />
                 </div>
-                <div className="absolute top-4 left-4 z-10 flex items-center gap-2 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] px-4 py-1.5">
-                  <FaDice size={14} className="text-white" />
-                  <span className="text-sm font-bold text-white">当選！</span>
+                <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
+                  <span className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] px-4 py-1.5">
+                    <FaDice size={14} className="text-white" />
+                    <span className="text-sm font-bold text-white">当選！</span>
+                  </span>
+                  {resultRarity && (
+                    <span
+                      className="flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-black tracking-wider text-white backdrop-blur-sm"
+                      style={{
+                        background: `linear-gradient(135deg, ${resultRarity.color}, ${resultRarity.color}88)`,
+                        boxShadow: `0 0 16px ${resultRarity.glow}`,
+                      }}
+                    >
+                      {resultRarity.emoji} {resultRarity.short}
+                    </span>
+                  )}
                 </div>
               </div>
 
               <div className="flex flex-col justify-center space-y-4 p-6 md:p-8">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-wrap">
+                  {resultRarity && (
+                    <span
+                      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-black"
+                      style={{ color: resultRarity.color, background: `${resultRarity.color}18` }}
+                    >
+                      {resultRarity.emoji} {resultRarity.label}
+                    </span>
+                  )}
                   <span className="inline-flex items-center gap-1 rounded-full border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 px-3 py-1 text-sm font-semibold text-[var(--color-accent)]">
                     <FaStar size={12} />
                     {result.rating.toFixed(1)}
@@ -374,13 +384,11 @@ export default function GachaPage({
                     <FaRedo size={12} />
                     もう一回！
                   </button>
-                  <button
-                    onClick={() => handleShare(result)}
-                    className="inline-flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2.5 text-sm text-[var(--color-text-secondary)] transition-colors hover:text-white"
-                  >
-                    <FaShareAlt size={12} />
-                    結果をシェア
-                  </button>
+                  <ShareMenu
+                    product={result}
+                    context="gacha"
+                    siteUrl={typeof window !== "undefined" ? window.location.origin + "/gacha" : ""}
+                  />
                 </div>
               </div>
             </div>
