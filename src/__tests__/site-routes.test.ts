@@ -224,7 +224,7 @@ describe("site routes", () => {
     const { container } = render(element);
 
     expect(screen.getByRole("heading", { name: /気になる作品を見つけよう/i })).toBeInTheDocument();
-    expect(screen.getByText(/キーワード・ジャンル・価格帯で絞り込めます/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/FANZA全体から検索|高速モード/i).length).toBeGreaterThan(0);
     expect(screen.queryByText(/準備中/i)).toBeNull();
     expect(container.querySelector(`input[placeholder*="検索"]`)).not.toBeNull();
     expect(container.querySelector(`button`)).not.toBeNull();

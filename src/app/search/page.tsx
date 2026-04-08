@@ -6,9 +6,9 @@ import { loadSearchProducts } from "@/lib/catalog";
 import { genrePages } from "@/data/genres";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "作品検索",
+  title: "作品検索｜FANZA全体から絞り込み検索｜FANZAトクナビ",
   description:
-    "キーワード・ジャンル・価格帯で作品を検索。人気順・新着順・価格順で並び替え、お目当ての作品がすぐ見つかります。",
+    "FANZA全体をキーワード・ジャンル・価格帯・評価・レビュー件数で絞り込み検索。重くなりすぎないページング設計で、お目当ての作品が探しやすくなっています。",
   path: ROUTES.search,
 });
 

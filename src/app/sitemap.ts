@@ -38,6 +38,7 @@ const staticEntries: Array<{
   { path: ROUTES.seriesGuide, changeFrequency: "weekly", priority: 0.72 },
   { path: ROUTES.salePredict, changeFrequency: "weekly", priority: 0.76 },
   { path: ROUTES.priceHistory, changeFrequency: "daily", priority: 0.74 },
+  { path: ROUTES.trendRadar, changeFrequency: "daily", priority: 0.79 },
   { path: ROUTES.snsCards, changeFrequency: "weekly", priority: 0.6 },
   { path: ROUTES.personalized, changeFrequency: "daily", priority: 0.77 },
   { path: ROUTES.deepDive, changeFrequency: "weekly", priority: 0.74 },

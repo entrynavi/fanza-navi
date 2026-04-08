@@ -9,6 +9,7 @@ FANZA / DMM アフィリエイト向けの静的メディアです。
 - React 19
 - Tailwind CSS v4
 - Framer Motion
+- Cloudflare Workers + D1
 - Vitest + Testing Library
 - Playwright
 - Cloudflare Pages
@@ -20,9 +21,12 @@ FANZA / DMM アフィリエイト向けの静的メディアです。
 | `/` | ランキング、セール、独自導線をまとめたトップページ |
 | `/discover` | **シチュエーション検索**。気分から探しつつ、今夜の1本診断も使える |
 | `/buy-timing` | **買い時判定ツール**。買い時、予算内まとめ買い、次のセール波を確認する |
-| `/watchlist` | **ウォッチリスト**。保存作品、値下げ候補、次に見る候補を整理する |
+| `/watchlist` | **ウォッチリスト**。ブラウザ保存で作品を溜めて、値下げ候補や次候補まで管理する |
 | `/personalized` | ウォッチリスト起点のパーソナライズフィード |
-| `/search` | 検索入口。ジャンル、並び替え、絞り込みの基本導線 |
+| `/search` | 検索入口。Workers 接続時は FANZA 全体検索、未接続時は 1,200 件超の高速モード |
+| `/trend-radar` | 急上昇・今夜向き・セール勢いをまとめて見る再訪導線 |
+| `/deep-dive` | ウォッチリスト起点で女優・メーカー・シリーズを芋づる提案 |
+| `/reviews` | みんなのおすすめ作品レビュー。Workers 接続時は共有レビューとして動作 |
 | `/ranking` | 売上ランキング |
 | `/custom-ranking` | 独自ランキング |
 | `/sale` | セール作品一覧 |
@@ -33,6 +37,7 @@ FANZA / DMM アフィリエイト向けの静的メディアです。
 
 - `/daily-pick` 今日のおすすめ
 - `/gacha` ランダム提案
+- `/trend-radar` 急上昇レーダー
 - `/cospa-calc` コスパ計算
 - `/price-history` 価格推移の確認
 - `/sale-predict` 次のセール予測
@@ -40,7 +45,6 @@ FANZA / DMM アフィリエイト向けの静的メディアです。
 - `/series-guide` シリーズ導線
 - `/sns-cards` SNS投稿用カード
 - `/community-ranking` 投票型ランキング
-- `/savings-tips` 節約の見方まとめ
 - `/simulator` 月額 vs 単品比較
 
 ## ローカル起動
@@ -92,6 +96,8 @@ cp .env.example .env.local
 - `SITE_URL` 未設定時は `http://localhost:3000` を使います
 - `SITE_URL` 未設定の build では sitemap は空、robots は noindex 相当で出力します
 - アフィリエイトリンクは `src/lib/affiliate.ts` を通して生成します
+- `DMM_API_ID` 未設定のローカル build はフォールバック作品を使うため、商品画像はプレースホルダー表示になります
+- `NEXT_PUBLIC_WORKERS_API` 未設定時、`/search` はローカル高速モードのみ、`/reviews` はブラウザ内保存モードで動作します
 
 ## Cloudflare Pages
 
@@ -110,5 +116,6 @@ cp .env.example .env.local
 ## 運用メモ
 
 - DMM API が取れない場合でもフォールバックデータで一覧が空になりにくい構成です
+- ローカル確認で商品画像が出ない場合は異常ではなく、`DMM_API_ID` 未設定時のフォールバック表示です
 - 18歳確認ゲート、ヘッダー開示表記、運営情報ページは公開前の確認対象です
 - 運用フローや SNS 自動化は `OPERATIONS.md` を参照してください

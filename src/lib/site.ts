@@ -45,6 +45,7 @@ export const ROUTES = {
   seriesGuide: "/series-guide",
   salePredict: "/sale-predict",
   priceHistory: "/price-history",
+  trendRadar: "/trend-radar",
   snsCards: "/sns-cards",
   personalized: "/personalized",
   deepDive: "/deep-dive",

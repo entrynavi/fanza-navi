@@ -1,8 +1,9 @@
 import HomePageView from "@/components/HomePageView";
 import { genrePages } from "@/data/genres";
-import { loadNewProducts, loadRankingProducts, loadSaleProducts } from "@/lib/catalog";
+import { loadFeatureProducts, loadNewProducts, loadRankingProducts, loadSaleProducts } from "@/lib/catalog";
 import { buildActressRanking } from "@/lib/actress-ranking";
 import type { Product } from "@/data/products";
+import { buildTrendRadar } from "@/lib/trend-radar";
 
 function sortSalePreview(products: Awaited<ReturnType<typeof loadSaleProducts>>) {
   return [...products].sort((left, right) => {
@@ -18,12 +19,14 @@ function pickDistinctProduct(products: Product[], excludedIds: string[] = []) {
 }
 
 export default async function HomePage() {
-  const [rankingPreview, saleProducts, newPreview] = await Promise.all([
+  const [rankingPreview, saleProducts, newPreview, featureProducts] = await Promise.all([
     loadRankingProducts({ limit: 20 }),
     loadSaleProducts({ limit: 16 }),
     loadNewProducts({ limit: 16 }),
+    loadFeatureProducts({ limit: 180 }),
   ]);
   const salePreview = sortSalePreview(saleProducts);
+  const trendPreview = buildTrendRadar(featureProducts, 4).trendingNow;
   const leadProduct = rankingPreview[0];
   const saleSpotlight = pickDistinctProduct(salePreview, leadProduct ? [leadProduct.id] : []);
   const newSpotlight = pickDistinctProduct(newPreview, leadProduct ? [leadProduct.id] : []);
@@ -39,6 +42,7 @@ export default async function HomePage() {
       newSpotlight={newSpotlight}
       rankingPreview={rankingPreview}
       salePreview={salePreview}
+      trendPreview={trendPreview}
       topActresses={topActresses}
       featuredGenres={genrePages}
     />

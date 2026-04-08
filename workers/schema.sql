@@ -35,6 +35,35 @@ CREATE TABLE IF NOT EXISTS votes (
 CREATE INDEX IF NOT EXISTS idx_votes_content ON votes(content_id);
 CREATE INDEX IF NOT EXISTS idx_votes_month ON votes(voted_at);
 
+-- Shared user reviews
+CREATE TABLE IF NOT EXISTS reviews (
+  id TEXT PRIMARY KEY,
+  product_id TEXT NOT NULL,
+  product_title TEXT NOT NULL,
+  product_image_url TEXT DEFAULT '',
+  product_affiliate_url TEXT DEFAULT '',
+  rating INTEGER NOT NULL,
+  title TEXT NOT NULL,
+  body TEXT NOT NULL,
+  tags TEXT NOT NULL DEFAULT '[]',
+  author_hash TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_reviews_product ON reviews(product_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_created ON reviews(created_at);
+CREATE INDEX IF NOT EXISTS idx_reviews_rating ON reviews(rating);
+
+-- Helpful votes for shared reviews
+CREATE TABLE IF NOT EXISTS review_helpful_votes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  review_id TEXT NOT NULL,
+  voter_hash TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE(review_id, voter_hash),
+  FOREIGN KEY (review_id) REFERENCES reviews(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_review_helpful_review ON review_helpful_votes(review_id);
+
 -- Sale alerts log (for bot)
 CREATE TABLE IF NOT EXISTS sale_alerts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -5,9 +5,9 @@ import { loadFeatureProducts } from "@/lib/catalog";
 import { ROUTES } from "@/lib/site";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "みんなのおすすめ作品レビュー｜ユーザー投稿レビュー｜FANZAトクナビ",
+  title: "みんなのおすすめ作品レビュー｜共有ユーザー投稿レビュー｜FANZAトクナビ",
   description:
-    "FANZAトクナビユーザーによるおすすめ作品レビュー。公式レビューだけでは分からないリアルな感想を参考にできます。",
+    "FANZAトクナビユーザーによる共有レビュー。公式レビューだけでは分からないリアルな感想を、評価やレビュー件数で絞り込みながら参考にできます。",
   path: ROUTES.reviews,
 });
 

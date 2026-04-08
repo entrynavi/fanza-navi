@@ -16,6 +16,7 @@ import ProductCard from "@/components/ProductCard";
 import ProductGridSection from "@/components/ProductGridSection";
 import RankingPodium from "@/components/RankingPodium";
 import RelatedNavigation from "@/components/RelatedNavigation";
+import RecentlyViewed from "@/components/RecentlyViewed";
 import SectionIntro from "@/components/SectionIntro";
 import StickyCTA from "@/components/StickyCTA";
 import type { ActressRankingEntry } from "@/lib/actress-ranking";
@@ -82,6 +83,13 @@ const toolCategories: ToolCategory[] = [
         description: "条件を決めて回す、当たり寄りのサプライズ発見機能です。",
         icon: <FaDice size={20} />,
         badge: "NEW",
+      },
+      {
+        href: ROUTES.trendRadar,
+        title: "急上昇レーダー",
+        description: "今伸びている作品、今夜向き、セールで動く作品を分けて見られます。",
+        icon: <FaChartBar size={20} />,
+        badge: "再訪向け",
       },
       {
         href: ROUTES.personalized,
@@ -265,12 +273,34 @@ const supportingGuides = [
   },
 ];
 
+const workflowRecipes = [
+  {
+    href: `${ROUTES.discover}#night-diagnosis`,
+    title: "3分で今夜の1本を決める",
+    description: "今夜の1本診断 → 急上昇レーダー → みんなのレビューの順で回すと、短時間で外しにくいです。",
+    eyebrow: "最短導線",
+  },
+  {
+    href: ROUTES.buyTiming,
+    title: "安く買う導線をまとめて使う",
+    description: "週間セール → 買い時判定 → 価格履歴をつなぐと、勢い買いせずに値下げの波を追えます。",
+    eyebrow: "節約導線",
+  },
+  {
+    href: ROUTES.watchlist,
+    title: "保存から深掘りまで一気に進む",
+    description: "ウォッチリスト → 同じ系統を深掘り → パーソナライズフィードで、次候補を芋づる式に増やせます。",
+    eyebrow: "再訪導線",
+  },
+];
+
 export default function HomePageView({
   leadProduct,
   saleSpotlight,
   newSpotlight,
   rankingPreview,
   salePreview,
+  trendPreview,
   topActresses,
   featuredGenres,
 }: {
@@ -279,6 +309,7 @@ export default function HomePageView({
   newSpotlight?: Product | null;
   rankingPreview: Product[];
   salePreview: Product[];
+  trendPreview: Product[];
   topActresses: ActressRankingEntry[];
   featuredGenres: GenreLandingPage[];
 }) {
@@ -295,6 +326,24 @@ export default function HomePageView({
         saleSpotlight={saleSpotlight ?? undefined}
         newSpotlight={newSpotlight ?? undefined}
       />
+
+      <RecentlyViewed />
+
+      <section className="content-shell px-4 pb-8">
+        <ProductGridSection
+          eyebrow="急上昇レーダー"
+          title="今動いている作品"
+          description="再訪ユーザー向けに、勢い・今夜向き・セールの熱量から今チェックする価値が高い作品を先に出しています。"
+          action={
+            <PrimaryCta href={ROUTES.trendRadar} size="sm" variant="outline">
+              急上昇レーダーへ
+            </PrimaryCta>
+          }
+          products={trendPreview}
+          columns="grid-cols-1 sm:grid-cols-2 xl:grid-cols-4"
+          compact
+        />
+      </section>
 
       {/* ★ UNIQUE TOOLS — Categorized */}
       <section className="content-shell px-4 pb-10">
@@ -544,6 +593,14 @@ export default function HomePageView({
           }
         />
         <GenreRail genres={featuredGenres} />
+      </section>
+
+      <section className="content-shell px-4 pb-8">
+        <RelatedNavigation
+          title="目的別の最短ルート"
+          description="似ている機能は単体で使うより、順番を決めてつなげると迷いにくくなります。"
+          items={workflowRecipes}
+        />
       </section>
 
       <section className="content-shell px-4 pb-8">

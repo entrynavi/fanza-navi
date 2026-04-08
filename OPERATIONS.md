@@ -1,6 +1,6 @@
 # FANZAトクナビ 運用・自動化ガイド
 
-> **最終更新:** 独自機能の統合表示を戻し、シチュ検索・今夜の1本診断・買い時判定などを個別に前面化した最新版
+> **最終更新:** 共有レビュー・FANZA全体検索・急上昇レーダー・ウォッチリスト安定化まで反映した最新版
 
 ## 目次
 1. [サイト構成](#サイト構成)
@@ -41,14 +41,17 @@
 | `/custom-ranking` | 独自ランキング（コスパ/隠れた名作/大幅値下げ/新人） | ビルド毎 |
 | `/discover` | **シチュエーション検索**。気分から探しつつ、今夜の1本診断も使える | ビルド毎 |
 | `/buy-timing` | **買い時判定ツール**。買い時、まとめ買い、次のセール波を確認 | ビルド毎 |
-| `/watchlist` | **ウォッチリスト**。保存作品、値下げ候補、次候補を管理 | リアルタイム |
+| `/watchlist` | **ウォッチリスト**。ブラウザ自動保存で作品・値下げ候補・次候補を管理 | リアルタイム |
 | `/personalized` | ウォッチリスト起点のパーソナライズフィード | リアルタイム |
+| `/deep-dive` | 同じ系統を深掘り。保存作品から女優・メーカー・シリーズを芋づる提案 | リアルタイム |
+| `/trend-radar` | 急上昇・今夜向き・セール勢いの3軸で再訪価値を作るページ | ビルド毎 |
 | `/actress-ranking` | 女優データベース+ランキング | ビルド毎 |
 | `/maker-ranking` | メーカー比較ガイド | ビルド毎 |
 | `/simulator` | 月額vs単品コスト比較シミュレーター | 静的 |
 | `/community-ranking` | ユーザー投票ランキング | リアルタイム |
 | `/new` | 新着作品 | ビルド毎 |
-| `/search` | 作品検索 | ビルド毎 |
+| `/search` | 作品検索。Workers接続時はFANZA全体、未接続時は1,200件超の高速モード | リアルタイム / ビルド毎 |
+| `/reviews` | みんなのおすすめ作品レビュー。Workers接続時は共有レビュー | リアルタイム |
 | `/guide` | 初心者完全ガイド（新規登録導線） | 月1回 |
 | `/compare` | サービス比較 | 月1回 |
 | `/articles/*` | 記事群（セールカレンダー/節約術/VR/支払い方法/比較） | 適宜 |
@@ -58,9 +61,9 @@
 | `/ranking-battle` | 2作品比較投票 | リアルタイム |
 | `/series-guide` | シリーズ完走ガイド | ビルド毎 |
 | `/sale-predict` | セール予測カレンダー | 週1回 |
-| `/savings-tips` | 節約の見方まとめ | リアルタイム |
 | `/price-history` | 価格履歴チャート | ビルド毎 |
 | `/sns-cards` | SNS共有カード自動生成 | リアルタイム |
+| `/contact` | 問い合わせ・新機能募集フォーム | 静的 |
 | `/genre/*` | ジャンル別一覧 | ビルド毎 |
 | `/actress/*` | 女優別ページ | ビルド毎 |
 | `/maker/*` | メーカー別ページ | ビルド毎 |
@@ -73,9 +76,11 @@
    迷っているユーザーに、今すぐ見る候補を3本まで先に絞って提示する導線。
 3. **買い時判定ツール (`/buy-timing`)**  
    価格、割引率、次のセール時期、まとめ買い可否を見て離脱を減らす判断ページ。
-4. **ウォッチリスト (`/watchlist`)**  
-   再訪ユーザー向け。保存作品の値下げ確認と次候補の発見を支える中核。
-5. **ランキング / セール / 週間セール / ガイド**  
+4. **急上昇レーダー (`/trend-radar`)**  
+   何を開けばいいか迷う再訪ユーザー向け。勢い・今夜向き・値下げ熱量を先に見せる。
+5. **ウォッチリスト + 深掘り (`/watchlist` / `/deep-dive`)**  
+   保存→関連掘り→次候補の流れを作る、継続利用の中核。
+6. **ランキング / セール / 週間セール / ガイド**  
    検索流入、新規登録導線、情報収集需要を拾う定番ページ群。
 
 ### 環境変数（Cloudflare Pages）
@@ -110,6 +115,10 @@ npx playwright test   # 92テスト（4ファイル）
 npm run build && npx vitest run && npx playwright test
 ```
 
+### 追加の静的監査
+- `out/` を対象に内部リンク・静的アセット欠落を走査
+- 今回の確認結果: **Vitest 100/100、Playwright 92/92、`out/` の内部リンク欠落 0件**
+
 ---
 
 ### 環境変数（Cloudflare Pages）
@@ -121,6 +130,10 @@ npm run build && npx vitest run && npx playwright test
 | `FANZA_FLOOR` | FANZAフロアコード | ✅ |
 | `SITE_URL` | サイトURL (https://fanza-navi.pages.dev) | ✅ |
 | `NEXT_PUBLIC_WORKERS_API` | Workers APIのURL | Workers使用時 |
+
+補足:
+- `DMM_API_ID` 未設定のローカル build はフォールバック作品を使うため、商品画像はプレースホルダー表示になります
+- `NEXT_PUBLIC_WORKERS_API` 未設定時、`/search` はローカル高速モードのみ、`/reviews` はブラウザ内保存モードで動作します
 
 ---
 
@@ -144,6 +157,10 @@ npx wrangler d1 create fanza-navi-db
 
 # テーブル作成
 npx wrangler d1 execute fanza-navi-db --file=schema.sql
+
+# 既存DBを使っている場合も、schema.sql を再実行して
+# reviews / review_helpful_votes など新テーブルを反映
+npx wrangler d1 execute fanza-navi-db --remote --file=schema.sql
 ```
 
 ### 2. Workers環境変数
@@ -176,6 +193,14 @@ Cloudflare Pagesの環境変数に追加：
 ```
 NEXT_PUBLIC_WORKERS_API=https://fanza-navi-worker.your-subdomain.workers.dev
 ```
+
+### 5. Workers有効化で本番反映される機能
+- `/search`: `GET /api/search` を使った **FANZA全体検索**
+- `/reviews`: `GET /api/reviews` / `POST /api/reviews` / helpful vote / delete による **共有レビュー**
+- `/community-ranking`: 投票系のリアルタイム集計
+- `/price-history`: D1 に蓄積した価格履歴の表示
+
+Workers未接続でもサイトは動きますが、**全作品検索**と**ブラウザをまたいだレビュー共有**は本番Workers前提です。
 
 ---
 
@@ -438,22 +463,26 @@ curl https://your-worker.workers.dev/api/cron-test
 1. **トップページ**で今のセール・ランキング・独自導線を確認する
 2. **シチュエーション検索**で「今日は何を見るか」を絞る
 3. **今夜の1本診断**で候補を3本程度まで圧縮する
-4. **買い時判定ツール**で価格・割引率・まとめ買い候補を比較する
-5. **ウォッチリスト**に保存して次回の再訪導線を作る
+4. **急上昇レーダー**で今動いている作品と今夜向きの作品を確認する
+5. **買い時判定ツール**で価格・割引率・まとめ買い候補を比較する
+6. **ウォッチリスト**に保存して、必要なら **同じ系統を深掘り** で候補を増やす
+7. **みんなのおすすめ作品レビュー**で最後の一押しを確認する
 
 ### ユーザー別の誘導
 | ユーザー状態 | 入口に使うページ | 目的 |
 | --- | --- | --- |
 | 初めてFANZAを使う人 | `/guide` | 登録・支払い・初回購入に繋げる |
 | 何を買うか迷っている人 | `/discover` | 気分・予算・セールで候補を出す |
+| 作品名や女優名が決まっている人 | `/search` | FANZA全体検索または高速モードで直接探す |
 | 安く買いたい人 | `/sale` / `/weekly-sale` / `/buy-timing` | 割引と買い時を見せる |
-| また使いたい人 | `/watchlist` / `/personalized` | 保存作品と近い候補で再訪させる |
+| また使いたい人 | `/watchlist` / `/deep-dive` / `/trend-radar` | 保存作品の延長線で再訪させる |
+| 最後に背中を押してほしい人 | `/reviews` | 他ユーザーの感想で不安を減らす |
 | 比較して決めたい人 | `/custom-ranking` / `/ranking-battle` | 公式にない切り口で比較させる |
 
 ### 運用側の見方
-- ホームの訴求で強く出すのは **シチュエーション検索 / 今夜の1本診断 / 買い時判定ツール / ウォッチリスト**
+- ホームの訴求で強く出すのは **シチュエーション検索 / 今夜の1本診断 / 急上昇レーダー / 買い時判定 / ウォッチリスト**
 - 単発SNS投稿は `/weekly-sale` と `/daily-pick` が最も作りやすい
-- 固定導線は `/guide`、回遊導線は `/discover` と `/watchlist`
+- 固定導線は `/guide`、回遊導線は `/discover` と `/watchlist`、再訪導線は `/trend-radar` と `/deep-dive`
 
 ---
 
@@ -461,12 +490,13 @@ curl https://your-worker.workers.dev/api/cron-test
 
 ### Day 1
 - `npm run build && npm test && npm run test:e2e`
-- Cloudflare Pages の環境変数 `SITE_URL / DMM_AFFILIATE_LINK / DMM_API_ID / DMM_AFFILIATE_ID / FANZA_FLOOR` を再確認
+- Cloudflare Pages の環境変数 `SITE_URL / DMM_AFFILIATE_LINK / DMM_API_ID / DMM_AFFILIATE_ID / FANZA_FLOOR / NEXT_PUBLIC_WORKERS_API` を再確認
+- Workers を使う場合は `cd workers && npx wrangler deploy` を実行し、`schema.sql` の反映漏れがないか確認
 - X プロフィール、固定ポスト、リンク先を `/guide` または `/weekly-sale` に合わせる
 
 ### Day 2
 - `/weekly-sale` から高割引作品を抜き出して X 投稿を3本作成
-- `/discover` の「今夜の1本診断」を紹介する短尺投稿を作成
+- `/discover` の「今夜の1本診断」か `/trend-radar` を紹介する短尺投稿を作成
 - Google Search Console に sitemap を再送信
 
 ### Day 3
@@ -474,15 +504,15 @@ curl https://your-worker.workers.dev/api/cron-test
 - `/custom-ranking` の上位作品で「公式にない切り口」投稿を作る
 
 ### Day 4
-- `/watchlist` と `/personalized` の導線を使った再訪訴求を投稿
-- 価格や画像が欠けていないか、セール作品リンクが正しいかを目視確認
+- `/watchlist` と `/deep-dive` の導線を使った再訪訴求を投稿
+- 価格や画像が欠けていないか、セール作品リンクが正しいか、`/reviews` 投稿が共有されるかを目視確認
 
 ### Day 5
 - `/guide` から登録導線の文言とCTAを見直す
-- Search Console の検索クエリを見て、`/articles/*` の見出しや description を微修正
+- Search Console の検索クエリを見て、`/articles/*` と `/search` の見出しや description を微修正
 
 ### Day 6
-- `community-ranking` や `ranking-battle` を使った参加型投稿を出す
+- `community-ranking` / `ranking-battle` / `/reviews` を使った参加型投稿を出す
 - 反応が良かった切り口を翌週の固定フォーマットに昇格させる
 
 ### Day 7
@@ -570,7 +600,7 @@ Twitter投稿文を1つ作って。
 
 | # | タスク | 内容 |
 |---|--------|------|
-| 1 | Workers D1 本番デプロイ | 価格トラッカーの実データ蓄積開始 |
+| 1 | Workers D1 本番デプロイ | **共有レビュー / 全作品検索 / 価格履歴** の本番稼働開始 |
 | 2 | Cronジョブ稼働 | 毎日6時のAPI取得→D1記録 |
 | 3 | セール自動検知 | 前日比30%以上の値下げを自動検出 |
 | 4 | X自動投稿Bot | セール検知→自動ツイート |

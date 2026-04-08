@@ -21,6 +21,7 @@ const navSections = [
       { href: `${ROUTES.discover}#night-diagnosis`, label: "今夜の1本診断", icon: null },
       { href: ROUTES.dailyPick, label: "今日のおすすめ", icon: null },
       { href: ROUTES.gacha, label: "ガチャレコメンド", icon: null },
+      { href: ROUTES.trendRadar, label: "急上昇レーダー", icon: null },
       { href: ROUTES.personalized, label: "パーソナライズフィード", icon: null },
       { href: ROUTES.deepDive, label: "同じ系統を深掘り", icon: null },
     ],
@@ -52,7 +53,7 @@ const navSections = [
     title: "管理・共有・ガイド",
     links: [
       { href: ROUTES.watchlist, label: "ウォッチリスト", icon: <FaBookmark size={10} /> },
-      { href: ROUTES.reviews, label: "みんなのレビュー", icon: null },
+      { href: ROUTES.reviews, label: "みんなのおすすめ作品レビュー", icon: null },
       { href: ROUTES.snsCards, label: "SNS共有カード", icon: null },
       { href: ROUTES.seriesGuide, label: "シリーズガイド", icon: null },
       { href: ROUTES.guide, label: "初心者ガイド", icon: <FaBookOpen size={10} /> },

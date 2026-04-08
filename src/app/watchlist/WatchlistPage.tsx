@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaBookmark, FaTrash, FaStar, FaArrowRight } from "react-icons/fa";
+import { FaArrowRight, FaBookmark, FaDownload, FaStar, FaTrash } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
 import FavoriteButton from "@/components/FavoriteButton";
 import PrimaryCta from "@/components/PrimaryCta";
@@ -31,7 +31,7 @@ export default function WatchlistPage({
 }: {
   allProducts: Product[];
 }) {
-  const { ids, toggle, count } = useFavorites();
+  const { ids, clearAll, count, maxFavorites } = useFavorites();
   const [showConfirm, setShowConfirm] = useState(false);
   const [source, setSource] = useState<ProductPoolSource>("favorites");
   const [query, setQuery] = useState("");
@@ -88,8 +88,24 @@ export default function WatchlistPage({
   );
 
   const handleClearAll = () => {
-    ids.forEach((id) => toggle(id));
+    clearAll();
     setShowConfirm(false);
+  };
+
+  const handleExport = () => {
+    if (typeof window === "undefined" || ids.length === 0) {
+      return;
+    }
+
+    const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), favoriteIds: ids }, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "fanza-tokunavi-watchlist.json";
+    anchor.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -109,16 +125,31 @@ export default function WatchlistPage({
               </h1>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center justify-end gap-3">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-sm font-semibold text-[var(--color-text-primary)]">
               <FaBookmark size={12} className="text-[var(--color-primary)]" />
               {count}件
             </span>
+            {count > 0 ? (
+              <button
+                type="button"
+                onClick={handleExport}
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-sm font-semibold text-[var(--color-text-secondary)] transition-colors hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)]"
+              >
+                <FaDownload size={11} />
+                JSON保存
+              </button>
+            ) : null}
           </div>
         </div>
         <p className="section-description mt-3">
-          気になる作品をお気に入りに追加すると、ここにまとめて表示されます。
+          気になる作品をお気に入りに追加すると、このブラウザに自動保存されます。あとで戻ってきても、値下げ監視や深掘りの起点としてそのまま使えます。
         </p>
+        <div className="mt-3 flex flex-wrap gap-2 text-xs text-[var(--color-text-secondary)]">
+          <span className="chip">ブラウザ自動保存</span>
+          <span className="chip">最大 {maxFavorites} 件まで保存</span>
+          <span className="chip">JSONバックアップ対応</span>
+        </div>
       </section>
 
       <ProductPoolToolbar

@@ -7,6 +7,7 @@ import PrimaryCta from "@/components/PrimaryCta";
 import FavoriteButton from "@/components/FavoriteButton";
 import { getGenreBySlug } from "@/data/genres";
 import type { Product } from "@/data/products";
+import { useViewHistory } from "@/hooks/useViewHistory";
 import {
   formatPriceYen,
   getDiscountPercent,
@@ -40,6 +41,7 @@ export default function ProductCard({
   index: number;
 }) {
   const [imgError, setImgError] = useState(false);
+  const { record } = useViewHistory();
   const genreColor = genreMeta[product.genre] ?? genreMeta.popular;
   const hasAffiliateUrl = product.affiliateUrl.trim().length > 0;
   const genre = getGenreBySlug(product.genre);
@@ -195,7 +197,22 @@ export default function ProductCard({
           </div>
 
           {hasAffiliateUrl ? (
-            <PrimaryCta href={product.affiliateUrl} external size="sm">
+            <PrimaryCta
+              href={product.affiliateUrl}
+              external
+              size="sm"
+              onClick={() =>
+                record({
+                  id: product.id,
+                  title: product.title,
+                  imageUrl: product.imageUrl,
+                  price: product.price,
+                  salePrice: product.salePrice,
+                  genre: product.genre,
+                  affiliateUrl: product.affiliateUrl,
+                })
+              }
+            >
               {getPrimaryFanzaCtaLabel(product)}
             </PrimaryCta>
           ) : (
