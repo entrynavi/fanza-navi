@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
 import { FaEnvelope, FaGlobe, FaShieldAlt } from "react-icons/fa";
 import { ROUTES, SITE_URL } from "@/lib/site";
+import { buildPageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "運営者情報",
-};
+  description:
+    "FANZAオトナビの運営者情報・特定商取引法に基づく表記。サイト概要、運営形態、お問い合わせ先をご確認いただけます。",
+  path: ROUTES.about,
+});
 
 export default function AboutPage() {
   return (

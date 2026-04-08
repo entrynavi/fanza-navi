@@ -1,0 +1,15 @@
+name = "fanza-otonavi-api"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+
+[triggers]
+crons = ["0 6 * * *"]  # Daily at 6am JST (9pm UTC previous day)
+
+[[d1_databases]]
+binding = "DB"
+database_name = "fanza-otonavi"
+database_id = "placeholder-replace-with-actual-id"
+
+[vars]
+SITE_URL = "https://fanza-navi.pages.dev"
+CORS_ORIGIN = "https://fanza-navi.pages.dev"

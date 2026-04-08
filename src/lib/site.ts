@@ -23,12 +23,19 @@ export const ROUTES = {
   terms: "/terms",
   privacy: "/privacy",
   about: "/about",
+  weeklySale: "/weekly-sale",
+  customRanking: "/custom-ranking",
+  communityRanking: "/community-ranking",
   articles: "/articles",
   articleFanzaPayment: "/articles/fanza-payment",
   articleVrSetup: "/articles/vr-setup",
   articleSaveMoney: "/articles/save-money",
   articleSaleCalendar: "/articles/sale-calendar",
   articleCostSaving: "/articles/cost-saving",
+  discover: "/discover",
+  actressRanking: "/actress-ranking",
+  makerRanking: "/maker-ranking",
+  simulator: "/simulator",
 } as const;
 
 export function toAbsoluteUrl(path = "") {

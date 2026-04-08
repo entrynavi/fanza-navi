@@ -12,6 +12,7 @@ import { buildActressRanking, decodeActressSlug, getActressSlug } from "@/lib/ac
 import { loadActressProducts, loadNewProducts, loadRankingProducts, loadSaleProducts } from "@/lib/catalog";
 import { buildPageMetadata } from "@/lib/metadata";
 import { ROUTES, getGenreRoute } from "@/lib/site";
+import type { Product } from "@/data/products";
 
 export const dynamicParams = false;
 
@@ -83,6 +84,38 @@ export default async function ActressPage({
     products.some((product) => product.genre === genre.slug)
   );
 
+  // Stats computation
+  const productCount = products.length;
+  const avgRating =
+    products.length > 0
+      ? Number(
+          (products.reduce((sum, p) => sum + p.rating, 0) / products.length).toFixed(1)
+        )
+      : 0;
+  const totalReviewCount = products.reduce((sum, p) => sum + p.reviewCount, 0);
+
+  const genreCounts = new Map<string, number>();
+  for (const product of products) {
+    for (const tag of product.tags) {
+      genreCounts.set(tag, (genreCounts.get(tag) ?? 0) + 1);
+    }
+  }
+  const topGenres = Array.from(genreCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([genre]) => genre);
+
+  const latestRelease = products
+    .filter((p) => p.releaseDate)
+    .sort((a, b) => (b.releaseDate > a.releaseDate ? 1 : -1))[0]?.releaseDate;
+  const latestDateFormatted = latestRelease
+    ? new Date(latestRelease).toLocaleDateString("ja-JP", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    : null;
+
   return (
     <main className="content-shell px-4 py-8">
       <Breadcrumb
@@ -103,6 +136,20 @@ export default async function ActressPage({
             </PrimaryCta>
           }
         />
+
+        {products.length > 0 && (
+          <div className="mb-5 flex flex-wrap gap-2">
+            <span className="chip">📊 作品数: {productCount}本</span>
+            <span className="chip">⭐ 平均評価: {avgRating}</span>
+            <span className="chip">💬 総レビュー数: {totalReviewCount}件</span>
+            {topGenres.length > 0 && (
+              <span className="chip">🏷️ 得意ジャンル: {topGenres.join("・")}</span>
+            )}
+            {latestDateFormatted && (
+              <span className="chip">📅 最新作: {latestDateFormatted}</span>
+            )}
+          </div>
+        )}
 
         {actressEntry ? (
           <div className="grid gap-4 md:grid-cols-3">

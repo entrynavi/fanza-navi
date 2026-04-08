@@ -8,6 +8,7 @@ import { JsonLd } from "@/components/JsonLd";
 import Analytics from "@/components/Analytics";
 import ErrorTracker from "@/components/ErrorTracker";
 import { SITE_URL } from "@/lib/site";
+import InstallBanner from "@/components/InstallBanner";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -41,6 +42,7 @@ export const metadata: Metadata = {
     description: "ランキング・セール・新作情報を厳選してお届け。初心者ガイドから支払い方法まで完全解説。",
     images: [`${SITE_URL}/images/ogp.svg`],
   },
+  manifest: "/manifest.json",
   robots: {
     index: true,
     follow: true,
@@ -127,7 +129,9 @@ export default function RootLayout({
           <Footer />
         </div>
         <AgeGate />
+        <InstallBanner />
         <script dangerouslySetInnerHTML={{ __html: bootstrapAgeGateScript }} />
+        <script dangerouslySetInnerHTML={{ __html: `if("serviceWorker"in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("/sw.js")})}` }} />
       </body>
     </html>
   );

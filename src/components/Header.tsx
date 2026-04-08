@@ -12,16 +12,17 @@ import {
   FaTimes,
   FaBolt,
 } from "react-icons/fa";
-import { ROUTES, getGenreRoute } from "@/lib/site";
+import { ROUTES } from "@/lib/site";
 
 const primaryLinks = [
   { href: ROUTES.ranking, label: "ランキング", icon: <FaChartLine size={12} />, accent: false },
   { href: ROUTES.sale, label: "セール", icon: <FaTags size={12} />, accent: true },
-  { href: getGenreRoute("popular"), label: "ジャンル別", icon: <FaCompass size={12} />, accent: false },
+  { href: ROUTES.discover, label: "シチュ検索", icon: <FaCompass size={12} />, accent: false },
   { href: ROUTES.articles, label: "記事", icon: <FaBookOpen size={12} />, accent: false },
 ];
 
 const utilityLinks = [
+  { href: ROUTES.weeklySale, label: "週間セール", icon: <FaTags size={11} /> },
   { href: ROUTES.newReleases, label: "新作", icon: <FaBolt size={11} /> },
   { href: ROUTES.guide, label: "初心者ガイド", icon: <FaBookOpen size={11} /> },
 ];
