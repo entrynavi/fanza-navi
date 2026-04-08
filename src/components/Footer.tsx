@@ -15,29 +15,32 @@ import { ROUTES } from "@/lib/site";
 
 const navSections = [
   {
-    title: "探す/決める",
+    title: "独自ツール",
     links: [
-      { href: ROUTES.discover, label: "探す/決めるラボ", icon: <FaCompass size={10} /> },
-      { href: ROUTES.watchlist, label: "ウォッチリスト司令室", icon: <FaBookmark size={10} /> },
-      { href: ROUTES.personalized, label: "自分向けフィード", icon: <FaUser size={10} /> },
-      { href: ROUTES.dailyPick, label: "今日の1本", icon: null },
-      { href: ROUTES.gacha, label: "サプライズ選出", icon: null },
-    ],
-  },
-  {
-    title: "買う前/節約",
-    links: [
-      { href: ROUTES.buyTiming, label: "買う前チェック", icon: <FaShoppingCart size={10} /> },
-      { href: ROUTES.weeklySale, label: "週間セールまとめ", icon: <FaTags size={10} /> },
-      { href: ROUTES.salePredict, label: "セール予測カレンダー", icon: null },
-      { href: ROUTES.priceHistory, label: "価格履歴チャート", icon: null },
-      { href: ROUTES.cospaCalc, label: "コスパ計算機", icon: null },
-    ],
-  },
-  {
-    title: "比較/ガイド",
-    links: [
+      { href: ROUTES.discover, label: "シチュエーション検索", icon: <FaCompass size={10} /> },
+      { href: `${ROUTES.discover}#night-diagnosis`, label: "今夜の1本診断", icon: null },
       { href: ROUTES.customRanking, label: "独自ランキング", icon: <FaChartLine size={10} /> },
+      { href: ROUTES.buyTiming, label: "買い時判定ツール", icon: <FaShoppingCart size={10} /> },
+      { href: ROUTES.watchlist, label: "ウォッチリスト", icon: <FaBookmark size={10} /> },
+      { href: ROUTES.weeklySale, label: "週間セールまとめ", icon: <FaTags size={10} /> },
+    ],
+  },
+  {
+    title: "便利機能",
+    links: [
+      { href: ROUTES.dailyPick, label: "今日のおすすめ", icon: null },
+      { href: ROUTES.gacha, label: "ガチャレコメンド", icon: null },
+      { href: ROUTES.personalized, label: "パーソナライズフィード", icon: <FaUser size={10} /> },
+      { href: ROUTES.priceHistory, label: "価格履歴チャート", icon: null },
+      { href: ROUTES.salePredict, label: "セール予測カレンダー", icon: null },
+      { href: ROUTES.seriesGuide, label: "シリーズ完走ガイド", icon: null },
+      { href: ROUTES.cospaCalc, label: "コスパ計算機", icon: null },
+      { href: ROUTES.snsCards, label: "SNS共有カード生成", icon: null },
+    ],
+  },
+  {
+    title: "ガイド/比較",
+    links: [
       { href: ROUTES.rankingBattle, label: "ランキングバトル", icon: null },
       { href: ROUTES.guide, label: "初心者ガイド", icon: <FaBookOpen size={10} /> },
       { href: ROUTES.articles, label: "記事一覧", icon: null },
@@ -46,6 +49,15 @@ const navSections = [
       { href: ROUTES.about, label: "運営者情報", icon: null },
       { href: ROUTES.privacy, label: "プライバシーポリシー", icon: null },
       { href: ROUTES.terms, label: "利用規約", icon: null },
+    ],
+  },
+  {
+    title: "探す",
+    links: [
+      { href: ROUTES.ranking, label: "人気ランキング", icon: null },
+      { href: ROUTES.sale, label: "セール作品", icon: null },
+      { href: ROUTES.search, label: "作品検索", icon: null },
+      { href: ROUTES.communityRanking, label: "みんなの推し", icon: null },
     ],
   },
 ];
@@ -98,8 +110,8 @@ export default function Footer() {
               </span>
             </a>
             <p className="mt-4 max-w-xs text-sm leading-7 text-[var(--color-text-secondary)]">
-              公式FANZAにない切り口で、探す・買う・比較するをまとめた<br className="hidden sm:block" />
-              無料ツール集です。診断ラボ・買う前チェック・<br className="hidden sm:block" />
+              公式FANZAにない切り口で作品を探せる<br className="hidden sm:block" />
+              無料ツール集です。シチュ検索・今夜の1本診断・<br className="hidden sm:block" />
               セール解析で、迷わず選びやすくしています。
             </p>
           </div>

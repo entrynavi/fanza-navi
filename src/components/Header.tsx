@@ -59,7 +59,7 @@ export default function Header() {
                   <span className="text-[var(--color-accent)]">FANZA</span><span className="gradient-text">トクナビ</span>
                 </p>
                 <p className="truncate text-[10px] font-medium text-[var(--color-text-muted)]">
-                  探すラボ × 買う前チェック × 独自ランキング
+                  シチュ検索 × 今夜の1本 × 独自ランキング
                 </p>
               </div>
             </div>

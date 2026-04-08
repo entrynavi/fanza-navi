@@ -96,6 +96,66 @@ const INTENT_OPTIONS: {
   },
 ];
 
+const SITUATION_SHORTCUTS: {
+  id: string;
+  label: string;
+  description: string;
+  icon: React.ReactNode;
+  intent: DiagnosisIntent;
+  source?: ProductPoolSource;
+  budget?: number;
+  requiresFavorites?: boolean;
+}[] = [
+  {
+    id: "safe",
+    label: "初めてでも外しにくい",
+    description: "高評価・レビュー多めから無難に探します。",
+    icon: <FaShieldAlt size={16} />,
+    intent: "safe",
+    source: "high-rated",
+  },
+  {
+    id: "budget",
+    label: "コスパ重視",
+    description: "安く済ませたい夜向けの候補に寄せます。",
+    icon: <FaCoins size={16} />,
+    intent: "budget",
+    source: "sale",
+    budget: 2500,
+  },
+  {
+    id: "sale",
+    label: "セールから選ぶ",
+    description: "いま値下げ中の作品から絞り込みます。",
+    icon: <FaTags size={16} />,
+    intent: "sale",
+    source: "sale",
+  },
+  {
+    id: "new",
+    label: "新作を追う",
+    description: "新着の中から評判が伸びそうな作品を優先します。",
+    icon: <FaFire size={16} />,
+    intent: "new",
+    source: "new",
+  },
+  {
+    id: "watchlist",
+    label: "保存中に近い",
+    description: "ウォッチリストの傾向に近い候補を探します。",
+    icon: <FaBookmark size={16} />,
+    intent: "watchlist",
+    requiresFavorites: true,
+  },
+  {
+    id: "surprise",
+    label: "ガチャで当たり寄り",
+    description: "完全ランダムではなく、当たり寄りで選びます。",
+    icon: <FaDice size={16} />,
+    intent: "surprise",
+  },
+];
+
 function QuickPickCard({
   product,
   eyebrow,
@@ -302,21 +362,38 @@ export default function DiscoverPage({
   const newCount =
     sourceOptions.find((option) => option.value === "new")?.count ?? 0;
 
+  const handleShortcutSelect = (
+    shortcut: (typeof SITUATION_SHORTCUTS)[number]
+  ) => {
+    if (shortcut.requiresFavorites && favoriteProducts.length === 0) {
+      return;
+    }
+    setIntent(shortcut.intent);
+    if (shortcut.source) {
+      setSource(shortcut.source);
+    }
+    if (shortcut.budget) {
+      setBudget(shortcut.budget);
+    }
+    document.getElementById("night-diagnosis")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   return (
     <main className="content-shell px-4 py-8">
-      <Breadcrumb items={[{ label: "探す/決めるラボ" }]} />
+      <Breadcrumb items={[{ label: "シチュエーション検索" }]} />
 
       <section className="editorial-surface mb-8 p-6 md:p-8">
         <div className="max-w-4xl">
-          <p className="section-eyebrow">探す/決めるラボ</p>
+          <p className="section-eyebrow">シチュエーション検索</p>
           <h1 className="section-title gradient-text text-3xl md:text-4xl">
-            探し方が多すぎる人向けの
-            <br className="hidden sm:block" />
-            1本決定ハブ
+            気分で作品を探す
           </h1>
           <p className="section-description mt-3">
-            シチュ検索・今日の1本・安牌フィルタ・給料日前ピックをひとまとめにしました。
-            「何を見ればいいかわからない」を、このページだけで減らします。
+            シチュエーション検索を軸にしつつ、今夜の1本診断と今日のおすすめも一緒に使えます。
+            まずは気分から候補を絞って、迷ったらそのまま診断へ進めます。
           </p>
         </div>
       </section>
@@ -330,52 +407,60 @@ export default function DiscoverPage({
         placeholder="作品名・女優名・シリーズで候補を絞る"
         summary={
           source === "favorites"
-            ? "ウォッチリストだけで診断・深掘り・サプライズ選出までまとめて使えます。"
-            : `全取得作品 ${sourceProducts.length} 件から、探す・決める・深掘りをひとつの流れで回せます。`
+            ? "ウォッチリストだけに絞って、近い作品探しや今夜の1本診断にそのまま使えます。"
+            : `全取得作品 ${sourceProducts.length} 件から、気分別の絞り込みと今夜の1本診断を続けて回せます。`
         }
       />
 
-      <section className="mb-8 grid gap-4 md:grid-cols-3">
-        <div className="glass-card p-4">
-          <p className="text-[11px] tracking-[0.08em] text-[var(--color-text-muted)]">
-            診断対象
-          </p>
-          <p className="mt-2 text-2xl font-bold text-white">
-            {sourceProducts.length}
-            <span className="ml-1 text-sm text-[var(--color-text-muted)]">件</span>
-          </p>
-          <p className="mt-2 text-xs leading-5 text-[var(--color-text-secondary)]">
-            検索・ウォッチリスト・セール切替後の候補数です。
-          </p>
-        </div>
-        <div className="glass-card p-4">
-          <p className="text-[11px] tracking-[0.08em] text-[var(--color-text-muted)]">
-            値下げ中
-          </p>
-          <p className="mt-2 text-2xl font-bold text-[var(--color-accent)]">
-            {saleCount}
-            <span className="ml-1 text-sm text-[var(--color-text-muted)]">件</span>
-          </p>
-          <p className="mt-2 text-xs leading-5 text-[var(--color-text-secondary)]">
-            割引狙いなら「今の値下げから」が最短です。
+      <section className="mb-8">
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="section-eyebrow">気分から選ぶ</p>
+            <h2 className="text-2xl font-bold text-[var(--color-text-primary)]">
+              まずは探し方を決める
+            </h2>
+          </div>
+          <p className="text-xs text-[var(--color-text-secondary)]">
+            候補 {sourceProducts.length} 件 / 値下げ中 {saleCount} 件 / 新作 {newCount} 件
           </p>
         </div>
-        <div className="glass-card p-4">
-          <p className="text-[11px] tracking-[0.08em] text-[var(--color-text-muted)]">
-            新作/保存中
-          </p>
-          <p className="mt-2 text-2xl font-bold text-white">
-            {newCount}
-            <span className="mx-1 text-sm text-[var(--color-text-muted)]">/</span>
-            {favoriteProducts.length}
-          </p>
-          <p className="mt-2 text-xs leading-5 text-[var(--color-text-secondary)]">
-            新作追いとウォッチリスト深掘りを同じ導線にまとめています。
-          </p>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {SITUATION_SHORTCUTS.map((shortcut) => {
+            const disabled =
+              shortcut.requiresFavorites && favoriteProducts.length === 0;
+            const active = intent === shortcut.intent;
+
+            return (
+              <button
+                key={shortcut.id}
+                type="button"
+                disabled={disabled}
+                onClick={() => handleShortcutSelect(shortcut)}
+                className={`rounded-[22px] border p-5 text-left transition-all ${
+                  active
+                    ? "border-[var(--color-primary)]/45 bg-[var(--color-primary)]/12 text-white"
+                    : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-strong)] hover:text-white"
+                } ${disabled ? "cursor-not-allowed opacity-45" : ""}`}
+              >
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--color-surface-highlight)] text-[var(--color-primary-light)]">
+                  {shortcut.icon}
+                </div>
+                <h3 className="mt-4 text-base font-bold text-[var(--color-text-primary)]">
+                  {shortcut.label}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+                  {shortcut.description}
+                </p>
+              </button>
+            );
+          })}
         </div>
       </section>
 
-      <section className="mb-8 grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
+      <section
+        id="night-diagnosis"
+        className="mb-8 grid gap-4 xl:grid-cols-[1.1fr_0.9fr]"
+      >
         <div className="glass-card p-5 md:p-6">
           <div className="flex items-start gap-3">
             <div className="mt-1 flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--color-primary)]/12 text-[var(--color-primary)]">
@@ -579,7 +664,7 @@ export default function DiscoverPage({
 
       <section className="mt-10">
         <div className="mb-5">
-          <p className="section-eyebrow">さらに細かく使う</p>
+          <p className="section-eyebrow">他の独自機能も使う</p>
           <h2 className="section-title">専用ツールに進む</h2>
           <p className="section-description">
             まずここで候補を絞ってから、買い時・比較・パーソナライズに進む流れがおすすめです。
@@ -589,19 +674,19 @@ export default function DiscoverPage({
           {[
             {
               href: ROUTES.buyTiming,
-              title: "買う前チェック",
+              title: "買い時判定ツール",
               description: "買い時・予算内まとめ買い・次のセール波を確認。",
               icon: <FaShoppingCart size={18} />,
             },
             {
               href: ROUTES.watchlist,
-              title: "ウォッチリスト司令室",
+              title: "ウォッチリスト",
               description: "保存作品の優先順位と似た作品の深掘りへ。",
               icon: <FaBookmark size={18} />,
             },
             {
               href: ROUTES.personalized,
-              title: "自分向けフィード",
+              title: "パーソナライズフィード",
               description: "履歴とウォッチリストからおすすめを濃くします。",
               icon: <FaBolt size={18} />,
             },

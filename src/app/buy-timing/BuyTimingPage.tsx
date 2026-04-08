@@ -288,7 +288,7 @@ export default function BuyTimingPage({ products }: Props) {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
-      <Breadcrumb items={[{ label: "買う前チェック" }]} />
+      <Breadcrumb items={[{ label: "買い時判定ツール" }]} />
 
       {/* Hero */}
       <motion.div
@@ -298,10 +298,10 @@ export default function BuyTimingPage({ products }: Props) {
       >
         <h1 className="mb-4 text-3xl font-extrabold md:text-4xl">
           <FaThermometerHalf className="mr-2 inline-block text-[var(--color-primary)]" />
-          <span className="gradient-text">買う前チェック</span>
+          <span className="gradient-text">買い時判定ツール</span>
         </h1>
         <p className="text-lg text-[var(--color-text-secondary)]">
-          買い時・予算内セット・次のセール波をまとめて見て、迷った作品を決めやすくします
+          セール状況、予算内まとめ買い、次のセール波を見て、今買うか待つかを判定します
         </p>
       </motion.div>
 

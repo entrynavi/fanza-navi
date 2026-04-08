@@ -212,7 +212,7 @@ export default function WatchlistPage({
               products={similarProducts}
               action={
                 <PrimaryCta href={ROUTES.personalized} size="sm" variant="outline">
-                  自分向けフィードへ
+                  パーソナライズフィードへ
                 </PrimaryCta>
               }
             />

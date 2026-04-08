@@ -92,14 +92,14 @@ test.describe("トップページ詳細チェック", () => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await expect(page.locator("text=公式FANZAにない、ここだけのツール")).toBeVisible();
     
-    // All 6 tool cards
+    // Key tool cards visible above the fold
     const toolLinks = [
-      "探す/決めるラボ",
-      "買う前チェック",
-      "ウォッチリスト司令室",
-      "自分向けフィード",
-      "比較/ランキング",
-      "節約攻略",
+      "シチュエーション検索",
+      "今夜の1本診断",
+      "独自ランキング",
+      "週間セールまとめ",
+      "買い時判定ツール",
+      "ウォッチリスト",
     ];
     for (const tool of toolLinks) {
       await expect(page.locator(`text=${tool}`).first()).toBeVisible();

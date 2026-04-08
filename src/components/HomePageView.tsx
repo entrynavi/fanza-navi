@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   FaArrowUp, FaCoins, FaGift, FaPercentage, FaTicketAlt, FaTags,
   FaTheaterMasks, FaChartLine, FaCalculator, FaThumbsUp, FaCalendarAlt,
@@ -22,60 +23,166 @@ import type { GenreLandingPage } from "@/data/genres";
 import type { Product } from "@/data/products";
 import { ROUTES } from "@/lib/site";
 
-const toolSuites = [
+const uniqueTools = [
   {
     href: ROUTES.discover,
-    title: "探す/決めるラボ",
-    description: "シチュ検索、今夜の1本診断、給料日前ピックを1画面で回せます。",
+    title: "シチュエーション検索",
+    description: "気分・予算・セール状況から逆引き。作品探しの最初の入口です。",
     icon: <FaTheaterMasks size={20} />,
     accent: true,
-    badge: "中心導線",
-    highlights: ["今夜の1本診断", "安牌フィルタ", "サプライズ選出"],
+    badge: "人気",
   },
   {
-    href: ROUTES.buyTiming,
-    title: "買う前チェック",
-    description: "買い時判定、予算内まとめ買い、価格履歴の見どころをまとめて確認。",
-    icon: <FaShoppingCart size={20} />,
+    href: `${ROUTES.discover}#night-diagnosis`,
+    title: "今夜の1本診断",
+    description: "気分と予算から、今すぐ見る候補を3本まで先に絞ります。",
+    icon: <FaRandom size={20} />,
     accent: true,
-    badge: "高CV",
-    highlights: ["買い時スコア", "予算内セット", "セール波チェック"],
-  },
-  {
-    href: ROUTES.watchlist,
-    title: "ウォッチリスト司令室",
-    description: "保存作品の優先順位、値下げ中の候補、似た作品の深掘りまで対応。",
-    icon: <FaBookmark size={20} />,
-    accent: false,
-    badge: "再訪向け",
-    highlights: ["値下げ監視", "優先順位", "似た作品深掘り"],
-  },
-  {
-    href: ROUTES.personalized,
-    title: "自分向けフィード",
-    description: "履歴とウォッチリストから、次に刺さりやすい候補を濃く出します。",
-    icon: <FaUser size={20} />,
-    accent: false,
-    badge: "習慣化",
-    highlights: ["好み学習", "保存中に近い作品", "新作の掘り起こし"],
+    badge: "NEW",
   },
   {
     href: ROUTES.customRanking,
-    title: "比較/ランキング",
-    description: "独自ランキングと比較導線で、迷っている候補を決め切る用途に寄せました。",
+    title: "独自ランキング",
+    description: "コスパ最強・隠れた名作・大幅値下げ・新人注目の独自切り口。",
     icon: <FaChartLine size={20} />,
     accent: false,
-    badge: "比較用",
-    highlights: ["独自ランキング", "ランキングバトル", "推し決定"],
+    badge: "独自",
   },
   {
     href: ROUTES.weeklySale,
-    title: "節約攻略",
-    description: "週間セール、予測カレンダー、節約術、比較系をまとめた節約導線です。",
-    icon: <FaGift size={20} />,
+    title: "週間セールまとめ",
+    description: "今週の値下げ作品を自動集計。割引率と注目作をまとめて見られます。",
+    icon: <FaCalendarAlt size={20} />,
     accent: false,
-    badge: "更新型",
-    highlights: ["週間セール", "予測カレンダー", "節約投稿/比較"],
+    badge: "毎週更新",
+  },
+  {
+    href: ROUTES.buyTiming,
+    title: "買い時判定ツール",
+    description: "買い時判定、予算内まとめ買い、次のセール波までまとめて確認できます。",
+    icon: <FaShoppingCart size={20} />,
+    accent: false,
+    badge: "NEW",
+  },
+  {
+    href: ROUTES.watchlist,
+    title: "ウォッチリスト",
+    description: "保存作品の一覧、値下げ中の候補、似た作品の深掘りまでまとめて使えます。",
+    icon: <FaBookmark size={20} />,
+    accent: false,
+    badge: "再訪向け",
+  },
+  {
+    href: ROUTES.dailyPick,
+    title: "今日のおすすめ",
+    description: "毎日1作品を厳選。迷ったらまずここから見れば外しにくいです。",
+    icon: <FaStar size={20} />,
+    accent: false,
+    badge: "毎日更新",
+  },
+  {
+    href: ROUTES.gacha,
+    title: "ガチャレコメンド",
+    description: "条件を決めて回す、当たり寄りのサプライズ発見機能です。",
+    icon: <FaDice size={20} />,
+    accent: false,
+    badge: "NEW",
+  },
+  {
+    href: ROUTES.personalized,
+    title: "パーソナライズフィード",
+    description: "好みやウォッチリストを元に、次に刺さりやすい候補を濃く出します。",
+    icon: <FaUser size={20} />,
+    accent: false,
+    badge: "AI",
+  },
+  {
+    href: ROUTES.simulator,
+    title: "コスト比較シミュレーター",
+    description: "月額見放題と単品購入のどちらが得かを即計算できます。",
+    icon: <FaCalculator size={20} />,
+    accent: false,
+    badge: null,
+  },
+  {
+    href: ROUTES.communityRanking,
+    title: "みんなの推しランキング",
+    description: "ユーザー投票で決まる、売上順だけでは見えない人気作品の比較導線。",
+    icon: <FaThumbsUp size={20} />,
+    accent: false,
+    badge: "参加型",
+  },
+  {
+    href: ROUTES.actressRanking,
+    title: "女優ランキング",
+    description: "作品数・レビュー評価・注目度から人気女優を比較できます。",
+    icon: <FaUserFriends size={20} />,
+    accent: false,
+    badge: null,
+  },
+  {
+    href: ROUTES.makerRanking,
+    title: "メーカー比較ガイド",
+    description: "メーカーごとの特徴を整理して、探し方の軸を増やせます。",
+    icon: <FaIndustry size={20} />,
+    accent: false,
+    badge: null,
+  },
+  {
+    href: ROUTES.cospaCalc,
+    title: "コスパ計算機",
+    description: "1分あたりの価格感まで見て、安くても満足しやすい作品を探せます。",
+    icon: <FaClock size={20} />,
+    accent: false,
+    badge: "NEW",
+  },
+  {
+    href: ROUTES.rankingBattle,
+    title: "ランキングバトル",
+    description: "迷った2作品を比較しながら、推しを決めやすくする対決機能です。",
+    icon: <FaVoteYea size={20} />,
+    accent: false,
+    badge: "参加型",
+  },
+  {
+    href: ROUTES.salePredict,
+    title: "セール予測カレンダー",
+    description: "次の値下げが来そうな時期を先読みして、買い控え判断に使えます。",
+    icon: <FaChartBar size={20} />,
+    accent: false,
+    badge: "予測",
+  },
+  {
+    href: ROUTES.priceHistory,
+    title: "価格履歴チャート",
+    description: "過去の価格推移を見て、今が高いのか安いのかを判断できます。",
+    icon: <FaHistory size={20} />,
+    accent: false,
+    badge: "NEW",
+  },
+  {
+    href: ROUTES.seriesGuide,
+    title: "シリーズ完走ガイド",
+    description: "人気シリーズを一覧で見て、続き物の抜け漏れを減らせます。",
+    icon: <FaListOl size={20} />,
+    accent: false,
+    badge: null,
+  },
+  {
+    href: ROUTES.savingsTips,
+    title: "みんなの節約術",
+    description: "クーポン、ポイント、買い回しなど節約目線の見方を集約しています。",
+    icon: <FaPiggyBank size={20} />,
+    accent: false,
+    badge: "投稿型",
+  },
+  {
+    href: ROUTES.snsCards,
+    title: "SNS共有カード生成",
+    description: "作品情報を投稿向けカードにして、そのままシェアしやすくします。",
+    icon: <FaShareAlt size={20} />,
+    accent: false,
+    badge: null,
   },
 ];
 
@@ -130,6 +237,8 @@ export default function HomePageView({
   featuredGenres: GenreLandingPage[];
 }) {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  const [showAllTools, setShowAllTools] = useState(false);
+  const visibleTools = showAllTools ? uniqueTools : uniqueTools.slice(0, 9);
   const rankingSpotlight = rankingPreview.slice(0, 3);
   const rankingMore = rankingPreview.slice(3, 6);
   const saleCompact = salePreview.slice(0, 4);
@@ -147,10 +256,10 @@ export default function HomePageView({
         <SectionIntro
           eyebrow="トクナビ独自機能"
           title="公式FANZAにない、ここだけのツール"
-          description="バラバラだった独自機能を「探す・買う・比較する」の流れでまとめ直しました。まずは目的に近い導線から入れます。"
+          description="統合前の見せ方に戻しつつ、今夜の1本診断や買い時判定などの新機能も個別に使えるように整理しています。"
         />
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {toolSuites.map((tool) => (
+          {visibleTools.map((tool) => (
             <a
               key={tool.href}
               href={tool.href}
@@ -184,16 +293,6 @@ export default function HomePageView({
                   <p className="mt-1.5 text-xs leading-5 text-[var(--color-text-secondary)]">
                     {tool.description}
                   </p>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {tool.highlights.map((highlight) => (
-                      <span
-                        key={highlight}
-                        className="rounded-full border border-[var(--color-border)] px-2 py-1 text-[10px] font-medium text-[var(--color-text-muted)]"
-                      >
-                        {highlight}
-                      </span>
-                    ))}
-                  </div>
                 </div>
               </div>
               <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[var(--color-primary-light)] opacity-0 transition-opacity group-hover:opacity-100">
@@ -202,6 +301,16 @@ export default function HomePageView({
             </a>
           ))}
         </div>
+        {!showAllTools && uniqueTools.length > visibleTools.length && (
+          <div className="mt-4 text-center">
+            <button
+              onClick={() => setShowAllTools(true)}
+              className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--color-text-secondary)] transition-all hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)]"
+            >
+              全{uniqueTools.length}機能を表示 <FaArrowRight size={10} />
+            </button>
+          </div>
+        )}
       </section>
 
       <section className="content-shell px-4 pb-8">

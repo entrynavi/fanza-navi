@@ -36,8 +36,9 @@ describe("RootLayout disclosure shell", () => {
     expect(markup).toContain('class="sticky top-0 z-50"');
     expect(markup).toContain("ランキング");
     expect(markup).toContain("セール");
-    expect(markup).toContain("探すラボ");
-    expect(markup).toContain("買う前チェック");
+    expect(markup).toContain("シチュ検索");
+    expect(markup).toContain("今夜の1本診断");
+    expect(markup).toContain("買い時判定ツール");
     expect(markup).toContain("記事一覧");
     expect(markup).toContain("初心者ガイド");
     expect(markup).toContain("検索入口");
