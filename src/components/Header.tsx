@@ -55,7 +55,7 @@ export default function Header() {
                   <rect x="21" y="28" width="3" height="5" rx="1" fill="#e34a6e" opacity="0.9"/>
                   <rect x="25" y="24" width="3" height="9" rx="1" fill="#d3af6f" opacity="0.9"/>
                   <rect x="29" y="20" width="3" height="13" rx="1" fill="#e34a6e" opacity="0.9"/>
-                  <text x="47" y="56" fontFamily="sans-serif" fontSize="16" fontWeight="800" fill="url(#hdr-accent)">N</text>
+                  <text x="47" y="56" fontFamily="sans-serif" fontSize="16" fontWeight="800" fill="url(#hdr-accent)">F</text>
                 </svg>
               </span>
               <div className="min-w-0">

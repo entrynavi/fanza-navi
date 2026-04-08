@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 import GenreRail from "@/components/GenreRail";
 import PrimaryCta from "@/components/PrimaryCta";
 import ProductGridSection from "@/components/ProductGridSection";
@@ -166,7 +165,7 @@ export default async function ActressPage({
               </p>
             </div>
             <div className="rounded-[22px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-              <p className="eyebrow">Genres</p>
+              <p className="eyebrow">ジャンル傾向</p>
               <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
                 {actressEntry.supportingGenres
                   .map((slug) => genrePages.find((genre) => genre.slug === slug)?.name ?? slug)
@@ -222,7 +221,6 @@ export default async function ActressPage({
         ]}
       />
 
-      <Footer />
     </main>
   );
 }

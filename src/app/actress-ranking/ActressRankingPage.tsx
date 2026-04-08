@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { FaStar, FaTrophy, FaUser, FaCommentDots } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 import PrimaryCta from "@/components/PrimaryCta";
 import SectionIntro from "@/components/SectionIntro";
 import { ROUTES, getActressRoute } from "@/lib/site";
@@ -140,7 +139,6 @@ export default function ActressRankingPage({
         </div>
       </section>
 
-      <Footer />
     </main>
   );
 }

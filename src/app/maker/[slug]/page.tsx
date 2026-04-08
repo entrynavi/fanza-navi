@@ -161,7 +161,7 @@ export default async function MakerPage({
             </p>
           </div>
           <div className="rounded-[22px] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-            <p className="eyebrow">Now on Sale</p>
+            <p className="eyebrow">セール中</p>
             <p className="mt-3 text-sm leading-7 text-[var(--color-text-secondary)]">
               値下げ中 {saleCount}件。割引率だけでなく、件数が多い作品から見ると判断しやすくなります。
             </p>

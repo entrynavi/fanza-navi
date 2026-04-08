@@ -14,20 +14,20 @@ test.describe("ホームページ", () => {
   });
 
   test("ヘッダーのブランド名が表示される", async ({ page }) => {
-    const brand = page.locator("header").getByText("FANZAナビ");
+    const brand = page.locator("header").getByText("FANZAオトナビ");
     await expect(brand.first()).toBeVisible();
   });
 
   test("ヘッダーのナビリンクが存在する", async ({ page }) => {
     const header = page.locator("header");
-    for (const label of ["ランキング", "セール", "ジャンル別", "レビュー"]) {
+    for (const label of ["シチュ検索", "独自ランキング", "週間セール", "コスト比較"]) {
       await expect(header.getByText(label).first()).toBeVisible();
     }
   });
 
   test("ヒーローセクションが表示される", async ({ page }) => {
-    await expect(page.getByText("人気作から探す。")).toBeVisible();
-    await expect(page.getByText("安い日はセールへ。")).toBeVisible();
+    await expect(page.getByText("公式にない探し方で")).toBeVisible();
+    await expect(page.getByText("もっとお得に。")).toBeVisible();
   });
 
   test("ランキングセクションが表示される", async ({ page }) => {
@@ -43,7 +43,8 @@ test.describe("ホームページ", () => {
   });
 
   test("レビューセクションが表示される", async ({ page }) => {
-    await expect(page.getByText("作品レビュー").first()).toBeVisible();
+    // Reviews were removed; check unique tools section instead
+    await expect(page.getByText("公式FANZAにない、ここだけのツール")).toBeVisible();
   });
 
   test("フッターが表示される", async ({ page }) => {

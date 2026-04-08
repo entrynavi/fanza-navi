@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { FaStar, FaCommentDots, FaYenSign, FaFilm, FaTrophy, FaArrowRight } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 import PrimaryCta from "@/components/PrimaryCta";
 import SectionIntro from "@/components/SectionIntro";
 import { ROUTES, getMakerRoute } from "@/lib/site";
@@ -193,7 +192,7 @@ export default function MakerRankingPage({
 
       <section className="mb-10">
         <SectionIntro
-          eyebrow="Comparison"
+          eyebrow="比較"
           title="カテゴリ別 TOP3"
           description="評価・価格・レビュー数の3軸でメーカーを比較できます。"
         />
@@ -231,7 +230,6 @@ export default function MakerRankingPage({
         </PrimaryCta>
       </section>
 
-      <Footer />
     </main>
   );
 }

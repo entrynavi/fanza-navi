@@ -26,8 +26,8 @@ test.describe("レスポンシブデザイン", () => {
 
     const mobileNav = page.locator("#mobile-navigation");
     await expect(mobileNav).toBeVisible();
-    await expect(mobileNav.getByText("ランキング")).toBeVisible();
-    await expect(mobileNav.getByText("セール")).toBeVisible();
+    await expect(mobileNav.getByText("シチュ検索")).toBeVisible();
+    await expect(mobileNav.getByText("週間セール")).toBeVisible();
   });
 
   test("デスクトップ: ナビゲーションリンクが直接表示される", async ({ page }) => {
@@ -51,7 +51,7 @@ test.describe("レスポンシブデザイン", () => {
     await page.setViewportSize({ width: 768, height: 1024 });
     await openHome(page);
 
-    await expect(page.getByText("人気作から探す。")).toBeVisible();
+    await expect(page.getByText("公式にない探し方で")).toBeVisible();
     await expect(page.locator("footer")).toBeVisible();
   });
 });

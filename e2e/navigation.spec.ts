@@ -21,10 +21,10 @@ test.describe("ナビゲーション", () => {
     await expect(page).toHaveURL(/\/sale/);
   });
 
-  test("ヘッダーからレビューページに遷移できる", async ({ page }) => {
+  test("ヘッダーからシチュ検索ページに遷移できる", async ({ page }) => {
     await visit(page, "/");
-    await page.locator("header a[href='/reviews']").first().click();
-    await expect(page).toHaveURL(/\/reviews/);
+    await page.locator("header a[href='/discover']").first().click();
+    await expect(page).toHaveURL(/\/discover/);
   });
 
   test("フッターからプライバシーポリシーに遷移できる", async ({ page }) => {
@@ -49,9 +49,9 @@ test.describe("ナビゲーション", () => {
     await expect(page).toHaveTitle(/セール|FANZA/);
   });
 
-  test("レビュー一覧ページが正しく表示される", async ({ page }) => {
-    await visit(page, "/reviews");
-    await expect(page).toHaveTitle(/レビュー|FANZA/);
+  test("独自ランキングページが正しく表示される", async ({ page }) => {
+    await visit(page, "/custom-ranking");
+    await expect(page).toHaveTitle(/ランキング|FANZA/);
   });
 
   test("新作ページが正しく表示される", async ({ page }) => {

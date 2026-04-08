@@ -19,5 +19,5 @@
   <rect x="200" y="198" width="22" height="70" rx="6" fill="#d3af6f" opacity="0.9"/>
   <rect x="230" y="166" width="22" height="102" rx="6" fill="#e34a6e" opacity="0.9"/>
   <!-- "N" for Navi -->
-  <text x="375" y="440" font-family="'Helvetica Neue',Arial,sans-serif" font-size="130" font-weight="800" fill="url(#accent)">N</text>
+  <text x="375" y="440" font-family="'Helvetica Neue',Arial,sans-serif" font-size="130" font-weight="800" fill="url(#accent)">F</text>
 </svg>

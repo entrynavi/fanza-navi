@@ -4,7 +4,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { FaStar } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
-import Footer from "@/components/Footer";
 import ProductGridSection from "@/components/ProductGridSection";
 import PrimaryCta from "@/components/PrimaryCta";
 import { ROUTES } from "@/lib/site";
@@ -228,7 +227,6 @@ export default function DiscoverPage({
         </section>
       )}
 
-      <Footer />
     </main>
   );
 }
