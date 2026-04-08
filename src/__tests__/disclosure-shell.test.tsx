@@ -36,10 +36,10 @@ describe("RootLayout disclosure shell", () => {
     expect(markup).toContain('class="sticky top-0 z-50"');
     expect(markup).toContain("ランキング");
     expect(markup).toContain("セール");
-    expect(markup).toContain("シチュ検索");
-    expect(markup).toContain("記事");
-    expect(markup).toContain("新作");
-    expect(markup).toContain("ガイド");
-    expect(markup).toContain("検索");
+    expect(markup).toContain("探すラボ");
+    expect(markup).toContain("買う前チェック");
+    expect(markup).toContain("記事一覧");
+    expect(markup).toContain("初心者ガイド");
+    expect(markup).toContain("検索入口");
   });
 });

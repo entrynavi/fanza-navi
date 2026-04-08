@@ -160,10 +160,12 @@ export async function searchProducts(
 
 // セール商品（キーワードでセール検索）
 export async function fetchSaleProducts(
-  hits: number = 20
+  hits: number = 20,
+  offset: number = 1
 ): Promise<DmmProduct[]> {
   const url = buildUrl("ItemList", {
     hits: String(hits),
+    offset: String(offset),
     sort: "rank",
     keyword: "セール",
   });

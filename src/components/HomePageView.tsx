@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   FaArrowUp, FaCoins, FaGift, FaPercentage, FaTicketAlt, FaTags,
   FaTheaterMasks, FaChartLine, FaCalculator, FaThumbsUp, FaCalendarAlt,
@@ -23,150 +22,60 @@ import type { GenreLandingPage } from "@/data/genres";
 import type { Product } from "@/data/products";
 import { ROUTES } from "@/lib/site";
 
-const uniqueTools = [
+const toolSuites = [
   {
     href: ROUTES.discover,
-    title: "シチュエーション検索",
-    description: "「癒されたい」「刺激的な」など気分で作品を逆引き。公式にはない検索軸。",
+    title: "探す/決めるラボ",
+    description: "シチュ検索、今夜の1本診断、給料日前ピックを1画面で回せます。",
     icon: <FaTheaterMasks size={20} />,
     accent: true,
-    badge: "人気",
-  },
-  {
-    href: ROUTES.customRanking,
-    title: "独自ランキング",
-    description: "コスパ最強・隠れた名作・大幅値下げ・新人注目の4つの独自切り口。",
-    icon: <FaChartLine size={20} />,
-    accent: false,
-    badge: "独自",
-  },
-  {
-    href: ROUTES.weeklySale,
-    title: "週間セールまとめ",
-    description: "今週の値下げ作品を自動集計。割引率・件数・最大割引が一目でわかる。",
-    icon: <FaCalendarAlt size={20} />,
-    accent: false,
-    badge: "毎週更新",
-  },
-  {
-    href: ROUTES.simulator,
-    title: "コスト比較シミュレーター",
-    description: "月額見放題 vs 単品購入、あなたの視聴スタイルでどちらがお得か即計算。",
-    icon: <FaCalculator size={20} />,
-    accent: false,
-    badge: null,
-  },
-  {
-    href: ROUTES.communityRanking,
-    title: "みんなの推しランキング",
-    description: "ユーザー投票で決まるリアルなランキング。売上だけじゃわからない人気作品。",
-    icon: <FaThumbsUp size={20} />,
-    accent: false,
-    badge: "参加型",
-  },
-  {
-    href: ROUTES.actressRanking,
-    title: "女優ランキング",
-    description: "作品数・レビュー評価で分析した人気女優データベース。",
-    icon: <FaUserFriends size={20} />,
-    accent: false,
-    badge: null,
-  },
-  {
-    href: ROUTES.watchlist,
-    title: "お気に入り＆ウォッチリスト",
-    description: "気になる作品をブックマーク。値下げを見逃さない。",
-    icon: <FaBookmark size={20} />,
-    accent: true,
-    badge: "NEW",
-  },
-  {
-    href: ROUTES.dailyPick,
-    title: "今日のおすすめ",
-    description: "毎日1作品を厳選ピック。過去のおすすめもアーカイブ。",
-    icon: <FaStar size={20} />,
-    accent: false,
-    badge: "毎日更新",
+    badge: "中心導線",
+    highlights: ["今夜の1本診断", "安牌フィルタ", "サプライズ選出"],
   },
   {
     href: ROUTES.buyTiming,
-    title: "買い時判定ツール",
-    description: "今買うべき？待つべき？セール傾向から最適タイミングを判定。",
+    title: "買う前チェック",
+    description: "買い時判定、予算内まとめ買い、価格履歴の見どころをまとめて確認。",
     icon: <FaShoppingCart size={20} />,
     accent: true,
-    badge: "NEW",
+    badge: "高CV",
+    highlights: ["買い時スコア", "予算内セット", "セール波チェック"],
   },
   {
-    href: ROUTES.cospaCalc,
-    title: "コスパ計算機",
-    description: "収録時間÷価格で1分あたりの金額を算出。お得な作品がわかる。",
-    icon: <FaClock size={20} />,
+    href: ROUTES.watchlist,
+    title: "ウォッチリスト司令室",
+    description: "保存作品の優先順位、値下げ中の候補、似た作品の深掘りまで対応。",
+    icon: <FaBookmark size={20} />,
     accent: false,
-    badge: "NEW",
-  },
-  {
-    href: ROUTES.rankingBattle,
-    title: "ランキングバトル",
-    description: "2作品を比べて投票するトーナメント。あなたの推しが決まる。",
-    icon: <FaVoteYea size={20} />,
-    accent: false,
-    badge: "参加型",
-  },
-  {
-    href: ROUTES.gacha,
-    title: "ガチャレコメンド",
-    description: "条件を設定してガチャを回す！意外な名作に出会える。",
-    icon: <FaDice size={20} />,
-    accent: false,
-    badge: "NEW",
-  },
-  {
-    href: ROUTES.salePredict,
-    title: "セール予測カレンダー",
-    description: "過去の傾向から次のセール時期を予測。買い物計画に。",
-    icon: <FaChartBar size={20} />,
-    accent: false,
-    badge: "予測",
-  },
-  {
-    href: ROUTES.priceHistory,
-    title: "価格履歴チャート",
-    description: "Keepa型の価格推移グラフ。過去最安値がわかる。",
-    icon: <FaHistory size={20} />,
-    accent: false,
-    badge: "NEW",
-  },
-  {
-    href: ROUTES.seriesGuide,
-    title: "シリーズ完走ガイド",
-    description: "人気シリーズの全作品を一覧。コンプ率を追跡。",
-    icon: <FaListOl size={20} />,
-    accent: false,
-    badge: null,
-  },
-  {
-    href: ROUTES.savingsTips,
-    title: "みんなの節約術",
-    description: "ユーザー投稿の節約テクニック集。いいね機能付き。",
-    icon: <FaPiggyBank size={20} />,
-    accent: false,
-    badge: "投稿型",
-  },
-  {
-    href: ROUTES.snsCards,
-    title: "SNS共有カード生成",
-    description: "作品情報を見やすいカードに。ワンクリックでSNSシェア。",
-    icon: <FaShareAlt size={20} />,
-    accent: false,
-    badge: null,
+    badge: "再訪向け",
+    highlights: ["値下げ監視", "優先順位", "似た作品深掘り"],
   },
   {
     href: ROUTES.personalized,
-    title: "パーソナライズフィード",
-    description: "あなたの好みを学習して、ぴったりの作品をおすすめ。",
+    title: "自分向けフィード",
+    description: "履歴とウォッチリストから、次に刺さりやすい候補を濃く出します。",
     icon: <FaUser size={20} />,
     accent: false,
-    badge: "AI",
+    badge: "習慣化",
+    highlights: ["好み学習", "保存中に近い作品", "新作の掘り起こし"],
+  },
+  {
+    href: ROUTES.customRanking,
+    title: "比較/ランキング",
+    description: "独自ランキングと比較導線で、迷っている候補を決め切る用途に寄せました。",
+    icon: <FaChartLine size={20} />,
+    accent: false,
+    badge: "比較用",
+    highlights: ["独自ランキング", "ランキングバトル", "推し決定"],
+  },
+  {
+    href: ROUTES.weeklySale,
+    title: "節約攻略",
+    description: "週間セール、予測カレンダー、節約術、比較系をまとめた節約導線です。",
+    icon: <FaGift size={20} />,
+    accent: false,
+    badge: "更新型",
+    highlights: ["週間セール", "予測カレンダー", "節約投稿/比較"],
   },
 ];
 
@@ -221,8 +130,6 @@ export default function HomePageView({
   featuredGenres: GenreLandingPage[];
 }) {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
-  const [showAllTools, setShowAllTools] = useState(false);
-  const visibleTools = showAllTools ? uniqueTools : uniqueTools.slice(0, 6);
   const rankingSpotlight = rankingPreview.slice(0, 3);
   const rankingMore = rankingPreview.slice(3, 6);
   const saleCompact = salePreview.slice(0, 4);
@@ -240,10 +147,10 @@ export default function HomePageView({
         <SectionIntro
           eyebrow="トクナビ独自機能"
           title="公式FANZAにない、ここだけのツール"
-          description="シチュエーション検索・独自ランキング・コスト比較など、公式サイトではできない探し方・使い方ができます。"
+          description="バラバラだった独自機能を「探す・買う・比較する」の流れでまとめ直しました。まずは目的に近い導線から入れます。"
         />
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {visibleTools.map((tool) => (
+          {toolSuites.map((tool) => (
             <a
               key={tool.href}
               href={tool.href}
@@ -277,6 +184,16 @@ export default function HomePageView({
                   <p className="mt-1.5 text-xs leading-5 text-[var(--color-text-secondary)]">
                     {tool.description}
                   </p>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {tool.highlights.map((highlight) => (
+                      <span
+                        key={highlight}
+                        className="rounded-full border border-[var(--color-border)] px-2 py-1 text-[10px] font-medium text-[var(--color-text-muted)]"
+                      >
+                        {highlight}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
               <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[var(--color-primary-light)] opacity-0 transition-opacity group-hover:opacity-100">
@@ -285,16 +202,6 @@ export default function HomePageView({
             </a>
           ))}
         </div>
-        {!showAllTools && uniqueTools.length > 6 && (
-          <div className="mt-4 text-center">
-            <button
-              onClick={() => setShowAllTools(true)}
-              className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--color-text-secondary)] transition-all hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)]"
-            >
-              全{uniqueTools.length}ツールを表示 <FaArrowRight size={10} />
-            </button>
-          </div>
-        )}
       </section>
 
       <section className="content-shell px-4 pb-8">

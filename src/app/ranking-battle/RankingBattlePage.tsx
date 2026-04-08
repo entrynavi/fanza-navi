@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaTrophy,
@@ -13,7 +13,14 @@ import {
   FaBolt,
 } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
+import ProductPoolToolbar from "@/components/ProductPoolToolbar";
+import { useFavorites } from "@/hooks/useFavorites";
 import type { Product } from "@/data/products";
+import {
+  filterProductPool,
+  getProductPoolOptions,
+  type ProductPoolSource,
+} from "@/lib/product-pool";
 
 /* ------------------------------------------------------------------ */
 /*  Tournament logic                                                   */
@@ -298,11 +305,30 @@ interface Props {
 }
 
 export default function RankingBattlePage({ products }: Props) {
+  const { ids } = useFavorites();
+  const [source, setSource] = useState<ProductPoolSource>("all");
+  const [query, setQuery] = useState("");
+  const [bracketSize, setBracketSize] = useState<16 | 32 | 64>(32);
+
+  const sourceOptions = useMemo(
+    () => getProductPoolOptions(products, ids),
+    [ids, products]
+  );
+  const filteredProducts = useMemo(
+    () =>
+      filterProductPool(products, {
+        source,
+        query,
+        favoriteIds: ids,
+      }),
+    [ids, products, query, source]
+  );
+
   // Ensure even number of contestants
   const contestants = useMemo(() => {
-    const list = products.slice(0, 32);
+    const list = filteredProducts.slice(0, bracketSize);
     return list.length % 2 === 0 ? list : list.slice(0, -1);
-  }, [products]);
+  }, [bracketSize, filteredProducts]);
 
   const totalRounds = useMemo(
     () => getTotalRounds(contestants.length),
@@ -316,6 +342,15 @@ export default function RankingBattlePage({ products }: Props) {
   const [roundNumber, setRoundNumber] = useState(0);
   const [champion, setChampion] = useState<Product | null>(null);
   const [matchKey, setMatchKey] = useState(0);
+
+  useEffect(() => {
+    setCurrentContestants(contestants);
+    setCurrentMatchIndex(0);
+    setWinners([]);
+    setRoundNumber(0);
+    setChampion(null);
+    setMatchKey((key) => key + 1);
+  }, [contestants]);
 
   const currentBracket = useMemo(
     () => buildBracket(currentContestants),
@@ -392,6 +427,38 @@ export default function RankingBattlePage({ products }: Props) {
           1対1のトーナメント形式で推し作品を決めよう！
         </p>
       </motion.div>
+
+      <ProductPoolToolbar
+        query={query}
+        onQueryChange={setQuery}
+        source={source}
+        onSourceChange={setSource}
+        options={sourceOptions}
+        placeholder="作品名・女優名・シリーズで対戦候補を絞る"
+        summary={
+          source === "favorites"
+            ? "ウォッチリストだけで推し対決できます。買う候補の最終比較にも使えます。"
+            : `候補母数は ${filteredProducts.length} 件。全取得作品・セール・新作・高評価からトーナメントを組めます。`
+        }
+      />
+
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        <span className="text-xs text-[var(--color-text-muted)]">対戦規模</span>
+        {[16, 32, 64].map((size) => (
+          <button
+            key={size}
+            type="button"
+            onClick={() => setBracketSize(size as 16 | 32 | 64)}
+            className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors ${
+              bracketSize === size
+                ? "border-[var(--color-primary)]/35 bg-[var(--color-primary)]/12 text-white"
+                : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:text-white"
+            }`}
+          >
+            {size}作品
+          </button>
+        ))}
+      </div>
 
       {champion ? (
         <ChampionDisplay champion={champion} onReset={handleReset} />

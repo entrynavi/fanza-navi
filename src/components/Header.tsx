@@ -4,15 +4,14 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaBars,
+  FaBookmark,
   FaBookOpen,
+  FaBolt,
+  FaCalculator,
   FaChartLine,
-  FaCompass,
   FaSearch,
   FaTags,
   FaTimes,
-  FaBolt,
-  FaCalculator,
-  FaThumbsUp,
   FaCalendarAlt,
   FaTheaterMasks,
   FaUserFriends,
@@ -23,13 +22,13 @@ const primaryLinks = [
   { href: ROUTES.discover, label: "シチュ検索", icon: <FaTheaterMasks size={12} />, accent: true },
   { href: ROUTES.customRanking, label: "独自ランキング", icon: <FaChartLine size={12} />, accent: false },
   { href: ROUTES.sale, label: "セール", icon: <FaTags size={12} />, accent: false },
-  { href: ROUTES.ranking, label: "人気作", icon: <FaBolt size={12} />, accent: false },
+  { href: ROUTES.ranking, label: "ランキング", icon: <FaBolt size={12} />, accent: false },
 ];
 
 const utilityLinks = [
   { href: ROUTES.weeklySale, label: "週間セール", icon: <FaCalendarAlt size={11} /> },
   { href: ROUTES.simulator, label: "コスト比較", icon: <FaCalculator size={11} /> },
-  { href: ROUTES.communityRanking, label: "みんなの推し", icon: <FaThumbsUp size={11} /> },
+  { href: ROUTES.watchlist, label: "ウォッチリスト", icon: <FaBookmark size={11} /> },
   { href: ROUTES.guide, label: "初心者ガイド", icon: <FaBookOpen size={11} /> },
 ];
 
@@ -52,7 +51,7 @@ export default function Header() {
                   </defs>
                   <circle cx="27" cy="27" r="16" fill="none" stroke="url(#hdr-accent)" strokeWidth="3.5" strokeLinecap="round"/>
                   <line x1="38" y1="38" x2="52" y2="52" stroke="url(#hdr-accent)" strokeWidth="4" strokeLinecap="round"/>
-                  <text x="27" y="34" fontFamily="'Arial Black', 'Helvetica Neue', sans-serif" fontSize="22" fontWeight="900" fill="url(#hdr-accent)" textAnchor="middle" dominantBaseline="central" letterSpacing="-1">F</text>
+                  <text x="27" y="30.4" fontFamily="'Arial Black', 'Helvetica Neue', sans-serif" fontSize="22" fontWeight="900" fill="url(#hdr-accent)" textAnchor="middle" dominantBaseline="middle" letterSpacing="-1">F</text>
                 </svg>
               </span>
               <div className="min-w-0">
@@ -60,7 +59,7 @@ export default function Header() {
                   <span className="text-[var(--color-accent)]">FANZA</span><span className="gradient-text">トクナビ</span>
                 </p>
                 <p className="truncate text-[10px] font-medium text-[var(--color-text-muted)]">
-                  セール解析 × シチュ検索 × 独自ランキング
+                  探すラボ × 買う前チェック × 独自ランキング
                 </p>
               </div>
             </div>

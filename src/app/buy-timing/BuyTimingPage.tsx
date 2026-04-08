@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
+  FaCoins,
   FaThermometerHalf,
   FaChartLine,
   FaShoppingCart,
@@ -17,72 +18,34 @@ import {
   FaTimesCircle,
 } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
+import PrimaryCta from "@/components/PrimaryCta";
+import ProductGridSection from "@/components/ProductGridSection";
+import ProductPoolToolbar from "@/components/ProductPoolToolbar";
+import { useFavorites } from "@/hooks/useFavorites";
 import type { Product } from "@/data/products";
-
-/* ------------------------------------------------------------------ */
-/*  Buy-timing score calculation                                       */
-/* ------------------------------------------------------------------ */
-
-interface TimingBreakdown {
-  sale: number;
-  discount: number;
-  rating: number;
-  seasonal: number;
-  newRelease: number;
-  total: number;
-}
-
-function getDiscountPercent(product: Product): number {
-  if (!product.salePrice || !product.price || product.price <= 0) return 0;
-  return Math.round(
-    ((product.price - product.salePrice) / product.price) * 100
-  );
-}
-
-function calcBuyTimingScore(product: Product): TimingBreakdown {
-  let sale = 0;
-  let discount = 0;
-  let rating = 0;
-  let seasonal = 0;
-  let newRelease = 0;
-
-  // On sale: +40
-  if (product.isSale || product.salePrice) {
-    sale = 40;
-  }
-
-  // High discount: +20 (if > 30% off)
-  const discPct = getDiscountPercent(product);
-  if (discPct > 30) {
-    discount = 20;
-  } else if (discPct > 15) {
-    discount = 10;
-  }
-
-  // High rating: +15 (if > 4.0)
-  if (product.rating > 4.0) {
-    rating = 15;
-  } else if (product.rating > 3.5) {
-    rating = 8;
-  }
-
-  // Seasonal bonus (month-based)
-  const month = new Date().getMonth();
-  // Big sale months in Japan: Jan (New Year), Mar (year-end), Jul (summer), Nov (BF)
-  if ([0, 2, 6, 10].includes(month)) {
-    seasonal = 10;
-  } else if ([3, 11].includes(month)) {
-    seasonal = 5;
-  }
-
-  // New release: +15
-  if (product.isNew) {
-    newRelease = 15;
-  }
-
-  const total = Math.min(sale + discount + rating + seasonal + newRelease, 100);
-  return { sale, discount, rating, seasonal, newRelease, total };
-}
+import {
+  filterProductPool,
+  getProductPoolOptions,
+  type ProductPoolSource,
+} from "@/lib/product-pool";
+import {
+  formatPriceYen,
+  getDiscountPercent,
+  getPresentedCurrentPrice,
+} from "@/lib/product-presenter";
+import {
+  MONTH_NAMES,
+  getUpcomingSales,
+} from "@/lib/sale-calendar";
+import { ROUTES } from "@/lib/site";
+import {
+  buildBundleUnderBudget,
+  calcBuyTimingScore,
+  computePriceHistoryStats,
+  generatePriceHistory,
+  getNearHistoricalLowRate,
+  type TimingBreakdown,
+} from "@/lib/toolkit-insights";
 
 type Verdict = "buy" | "wait" | "skip";
 
@@ -186,15 +149,33 @@ interface Props {
 }
 
 export default function BuyTimingPage({ products }: Props) {
+  const { ids } = useFavorites();
   const [selectedGenre, setSelectedGenre] = useState<string>("all");
+  const [source, setSource] = useState<ProductPoolSource>("all");
+  const [query, setQuery] = useState("");
+  const [budget, setBudget] = useState(5000);
+
+  const sourceOptions = useMemo(
+    () => getProductPoolOptions(products, ids),
+    [ids, products]
+  );
+  const sourceProducts = useMemo(
+    () =>
+      filterProductPool(products, {
+        source,
+        query,
+        favoriteIds: ids,
+      }),
+    [ids, products, query, source]
+  );
 
   const scoredProducts = useMemo(
     () =>
-      products.map((p) => ({
+      sourceProducts.map((p) => ({
         ...p,
         breakdown: calcBuyTimingScore(p),
       })),
-    [products]
+    [sourceProducts]
   );
 
   const genres = useMemo(() => {
@@ -204,6 +185,12 @@ export default function BuyTimingPage({ products }: Props) {
     });
     return Array.from(set);
   }, [scoredProducts]);
+
+  useEffect(() => {
+    if (selectedGenre !== "all" && !genres.includes(selectedGenre)) {
+      setSelectedGenre("all");
+    }
+  }, [genres, selectedGenre]);
 
   const filtered = useMemo(() => {
     const list =
@@ -224,10 +211,84 @@ export default function BuyTimingPage({ products }: Props) {
   const skipCount = filtered.filter(
     (p) => p.breakdown.total < 40
   ).length;
+  const favoriteProducts = useMemo(
+    () => products.filter((product) => ids.includes(product.id)),
+    [ids, products]
+  );
+  const favoritePriority = useMemo(
+    () =>
+      [...favoriteProducts]
+        .map((product) => ({
+          product,
+          score: calcBuyTimingScore(product).total,
+        }))
+        .sort((left, right) => right.score - left.score)
+        .slice(0, 6)
+        .map((entry) => entry.product),
+    [favoriteProducts]
+  );
+  const budgetBundle = useMemo(
+    () => buildBundleUnderBudget(sourceProducts, budget, 3),
+    [budget, sourceProducts]
+  );
+  const bundleTotal = useMemo(
+    () =>
+      budgetBundle.reduce(
+        (sum, product) => sum + getPresentedCurrentPrice(product),
+        0
+      ),
+    [budgetBundle]
+  );
+  const priceOpportunityProducts = useMemo(
+    () =>
+      sourceProducts
+        .map((product) => {
+          const basePrice = getPresentedCurrentPrice(product);
+          const history = generatePriceHistory(product.id, basePrice > 0 ? basePrice : 1980);
+          const stats = computePriceHistoryStats(history);
+          const nearMinRate = getNearHistoricalLowRate(basePrice, stats.min);
+          return { product, nearMinRate };
+        })
+        .sort((left, right) => left.nearMinRate - right.nearMinRate)
+        .slice(0, 6)
+        .map((entry) => entry.product),
+    [sourceProducts]
+  );
+  const upcomingSaleWindows = useMemo(() => {
+    const now = new Date();
+    const nextMonthDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const seen = new Set<string>();
+
+    return [
+      { label: MONTH_NAMES[now.getMonth()], items: getUpcomingSales(now.getFullYear(), now.getMonth(), now) },
+      {
+        label: MONTH_NAMES[nextMonthDate.getMonth()],
+        items: getUpcomingSales(
+          nextMonthDate.getFullYear(),
+          nextMonthDate.getMonth(),
+          nextMonthDate
+        ),
+      },
+    ]
+      .flatMap((group) =>
+        group.items.map((item) => ({
+          ...item,
+          monthLabel: group.label,
+        }))
+      )
+      .filter((item) => {
+        if (seen.has(item.name)) {
+          return false;
+        }
+        seen.add(item.name);
+        return true;
+      })
+      .slice(0, 4);
+  }, []);
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
-      <Breadcrumb items={[{ label: "買い時判定ツール" }]} />
+      <Breadcrumb items={[{ label: "買う前チェック" }]} />
 
       {/* Hero */}
       <motion.div
@@ -237,12 +298,177 @@ export default function BuyTimingPage({ products }: Props) {
       >
         <h1 className="mb-4 text-3xl font-extrabold md:text-4xl">
           <FaThermometerHalf className="mr-2 inline-block text-[var(--color-primary)]" />
-          <span className="gradient-text">買い時判定ツール</span>
+          <span className="gradient-text">買う前チェック</span>
         </h1>
         <p className="text-lg text-[var(--color-text-secondary)]">
-          セール状況・割引率・評価を総合分析して「今が買い時か」を判定
+          買い時・予算内セット・次のセール波をまとめて見て、迷った作品を決めやすくします
         </p>
       </motion.div>
+
+      <ProductPoolToolbar
+        query={query}
+        onQueryChange={setQuery}
+        source={source}
+        onSourceChange={setSource}
+        options={sourceOptions}
+        placeholder="作品名・女優名・シリーズで買い時を絞り込む"
+        summary={
+          source === "favorites"
+            ? "ウォッチリストだけに絞って、今買うべき作品を先に判断できます。"
+            : `全取得作品 ${sourceProducts.length} 件から診断中。セール・新作・高評価へ切り替えて精度よく比較できます。`
+        }
+      />
+
+      <section className="mb-8 grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
+        <div className="glass-card p-5 md:p-6">
+          <div className="flex items-start gap-3">
+            <div className="mt-1 flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--color-primary)]/12 text-[var(--color-primary)]">
+              <FaCoins size={18} />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-[var(--color-text-primary)]">
+                予算内まとめ買い
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+                使える金額を決めると、その中で満足しやすい組み合わせを先に作ります。
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold text-[var(--color-text-primary)]">
+                  今回の予算
+                </p>
+                <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
+                  ¥{budget.toLocaleString()} まで
+                </p>
+              </div>
+              <span className="rounded-full border border-[var(--color-border)] px-3 py-1 text-xs font-semibold text-[var(--color-text-secondary)]">
+                残り ¥{Math.max(budget - bundleTotal, 0).toLocaleString()}
+              </span>
+            </div>
+            <input
+              type="range"
+              min={2000}
+              max={15000}
+              step={500}
+              value={budget}
+              onChange={(event) => setBudget(Number(event.target.value))}
+              className="mt-4 w-full accent-[var(--color-primary)]"
+            />
+            <div className="mt-1 flex justify-between text-[10px] text-[var(--color-text-muted)]">
+              <span>¥2,000</span>
+              <span>¥15,000</span>
+            </div>
+          </div>
+
+          <div className="mt-5 space-y-3">
+            {budgetBundle.length > 0 ? (
+              budgetBundle.map((product, index) => (
+                <div
+                  key={product.id}
+                  className="flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3"
+                >
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-primary)]/12 text-xs font-bold text-[var(--color-primary)]">
+                    {index + 1}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="line-clamp-1 text-sm font-semibold text-[var(--color-text-primary)]">
+                      {product.title}
+                    </p>
+                    <p className="mt-1 text-xs text-[var(--color-text-secondary)]">
+                      {formatPriceYen(getPresentedCurrentPrice(product))}
+                    </p>
+                  </div>
+                  <PrimaryCta href={product.affiliateUrl} external size="sm">
+                    確認
+                  </PrimaryCta>
+                </div>
+              ))
+            ) : (
+              <div className="rounded-2xl border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-8 text-sm text-[var(--color-text-secondary)]">
+                予算内に収まる候補がありません。価格上限やソースを広げると組みやすくなります。
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="glass-card p-5 md:p-6">
+          <div className="flex items-start gap-3">
+            <div className="mt-1 flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--color-accent)]/12 text-[var(--color-accent)]">
+              <FaCalendarAlt size={18} />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-[var(--color-text-primary)]">
+                次のセール波
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+                予測カレンダーの見どころをここに要約。待つか今買うかの判断材料を先に揃えます。
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 space-y-3">
+            {upcomingSaleWindows.map((sale) => (
+              <div
+                key={`${sale.monthLabel}-${sale.name}`}
+                className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-full bg-[var(--color-accent)]/15 px-2.5 py-1 text-[10px] font-semibold text-[var(--color-accent)]">
+                    {sale.monthLabel}
+                  </span>
+                  <p className="text-sm font-bold text-[var(--color-text-primary)]">
+                    {sale.name}
+                  </p>
+                  <span className="text-xs text-[var(--color-text-secondary)]">
+                    {sale.discount}
+                  </span>
+                </div>
+                <p className="mt-2 text-xs leading-5 text-[var(--color-text-secondary)]">
+                  {sale.strategy}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-5">
+            <PrimaryCta href={ROUTES.salePredict} size="sm" variant="outline">
+              セール予測カレンダーを開く
+            </PrimaryCta>
+          </div>
+        </div>
+      </section>
+
+      {favoritePriority.length > 0 && (
+        <ProductGridSection
+          eyebrow="ウォッチリスト優先順位"
+          title="保存作品の中で先に見ておきたい候補"
+          description="ウォッチリストから、買い時スコアの高い順に先頭だけ抜き出しています。"
+          products={favoritePriority}
+          action={
+            <PrimaryCta href={ROUTES.watchlist} size="sm" variant="outline">
+              ウォッチリストへ
+            </PrimaryCta>
+          }
+        />
+      )}
+
+      {priceOpportunityProducts.length > 0 && (
+        <ProductGridSection
+          eyebrow="価格履歴の近さ"
+          title="過去最安値に近い候補"
+          description="価格履歴の擬似チャートから、今の価格が底値に近い作品を先に並べています。"
+          products={priceOpportunityProducts}
+          action={
+            <PrimaryCta href={ROUTES.priceHistory} size="sm" variant="outline">
+              価格履歴チャートへ
+            </PrimaryCta>
+          }
+        />
+      )}
 
       {/* Summary stats */}
       <motion.div
@@ -529,7 +755,7 @@ export default function BuyTimingPage({ products }: Props) {
 
       {/* PR note */}
       <p className="mt-6 text-center text-xs text-[var(--color-text-muted)]">
-        ※ 買い時スコアは独自算出の目安です ※ PR
+        ※ 買い時スコアと予算内セットは独自算出の目安です ※ PR
       </p>
     </main>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaRandom,
@@ -15,19 +15,45 @@ import {
 import Breadcrumb from "@/components/Breadcrumb";
 import FavoriteButton from "@/components/FavoriteButton";
 import PrimaryCta from "@/components/PrimaryCta";
+import ProductPoolToolbar from "@/components/ProductPoolToolbar";
+import { useFavorites } from "@/hooks/useFavorites";
 import { ROUTES } from "@/lib/site";
 import type { Product } from "@/data/products";
+import {
+  filterProductPool,
+  getProductPoolOptions,
+  type ProductPoolSource,
+} from "@/lib/product-pool";
 import {
   formatPriceYen,
   getPresentedCurrentPrice,
   getPrimaryFanzaCtaLabel,
 } from "@/lib/product-presenter";
+import { getRecommendationWeight } from "@/lib/toolkit-insights";
+
+function pickWeightedProduct(products: Product[]): Product {
+  const totalWeight = products.reduce(
+    (sum, product) => sum + getRecommendationWeight(product),
+    0
+  );
+  let target = Math.random() * totalWeight;
+
+  for (const product of products) {
+    target -= getRecommendationWeight(product);
+    if (target <= 0) {
+      return product;
+    }
+  }
+
+  return products[0];
+}
 
 export default function GachaPage({
   allProducts,
 }: {
   allProducts: Product[];
 }) {
+  const { ids } = useFavorites();
   const [selectedGenre, setSelectedGenre] = useState<string>("all");
   const [maxPrice, setMaxPrice] = useState<number>(30000);
   const [minRating, setMinRating] = useState<number>(0);
@@ -35,20 +61,42 @@ export default function GachaPage({
   const [result, setResult] = useState<Product | null>(null);
   const [history, setHistory] = useState<Product[]>([]);
   const [spinKey, setSpinKey] = useState(0);
+  const [source, setSource] = useState<ProductPoolSource>("all");
+  const [query, setQuery] = useState("");
+
+  const sourceOptions = useMemo(
+    () => getProductPoolOptions(allProducts, ids),
+    [allProducts, ids]
+  );
+  const sourceProducts = useMemo(
+    () =>
+      filterProductPool(allProducts, {
+        source,
+        query,
+        favoriteIds: ids,
+      }),
+    [allProducts, ids, query, source]
+  );
 
   const genres = useMemo(() => {
-    const genreSet = new Set(allProducts.map((p) => p.genre));
+    const genreSet = new Set(sourceProducts.map((p) => p.genre));
     return Array.from(genreSet).sort();
-  }, [allProducts]);
+  }, [sourceProducts]);
+
+  useEffect(() => {
+    if (selectedGenre !== "all" && !genres.includes(selectedGenre)) {
+      setSelectedGenre("all");
+    }
+  }, [genres, selectedGenre]);
 
   const filteredProducts = useMemo(() => {
-    return allProducts.filter((p) => {
+    return sourceProducts.filter((p) => {
       if (selectedGenre !== "all" && p.genre !== selectedGenre) return false;
       if (getPresentedCurrentPrice(p) > maxPrice) return false;
       if (p.rating < minRating) return false;
       return true;
     });
-  }, [allProducts, selectedGenre, maxPrice, minRating]);
+  }, [maxPrice, minRating, selectedGenre, sourceProducts]);
 
   const handleGacha = useCallback(() => {
     if (filteredProducts.length === 0 || isSpinning) return;
@@ -57,8 +105,7 @@ export default function GachaPage({
     setResult(null);
 
     setTimeout(() => {
-      const randomIndex = Math.floor(Math.random() * filteredProducts.length);
-      const picked = filteredProducts[randomIndex];
+      const picked = pickWeightedProduct(filteredProducts);
       setResult(picked);
       setHistory((prev) => [picked, ...prev].slice(0, 20));
       setSpinKey((k) => k + 1);
@@ -99,6 +146,20 @@ export default function GachaPage({
           条件を設定してガチャを回そう！運命の作品に出会えるかも。
         </p>
       </section>
+
+      <ProductPoolToolbar
+        query={query}
+        onQueryChange={setQuery}
+        source={source}
+        onSourceChange={setSource}
+        options={sourceOptions}
+        placeholder="作品名・女優名・シリーズで候補を絞る"
+        summary={
+          source === "favorites"
+            ? "ウォッチリストだけで回せるので、迷っている候補の中から今日の1本を決めやすくしています。"
+            : `候補母数は ${sourceProducts.length} 件。高評価・レビュー数・セール状況を反映した重み付き抽選です。`
+        }
+      />
 
       {/* フィルター */}
       <motion.section

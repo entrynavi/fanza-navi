@@ -94,12 +94,12 @@ test.describe("トップページ詳細チェック", () => {
     
     // All 6 tool cards
     const toolLinks = [
-      "シチュエーション検索",
-      "独自ランキング",
-      "週間セールまとめ",
-      "コスト比較シミュレーター",
-      "みんなの推しランキング",
-      "女優ランキング",
+      "探す/決めるラボ",
+      "買う前チェック",
+      "ウォッチリスト司令室",
+      "自分向けフィード",
+      "比較/ランキング",
+      "節約攻略",
     ];
     for (const tool of toolLinks) {
       await expect(page.locator(`text=${tool}`).first()).toBeVisible();

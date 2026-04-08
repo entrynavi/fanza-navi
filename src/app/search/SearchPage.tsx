@@ -35,7 +35,7 @@ function sortProducts(products: Product[], sort: SortValue): Product[] {
   const sorted = [...products];
   switch (sort) {
     case "popular":
-      return sorted.sort((a, b) => (b.rank ?? 999) - (a.rank ?? 999) || b.reviewCount - a.reviewCount);
+      return sorted.sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999) || b.reviewCount - a.reviewCount);
     case "price-asc":
       return sorted.sort((a, b) => getEffectivePrice(a) - getEffectivePrice(b));
     case "price-desc":

@@ -1,0 +1,13 @@
+{
+  "name": "FANZAトクナビ",
+  "short_name": "トクナビ",
+  "description": "セール解析・シチュ検索・独自ランキング — 公式FANZAにない探し方",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#8f1d46",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

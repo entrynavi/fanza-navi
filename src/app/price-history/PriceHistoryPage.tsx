@@ -1,80 +1,24 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaChartLine, FaHistory, FaArrowDown, FaTimes, FaStar, FaSortAmountDown } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
+import ProductPoolToolbar from "@/components/ProductPoolToolbar";
+import { useFavorites } from "@/hooks/useFavorites";
 import { ROUTES } from "@/lib/site";
 import type { Product } from "@/data/products";
-
-/* ------------------------------------------------------------------ */
-/*  Deterministic price history generator                              */
-/* ------------------------------------------------------------------ */
-
-function hashCode(str: string): number {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0;
-  }
-  return Math.abs(hash);
-}
-
-function seededRandom(seed: number): () => number {
-  let s = seed;
-  return () => {
-    s = (s * 1664525 + 1013904223) & 0x7fffffff;
-    return s / 0x7fffffff;
-  };
-}
-
-interface PricePoint {
-  date: string;
-  price: number;
-}
-
-function generatePriceHistory(productId: string, basePrice: number): PricePoint[] {
-  const seed = hashCode(productId);
-  const rand = seededRandom(seed);
-  const points: PricePoint[] = [];
-  const today = new Date();
-
-  const salePeriod1Start = 15 + Math.floor(rand() * 20);
-  const salePeriod1End = salePeriod1Start + 3 + Math.floor(rand() * 5);
-  const salePeriod2Start = 50 + Math.floor(rand() * 20);
-  const salePeriod2End = salePeriod2Start + 3 + Math.floor(rand() * 4);
-
-  for (let i = 89; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(d.getDate() - i);
-    const dateStr = `${d.getMonth() + 1}/${d.getDate()}`;
-    const dayIndex = 89 - i;
-
-    let price = basePrice;
-    const noise = (rand() - 0.5) * basePrice * 0.05;
-
-    if (dayIndex >= salePeriod1Start && dayIndex <= salePeriod1End) {
-      price = Math.round(basePrice * (0.5 + rand() * 0.15));
-    } else if (dayIndex >= salePeriod2Start && dayIndex <= salePeriod2End) {
-      price = Math.round(basePrice * (0.55 + rand() * 0.15));
-    } else {
-      price = Math.round(basePrice + noise);
-    }
-
-    price = Math.max(100, price);
-    points.push({ date: dateStr, price });
-  }
-
-  return points;
-}
-
-function computeStats(data: PricePoint[]) {
-  const prices = data.map((d) => d.price);
-  const min = Math.min(...prices);
-  const max = Math.max(...prices);
-  const avg = Math.round(prices.reduce((a, b) => a + b, 0) / prices.length);
-  const minIndex = prices.indexOf(min);
-  return { min, max, avg, minIndex, minDate: data[minIndex].date };
-}
+import {
+  filterProductPool,
+  getProductPoolOptions,
+  type ProductPoolSource,
+} from "@/lib/product-pool";
+import {
+  computePriceHistoryStats,
+  generatePriceHistory,
+  getNearHistoricalLowRate,
+  type PricePoint,
+} from "@/lib/toolkit-insights";
 
 /* ------------------------------------------------------------------ */
 /*  SVG Line Chart                                                     */
@@ -175,28 +119,44 @@ interface Props {
 interface ProductWithHistory {
   product: Product;
   history: PricePoint[];
-  stats: ReturnType<typeof computeStats>;
+  stats: ReturnType<typeof computePriceHistoryStats>;
   discountRate: number;
   nearMinRate: number;
 }
 
 export default function PriceHistoryPage({ products }: Props) {
+  const { ids, isFavorite, toggle } = useFavorites();
   const [sortKey, setSortKey] = useState<SortKey>("discount");
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
+  const [source, setSource] = useState<ProductPoolSource>("all");
+  const [query, setQuery] = useState("");
+
+  const sourceOptions = useMemo(
+    () => getProductPoolOptions(products, ids),
+    [ids, products]
+  );
+  const sourceProducts = useMemo(
+    () =>
+      filterProductPool(products, {
+        source,
+        query,
+        favoriteIds: ids,
+      }),
+    [ids, products, query, source]
+  );
 
   const items: ProductWithHistory[] = useMemo(
     () =>
-      products.map((product) => {
+      sourceProducts.map((product) => {
         const basePrice = product.salePrice ?? product.price;
         const history = generatePriceHistory(product.id, basePrice > 0 ? basePrice : 1980);
-        const stats = computeStats(history);
+        const stats = computePriceHistoryStats(history);
         const currentPrice = history[history.length - 1].price;
         const discountRate = stats.max > 0 ? ((stats.max - currentPrice) / stats.max) * 100 : 0;
-        const nearMinRate = stats.min > 0 ? ((currentPrice - stats.min) / stats.min) * 100 : 0;
+        const nearMinRate = getNearHistoricalLowRate(currentPrice, stats.min);
         return { product, history, stats, discountRate, nearMinRate };
       }),
-    [products]
+    [sourceProducts]
   );
 
   const sorted = useMemo(() => {
@@ -211,14 +171,11 @@ export default function PriceHistoryPage({ products }: Props) {
     }
   }, [items, sortKey]);
 
-  const toggleWatchlist = useCallback((id: string) => {
-    setWatchlist((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }, []);
+  useEffect(() => {
+    if (expandedId && !items.some((item) => item.product.id === expandedId)) {
+      setExpandedId(null);
+    }
+  }, [expandedId, items]);
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
@@ -234,6 +191,20 @@ export default function PriceHistoryPage({ products }: Props) {
           過去90日間の価格推移をチェック。最安値タイミングを逃さず、お得に購入できます。
         </p>
       </motion.div>
+
+      <ProductPoolToolbar
+        query={query}
+        onQueryChange={setQuery}
+        source={source}
+        onSourceChange={setSource}
+        options={sourceOptions}
+        placeholder="作品名・女優名・シリーズで価格履歴を見る"
+        summary={
+          source === "favorites"
+            ? "ウォッチリストだけで最安値チェックできます。買う順番を決める用途に向けた導線です。"
+            : `全取得作品 ${sourceProducts.length} 件から履歴を比較中。セール中だけ・新作だけにも切り替えられます。`
+        }
+      />
 
       {/* Sort controls */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-6 flex flex-wrap items-center gap-2">
@@ -360,16 +331,16 @@ export default function PriceHistoryPage({ products }: Props) {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            toggleWatchlist(item.product.id);
+                            toggle(item.product.id);
                           }}
                           className={`flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-bold transition-colors ${
-                            watchlist.has(item.product.id)
+                            isFavorite(item.product.id)
                               ? "border border-[var(--color-accent)] bg-[var(--color-surface-highlight)] text-[var(--color-accent)]"
                               : "border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:text-white"
                           }`}
                         >
                           <FaHistory size={12} />
-                          {watchlist.has(item.product.id) ? "ウォッチリストに追加済み" : "この作品をウォッチリストに追加"}
+                          {isFavorite(item.product.id) ? "ウォッチリストに追加済み" : "この作品をウォッチリストに追加"}
                         </button>
                         <a
                           href={item.product.affiliateUrl}

@@ -1,32 +1,44 @@
 "use client";
 
-import { FaChartLine, FaTags, FaCompass, FaBookOpen, FaArrowRight, FaGift } from "react-icons/fa";
+import {
+  FaArrowRight,
+  FaBookOpen,
+  FaBookmark,
+  FaChartLine,
+  FaCompass,
+  FaGift,
+  FaShoppingCart,
+  FaTags,
+  FaUser,
+} from "react-icons/fa";
 import { ROUTES } from "@/lib/site";
 
 const navSections = [
   {
-    title: "独自ツール",
+    title: "探す/決める",
     links: [
-      { href: ROUTES.discover, label: "シチュエーション検索", icon: <FaCompass size={10} /> },
-      { href: ROUTES.customRanking, label: "独自ランキング", icon: <FaChartLine size={10} /> },
-      { href: ROUTES.simulator, label: "コスト比較", icon: null },
-      { href: ROUTES.communityRanking, label: "みんなの推し", icon: null },
+      { href: ROUTES.discover, label: "探す/決めるラボ", icon: <FaCompass size={10} /> },
+      { href: ROUTES.watchlist, label: "ウォッチリスト司令室", icon: <FaBookmark size={10} /> },
+      { href: ROUTES.personalized, label: "自分向けフィード", icon: <FaUser size={10} /> },
+      { href: ROUTES.dailyPick, label: "今日の1本", icon: null },
+      { href: ROUTES.gacha, label: "サプライズ選出", icon: null },
+    ],
+  },
+  {
+    title: "買う前/節約",
+    links: [
+      { href: ROUTES.buyTiming, label: "買う前チェック", icon: <FaShoppingCart size={10} /> },
       { href: ROUTES.weeklySale, label: "週間セールまとめ", icon: <FaTags size={10} /> },
+      { href: ROUTES.salePredict, label: "セール予測カレンダー", icon: null },
+      { href: ROUTES.priceHistory, label: "価格履歴チャート", icon: null },
+      { href: ROUTES.cospaCalc, label: "コスパ計算機", icon: null },
     ],
   },
   {
-    title: "探す",
+    title: "比較/ガイド",
     links: [
-      { href: ROUTES.ranking, label: "人気ランキング", icon: null },
-      { href: ROUTES.sale, label: "セール作品", icon: null },
-      { href: ROUTES.actressRanking, label: "女優ランキング", icon: null },
-      { href: ROUTES.makerRanking, label: "メーカー比較", icon: null },
-      { href: ROUTES.newReleases, label: "新作", icon: null },
-    ],
-  },
-  {
-    title: "読む",
-    links: [
+      { href: ROUTES.customRanking, label: "独自ランキング", icon: <FaChartLine size={10} /> },
+      { href: ROUTES.rankingBattle, label: "ランキングバトル", icon: null },
       { href: ROUTES.guide, label: "初心者ガイド", icon: <FaBookOpen size={10} /> },
       { href: ROUTES.articles, label: "記事一覧", icon: null },
       { href: ROUTES.compare, label: "サービス比較", icon: null },
@@ -53,7 +65,7 @@ export default function Footer() {
             </div>
             <div>
               <p className="text-sm font-bold text-[var(--color-text-primary)] sm:text-base">
-                🎁 初めての方はこちら — FANZA完全ガイド
+                初めての方はこちら — FANZA完全ガイド
               </p>
               <p className="mt-1 text-xs text-[var(--color-text-secondary)] sm:text-sm">
                 無料登録の手順・支払い方法・お得な買い方まで徹底解説。初回限定クーポンあり！
@@ -78,7 +90,7 @@ export default function Footer() {
                   </defs>
                   <circle cx="27" cy="27" r="16" fill="none" stroke="url(#ftr-accent)" strokeWidth="3.5" strokeLinecap="round"/>
                   <line x1="38" y1="38" x2="52" y2="52" stroke="url(#ftr-accent)" strokeWidth="4" strokeLinecap="round"/>
-                  <text x="27" y="27" fontFamily="'Arial Black','Helvetica Neue',sans-serif" fontSize="22" fontWeight="900" fill="url(#ftr-accent)" textAnchor="middle" dominantBaseline="central" letterSpacing="-1">F</text>
+                  <text x="27" y="30.4" fontFamily="'Arial Black','Helvetica Neue',sans-serif" fontSize="22" fontWeight="900" fill="url(#ftr-accent)" textAnchor="middle" dominantBaseline="middle" letterSpacing="-1">F</text>
                 </svg>
               </span>
               <span className="text-lg font-bold tracking-tight">
@@ -86,9 +98,9 @@ export default function Footer() {
               </span>
             </a>
             <p className="mt-4 max-w-xs text-sm leading-7 text-[var(--color-text-secondary)]">
-              公式FANZAにない切り口で作品を探せる<br className="hidden sm:block" />
-              無料ツール集。シチュ検索・独自ランキング・<br className="hidden sm:block" />
-              セール解析で、もっとお得に楽しめます。
+              公式FANZAにない切り口で、探す・買う・比較するをまとめた<br className="hidden sm:block" />
+              無料ツール集です。診断ラボ・買う前チェック・<br className="hidden sm:block" />
+              セール解析で、迷わず選びやすくしています。
             </p>
           </div>
 

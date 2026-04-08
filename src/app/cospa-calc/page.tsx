@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import CospaCalcPage from "./CospaCalcPage";
 import { buildPageMetadata } from "@/lib/metadata";
-import { fetchRanking, toProduct } from "@/lib/dmm-api";
+import { loadFeatureProducts } from "@/lib/catalog";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "コスパ計算機｜1分あたりの価格でランキング｜FANZAトクナビ",
@@ -11,8 +11,6 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default async function Page() {
-  const raw = await fetchRanking(50);
-  const products = raw.map((item, i) => toProduct(item, i + 1));
-
+  const products = await loadFeatureProducts({ limit: 180 });
   return <CospaCalcPage products={products} />;
 }

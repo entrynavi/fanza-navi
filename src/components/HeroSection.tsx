@@ -102,20 +102,20 @@ export default function HeroSection({
             </h1>
 
             <p className="mt-3 text-base font-semibold text-[var(--color-accent)] md:text-lg">
-              シチュ検索・独自ランキング・セール解析、ここだけのツール。
+              探すラボ・買う前チェック・セール解析、ここだけの導線。
             </p>
 
             <p className="mt-4 max-w-[34rem] text-[15px] leading-7 text-[var(--color-text-secondary)] md:text-[17px]">
-              気分で逆引き検索、コスパ最強ランキング、週間セール自動まとめ。
-              公式FANZAにはない切り口で、あなたの「次に見たい作品」が見つかります。
+              気分で逆引き検索、今夜の1本診断、予算内まとめ買い、週間セール自動まとめ。
+              公式FANZAにはない切り口で、あなたの「次に見たい作品」と「今買うべき作品」が見つかります。
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
               <PrimaryCta href={ROUTES.discover} size="lg">
                 シチュ検索を使う
               </PrimaryCta>
-              <PrimaryCta href={ROUTES.customRanking} size="lg" variant="outline">
-                独自ランキング
+              <PrimaryCta href={ROUTES.buyTiming} size="lg" variant="outline">
+                買う前チェック
               </PrimaryCta>
               <PrimaryCta href={ROUTES.weeklySale} size="lg" variant="ghost">
                 週間セール
@@ -124,8 +124,8 @@ export default function HeroSection({
 
             <div className="mt-5 flex flex-wrap gap-6 text-sm">
               {[
-                { num: "7+", label: "独自ツール" },
-                { num: "4種", label: "独自ランキング" },
+                { num: "6導線", label: "主要ワークフロー" },
+                { num: "14+", label: "独自機能" },
                 { num: "毎日", label: "セール自動解析" },
               ].map((s) => (
                 <div key={s.label}>

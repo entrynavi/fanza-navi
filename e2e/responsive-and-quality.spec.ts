@@ -35,8 +35,12 @@ test.describe("レスポンシブデザイン", () => {
     await openHome(page);
 
     const nav = page.locator("header nav");
-    await expect(nav.getByText("ランキング")).toBeVisible();
-    await expect(nav.getByText("セール")).toBeVisible();
+    await expect(
+      nav.getByRole("link", { name: "ランキング", exact: true })
+    ).toBeVisible();
+    await expect(
+      nav.getByRole("link", { name: "セール", exact: true })
+    ).toBeVisible();
   });
 
   test("デスクトップ: ハンバーガーメニューが非表示", async ({ page }) => {

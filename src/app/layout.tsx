@@ -13,18 +13,18 @@ import InstallBanner from "@/components/InstallBanner";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "FANZAトクナビ — セール解析・シチュ検索・独自ランキング",
+    default: "FANZAトクナビ — 探すラボ・買う前チェック・独自ランキング",
     template: "%s | FANZAトクナビ",
   },
   description:
-    "公式FANZAにない切り口で作品を探せる。シチュエーション検索・独自ランキング・週間セール解析・コスト比較シミュレーターなど、もっとお得に楽しむための無料ツール集。",
-  keywords: ["FANZA", "DMM", "セール", "ランキング", "シチュエーション検索", "コスト比較", "VR", "独自ランキング", "週間セール"],
+    "公式FANZAにない切り口で作品を探せる。探すラボ・買う前チェック・独自ランキング・週間セール解析など、迷わず選ぶための無料ツール集。",
+  keywords: ["FANZA", "DMM", "セール", "ランキング", "シチュエーション検索", "買い時", "ウォッチリスト", "独自ランキング", "週間セール"],
   icons: {
     icon: "/favicon.svg",
   },
   openGraph: {
-    title: "FANZAトクナビ — セール解析・シチュ検索・独自ランキング",
-    description: "公式FANZAにない切り口で作品を探せる無料ツール集。シチュエーション検索・独自ランキング・週間セール解析・コスト比較。",
+    title: "FANZAトクナビ — 探すラボ・買う前チェック・独自ランキング",
+    description: "公式FANZAにない切り口で作品を探せる無料ツール集。探すラボ・買う前チェック・週間セール解析をまとめています。",
     type: "website",
     siteName: "FANZAトクナビ",
     images: [
@@ -32,14 +32,14 @@ export const metadata: Metadata = {
         url: `${SITE_URL}/images/ogp.svg`,
         width: 1200,
         height: 630,
-        alt: "FANZAトクナビ — セール解析・シチュ検索・独自ランキング",
+        alt: "FANZAトクナビ — 探すラボ・買う前チェック・独自ランキング",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "FANZAトクナビ — セール解析・シチュ検索・独自ランキング",
-    description: "公式FANZAにない切り口で作品を探せる無料ツール集。シチュエーション検索・独自ランキング・週間セール解析・コスト比較。",
+    title: "FANZAトクナビ — 探すラボ・買う前チェック・独自ランキング",
+    description: "公式FANZAにない切り口で作品を探せる無料ツール集。探すラボ・買う前チェック・週間セール解析をまとめています。",
     images: [`${SITE_URL}/images/ogp.svg`],
   },
   manifest: "/manifest.json",

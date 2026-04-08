@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
 import PersonalizedPage from "./PersonalizedPage";
-import {
-  loadRankingProducts,
-  loadSaleProducts,
-  loadNewProducts,
-} from "@/lib/catalog";
+import { loadFeatureProducts } from "@/lib/catalog";
 import { buildPageMetadata } from "@/lib/metadata";
-import type { Product } from "@/data/products";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "パーソナライズドフィード｜あなたへのおすすめ｜FANZAトクナビ",
@@ -15,23 +10,8 @@ export const metadata: Metadata = buildPageMetadata({
   path: "/personalized",
 });
 
-function dedupeProducts(products: Product[]): Product[] {
-  const seen = new Set<string>();
-  return products.filter((p) => {
-    if (seen.has(p.id)) return false;
-    seen.add(p.id);
-    return true;
-  });
-}
-
 export default async function Page() {
-  const [ranking, sale, newReleases] = await Promise.all([
-    loadRankingProducts({ limit: 40 }),
-    loadSaleProducts({ limit: 40 }),
-    loadNewProducts({ limit: 40 }),
-  ]);
-
-  const allProducts = dedupeProducts([...ranking, ...sale, ...newReleases]);
+  const allProducts = await loadFeatureProducts({ limit: 180 });
 
   return <PersonalizedPage allProducts={allProducts} />;
 }

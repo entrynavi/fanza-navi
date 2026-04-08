@@ -16,6 +16,7 @@ import {
   FaRegStar,
 } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
+import { useFavorites } from "@/hooks/useFavorites";
 import { ROUTES } from "@/lib/site";
 import type { Product } from "@/data/products";
 
@@ -56,6 +57,13 @@ interface BrowsingHistory {
   viewedIds: string[];
 }
 
+interface PreferenceProfile {
+  genreCounts: Record<string, number>;
+  actressCounts: Record<string, number>;
+  makerCounts: Record<string, number>;
+  seriesCounts: Record<string, number>;
+}
+
 function loadSelectedGenres(): string[] {
   if (typeof window === "undefined") return [];
   try {
@@ -90,6 +98,32 @@ function saveHistory(history: BrowsingHistory) {
   } catch {}
 }
 
+function buildPreferenceProfile(products: Product[]): PreferenceProfile {
+  return products.reduce<PreferenceProfile>(
+    (profile, product) => {
+      if (product.genre) {
+        profile.genreCounts[product.genre] = (profile.genreCounts[product.genre] || 0) + 1;
+      }
+      if (product.maker) {
+        profile.makerCounts[product.maker] = (profile.makerCounts[product.maker] || 0) + 1;
+      }
+      if (product.series) {
+        profile.seriesCounts[product.series] = (profile.seriesCounts[product.series] || 0) + 1;
+      }
+      product.actresses?.forEach((actress) => {
+        profile.actressCounts[actress] = (profile.actressCounts[actress] || 0) + 1;
+      });
+      return profile;
+    },
+    {
+      genreCounts: {},
+      actressCounts: {},
+      makerCounts: {},
+      seriesCounts: {},
+    }
+  );
+}
+
 function recordProductView(product: Product) {
   const history = loadHistory();
   if (product.genre) {
@@ -116,20 +150,34 @@ function recordProductView(product: Product) {
 /*  Recommendation algorithm                                           */
 /* ------------------------------------------------------------------ */
 
-function scoreProduct(product: Product, history: BrowsingHistory, selectedGenres: string[]): number {
+function scoreProduct(
+  product: Product,
+  history: BrowsingHistory,
+  selectedGenres: string[],
+  profile: PreferenceProfile
+): number {
   let score = 0;
 
   const genreWeight = history.genreCounts[product.genre] || 0;
   score += genreWeight * 10;
+  score += (profile.genreCounts[product.genre] || 0) * 8;
 
   if (selectedGenres.includes(product.genre)) score += 15;
 
   const price = product.salePrice ?? product.price;
   if (price >= history.priceRange.min && price <= history.priceRange.max) score += 5;
 
+  if (product.maker) {
+    score += (profile.makerCounts[product.maker] || 0) * 10;
+  }
+  if (product.series) {
+    score += (profile.seriesCounts[product.series] || 0) * 12;
+  }
+
   if (product.actresses) {
     for (const a of product.actresses) {
       score += (history.actressCounts[a] || 0) * 8;
+      score += (profile.actressCounts[a] || 0) * 10;
     }
   }
 
@@ -301,6 +349,7 @@ interface Props {
 }
 
 export default function PersonalizedPage({ allProducts }: Props) {
+  const { ids } = useFavorites();
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [history, setHistory] = useState<BrowsingHistory | null>(null);
   const [initialized, setInitialized] = useState(false);
@@ -329,20 +378,30 @@ export default function PersonalizedPage({ allProducts }: Props) {
     setHistory({ genreCounts: {}, priceRange: { min: 0, max: 10000 }, actressCounts: {}, viewedIds: [] });
   }, []);
 
+  const favoriteProducts = useMemo(
+    () => allProducts.filter((product) => ids.includes(product.id)),
+    [allProducts, ids]
+  );
+  const preferenceProfile = useMemo(
+    () => buildPreferenceProfile(favoriteProducts),
+    [favoriteProducts]
+  );
+
   // Recommendation sections
-  const { recommended, genreNew, salePicks, explorePicks } = useMemo(() => {
-    if (!history || selectedGenres.length === 0) {
-      return { recommended: [], genreNew: [], salePicks: [], explorePicks: [] };
+  const { recommended, genreNew, salePicks, explorePicks, watchlistMatches } = useMemo(() => {
+    if (!history || (selectedGenres.length === 0 && favoriteProducts.length === 0)) {
+      return { recommended: [], genreNew: [], salePicks: [], explorePicks: [], watchlistMatches: [] };
     }
 
     // Score all products
     const scored = allProducts.map((p) => ({
       product: p,
-      score: scoreProduct(p, history, selectedGenres),
+      score: scoreProduct(p, history, selectedGenres, preferenceProfile),
     }));
 
     // Top matches
     const recommended = [...scored]
+      .filter((item) => !ids.includes(item.product.id))
       .sort((a, b) => b.score - a.score)
       .slice(0, 12)
       .map((s) => s.product);
@@ -368,8 +427,34 @@ export default function PersonalizedPage({ allProducts }: Props) {
       .sort((a, b) => b.rating - a.rating)
       .slice(0, 12);
 
-    return { recommended, genreNew, salePicks, explorePicks };
-  }, [allProducts, history, selectedGenres]);
+    const favoriteMakers = new Set(
+      favoriteProducts.map((product) => product.maker).filter(Boolean)
+    );
+    const favoriteSeries = new Set(
+      favoriteProducts.map((product) => product.series).filter(Boolean)
+    );
+    const favoriteActresses = new Set(
+      favoriteProducts.flatMap((product) => product.actresses ?? [])
+    );
+
+    const watchlistMatches = [...scored]
+      .filter(({ product }) => {
+        if (ids.includes(product.id)) {
+          return false;
+        }
+
+        return (
+          (product.maker ? favoriteMakers.has(product.maker) : false) ||
+          (product.series ? favoriteSeries.has(product.series) : false) ||
+          (product.actresses?.some((actress) => favoriteActresses.has(actress)) ?? false)
+        );
+      })
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 12)
+      .map((item) => item.product);
+
+    return { recommended, genreNew, salePicks, explorePicks, watchlistMatches };
+  }, [allProducts, favoriteProducts, history, ids, preferenceProfile, selectedGenres]);
 
   if (!initialized) {
     return (
@@ -381,7 +466,7 @@ export default function PersonalizedPage({ allProducts }: Props) {
     );
   }
 
-  const hasPreferences = selectedGenres.length >= 3;
+  const hasPreferences = selectedGenres.length >= 3 || favoriteProducts.length > 0;
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
@@ -404,7 +489,9 @@ export default function PersonalizedPage({ allProducts }: Props) {
         <>
           {/* Preference summary bar */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-8 flex flex-wrap items-center gap-2">
-            <span className="text-xs text-[var(--color-text-muted)]">選択中のジャンル:</span>
+            <span className="text-xs text-[var(--color-text-muted)]">
+              {selectedGenres.length > 0 ? "選択中のジャンル:" : "ウォッチリスト起点のおすすめ:"}
+            </span>
             {selectedGenres.map((gId) => {
               const genre = ALL_GENRES.find((g) => g.id === gId);
               return (
@@ -413,6 +500,11 @@ export default function PersonalizedPage({ allProducts }: Props) {
                 </span>
               );
             })}
+            {favoriteProducts.length > 0 ? (
+              <span className="chip border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)]">
+                ウォッチリスト {favoriteProducts.length}件
+              </span>
+            ) : null}
             <button
               onClick={handleReset}
               className="ml-auto flex items-center gap-1 rounded-full border border-[var(--color-border)] px-3 py-1.5 text-[10px] text-[var(--color-text-muted)] transition-colors hover:text-white"
@@ -421,6 +513,40 @@ export default function PersonalizedPage({ allProducts }: Props) {
               リセット
             </button>
           </motion.div>
+
+          {/* Section 0: Watchlist similarity */}
+          {watchlistMatches.length > 0 && (
+            <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="mb-10">
+              <SectionHeader
+                icon={<FaMagic className="text-[var(--color-accent)]" />}
+                title="ウォッチリストに近いおすすめ"
+                description="保存済み作品の女優・シリーズ・メーカーに近い候補を先回りで提案"
+              />
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                {watchlistMatches.map((product, i) => (
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: Math.min(i * 0.03, 0.2) }}
+                  >
+                    <ProductCard
+                      product={product}
+                      onView={handleView}
+                      badge={
+                        i < 3 ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-[var(--color-accent)] px-2 py-0.5 text-[10px] font-bold text-[#20150f]">
+                            <FaMagic size={8} />
+                            近い候補
+                          </span>
+                        ) : undefined
+                      }
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
+          )}
 
           {/* Section 1: Recommendations */}
           {recommended.length > 0 && (

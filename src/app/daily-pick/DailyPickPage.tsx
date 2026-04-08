@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   FaStar,
@@ -13,32 +13,21 @@ import {
 import Breadcrumb from "@/components/Breadcrumb";
 import FavoriteButton from "@/components/FavoriteButton";
 import PrimaryCta from "@/components/PrimaryCta";
+import ProductPoolToolbar from "@/components/ProductPoolToolbar";
+import { useFavorites } from "@/hooks/useFavorites";
 import { ROUTES } from "@/lib/site";
 import type { Product } from "@/data/products";
+import {
+  filterProductPool,
+  getProductPoolOptions,
+  type ProductPoolSource,
+} from "@/lib/product-pool";
 import {
   formatPriceYen,
   getPresentedCurrentPrice,
   getPrimaryFanzaCtaLabel,
 } from "@/lib/product-presenter";
-
-function hashDateString(dateStr: string): number {
-  let hash = 0;
-  for (let i = 0; i < dateStr.length; i++) {
-    const char = dateStr.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash |= 0;
-  }
-  return Math.abs(hash);
-}
-
-function getPickForDate(
-  dateStr: string,
-  products: Product[]
-): Product | undefined {
-  if (products.length === 0) return undefined;
-  const index = hashDateString(dateStr) % products.length;
-  return products[index];
-}
+import { getDailyPickForDate } from "@/lib/toolkit-insights";
 
 function formatDateJP(dateStr: string): string {
   const [y, m, d] = dateStr.split("-");
@@ -56,24 +45,40 @@ export default function DailyPickPage({
 }: {
   allProducts: Product[];
 }) {
+  const { ids } = useFavorites();
+  const [source, setSource] = useState<ProductPoolSource>("all");
+  const [query, setQuery] = useState("");
   const today = getDateString(0);
+  const sourceOptions = useMemo(
+    () => getProductPoolOptions(allProducts, ids),
+    [allProducts, ids]
+  );
+  const filteredProducts = useMemo(
+    () =>
+      filterProductPool(allProducts, {
+        source,
+        query,
+        favoriteIds: ids,
+      }),
+    [allProducts, ids, query, source]
+  );
 
   const todayPick = useMemo(
-    () => getPickForDate(today, allProducts),
-    [today, allProducts]
+    () => getDailyPickForDate(today, filteredProducts),
+    [today, filteredProducts]
   );
 
   const pastPicks = useMemo(() => {
     const picks: { date: string; product: Product }[] = [];
     for (let i = 1; i <= 7; i++) {
       const dateStr = getDateString(-i);
-      const product = getPickForDate(dateStr, allProducts);
+      const product = getDailyPickForDate(dateStr, filteredProducts);
       if (product) {
         picks.push({ date: dateStr, product });
       }
     }
     return picks;
-  }, [allProducts]);
+  }, [filteredProducts]);
 
   const handleShare = (product: Product) => {
     const text = `今日のFANZAおすすめ: ${product.title} ${formatPriceYen(getPresentedCurrentPrice(product))}~`;
@@ -104,6 +109,20 @@ export default function DailyPickPage({
           毎日変わる厳選おすすめ作品。今日のピックをチェックして、新しいお気に入りを見つけよう。
         </p>
       </section>
+
+      <ProductPoolToolbar
+        query={query}
+        onQueryChange={setQuery}
+        source={source}
+        onSourceChange={setSource}
+        options={sourceOptions}
+        placeholder="作品名・女優名・シリーズで今日の候補を絞る"
+        summary={
+          source === "favorites"
+            ? "ウォッチリストだけで“今日の1本”を選べます。迷いを減らす使い方に寄せました。"
+            : `全取得作品 ${filteredProducts.length} 件から、評価・レビュー数・セール状況を加味して日替わりで選出します。`
+        }
+      />
 
       {todayPick ? (
         <motion.section

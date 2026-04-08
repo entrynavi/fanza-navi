@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import PriceHistoryPage from "./PriceHistoryPage";
-import { loadRankingProducts } from "@/lib/catalog";
+import { loadFeatureProducts } from "@/lib/catalog";
 import { buildPageMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -11,6 +11,6 @@ export const metadata: Metadata = buildPageMetadata({
 });
 
 export default async function Page() {
-  const products = await loadRankingProducts({ limit: 30 });
+  const products = await loadFeatureProducts({ limit: 180 });
   return <PriceHistoryPage products={products} />;
 }

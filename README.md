@@ -1,45 +1,47 @@
-# FANZAナビ
+# FANZAトクナビ
 
-FANZA / DMM アフィリエイト向けの静的レビューサイトです。  
-Next.js App Router を `output: "export"` で運用し、Cloudflare Pages にそのまま載せられる構成にしています。
+FANZA / DMM アフィリエイト向けの静的メディアです。  
+公式カタログの代替ではなく、**探す・比較する・買い時を判断する** ための独自導線を前面に出した構成にしています。
 
 ## 技術スタック
 
-- Next.js 16
+- Next.js 16 App Router (`output: "export"`)
 - React 19
 - Tailwind CSS v4
 - Framer Motion
 - Vitest + Testing Library
-- Cloudflare Pages 向け static export
+- Playwright
+- Cloudflare Pages
 
-## サイト構成
+## 主要導線
 
-- `/`
-  ランキング、セール、ジャンル、レビューに流すトップページ
-- `/ranking`
-  月間ランキング
-- `/sale`
-  セール情報
-- `/new`
-  新作導線
-- `/search`
-  静的サイト向けの検索入口ページ
-- `/genre/[slug]`
-  ジャンル別一覧テンプレート
-- `/reviews`
-  レビュー一覧
-- `/reviews/[slug]`
-  個別レビューテンプレート
-- `/articles`
-  ガイド記事一覧
-- `/about`
-  運営者情報
-- `/contact`
-  お問い合わせ
-- `/privacy`
-  プライバシーポリシー
-- `/terms`
-  利用規約
+| URL | 役割 |
+| --- | --- |
+| `/` | ランキング、セール、独自導線をまとめたトップページ |
+| `/discover` | **探す/決めるラボ**。気分・予算・セール状況から候補を絞る |
+| `/buy-timing` | **買う前チェック**。買い時、予算内まとめ買い、次のセール波を確認する |
+| `/watchlist` | **ウォッチリスト司令室**。保存作品、値下げ候補、次に見る候補を整理する |
+| `/personalized` | ウォッチリスト起点の自分向けフィード |
+| `/search` | 検索入口。ジャンル、並び替え、絞り込みの基本導線 |
+| `/ranking` | 売上ランキング |
+| `/custom-ranking` | 独自ランキング |
+| `/sale` | セール作品一覧 |
+| `/weekly-sale` | 今週のセールまとめ |
+| `/guide` | 初心者向けの登録・支払い・お得な買い方ガイド |
+
+## 独自機能
+
+- `/daily-pick` 今日のおすすめ
+- `/gacha` ランダム提案
+- `/cospa-calc` コスパ計算
+- `/price-history` 価格推移の確認
+- `/sale-predict` 次のセール予測
+- `/ranking-battle` 2作品比較
+- `/series-guide` シリーズ導線
+- `/sns-cards` SNS投稿用カード
+- `/community-ranking` 投票型ランキング
+- `/savings-tips` 節約の見方まとめ
+- `/simulator` 月額 vs 単品比較
 
 ## ローカル起動
 
@@ -48,20 +50,26 @@ npm install
 npm run dev
 ```
 
-開発サーバーは通常 `http://localhost:3000` です。
+通常は `http://localhost:3000` で確認します。
 
-## build / export
+## ビルド
 
 ```bash
 npm run build
 ```
 
-成功すると `out/` に静的ファイルが出力されます。  
-Cloudflare Pages ではこの `out/` を配信します。
+静的出力は `out/` に生成され、Cloudflare Pages ではこのディレクトリを配信します。
+
+## テスト
+
+```bash
+npm test
+npm run test:e2e
+```
 
 ## 環境変数
 
-`.env.example` をコピーして使ってください。
+`.env.example` をコピーして使います。
 
 ```bash
 cp .env.example .env.local
@@ -69,38 +77,26 @@ cp .env.example .env.local
 
 主な変数:
 
-- `SITE_URL`
-  本番URL。canonical / OGP / sitemap / robots に使います
-- `DMM_AFFILIATE_LINK`
-  DMM アフィリエイトのトラッキングURL
-- `DMM_API_ID`
-  DMM Web Service API ID
-- `DMM_AFFILIATE_ID`
-  API用アフィリエイトID
-- `FANZA_FLOOR`
-  既定フロア。通常は `videoa`
-- `FANZA_DEFAULT_GENRE`
-  デフォルトのジャンル slug
-- `ANALYTICS_ID`
-  Google Analytics の測定ID
-- `GTM_ID`
-  Google Tag Manager ID
+- `SITE_URL` - canonical / OGP / sitemap 用の本番 URL
+- `DMM_AFFILIATE_LINK` - DMM アフィリエイトのトラッキング URL
+- `DMM_API_ID` - DMM Web Service API ID
+- `DMM_AFFILIATE_ID` - API 用アフィリエイト ID
+- `FANZA_FLOOR` - 通常は `videoa`
+- `FANZA_DEFAULT_GENRE` - 既定ジャンル slug
+- `ANALYTICS_ID` - Google Analytics ID
+- `GTM_ID` - Google Tag Manager ID
+- `NEXT_PUBLIC_WORKERS_API` - Workers API の URL（Workers 導入時）
 
 補足:
 
-- `SITE_URL` 未設定時はローカル安全値 `http://localhost:3000` にフォールバックします
-- `SITE_URL` 未設定の build では robots を noindex 相当にし、sitemap は空で出します
-- 本番公開前に `SITE_URL` は必ず設定してください
+- `SITE_URL` 未設定時は `http://localhost:3000` を使います
+- `SITE_URL` 未設定の build では sitemap は空、robots は noindex 相当で出力します
+- アフィリエイトリンクは `src/lib/affiliate.ts` を通して生成します
 
-## Cloudflare Pages 設定
+## Cloudflare Pages
 
 - Build command: `npm run build`
 - Build output directory: `out`
-
-補足:
-
-- Cloudflare Pages の Git 連携ビルドはクリーンインストール前提です。`package.json` を変更したら、`package-lock.json` も必ず更新して一緒に commit してください。
-- 依存追加後は `npm install` または `npm install --package-lock-only` を実行し、`npm ci && npm run build` が通る状態にしてから push してください。
 
 必要な環境変数:
 
@@ -110,48 +106,9 @@ cp .env.example .env.local
 - `DMM_AFFILIATE_ID`
 - `FANZA_FLOOR`
 - `FANZA_DEFAULT_GENRE`
-- `ANALYTICS_ID` または `GTM_ID` は任意
-
-`public/_headers` でセキュリティヘッダーを配信します。
-
-## SEO 実装
-
-- metadata API による title / description / canonical / OGP / Twitter Card
-- `src/app/robots.ts`
-- `src/app/sitemap.ts`
-- `JsonLd` による `WebSite`
-- レビュー詳細の `Review` 構造化データ
-
-## テスト
-
-```bash
-npm test
-```
-
-主な対象:
-
-- env 契約
-- affiliate link helper
-- age gate
-- ルート metadata / static params
-- ホーム導線
-- 商品カード
-- レビューデータ
-
-## GitLab への初期 push
-
-空の GitLab repo を作成したあとに:
-
-```bash
-git remote remove origin
-git remote add origin https://gitlab.com/<user>/<repo>.git
-git push -u origin main
-```
-
-HTTPS で push する場合は GitLab Personal Access Token を使います。
 
 ## 運用メモ
 
-- DMM API が取れない場合でも、フォールバック作品データで一覧が空にならないようにしています
-- アフィリエイトリンクは `src/lib/affiliate.ts` を経由して生成します
-- 公開時は 18歳確認ゲート、上部開示表記、運営者情報ページをセットで確認してください
+- DMM API が取れない場合でもフォールバックデータで一覧が空になりにくい構成です
+- 18歳確認ゲート、ヘッダー開示表記、運営情報ページは公開前の確認対象です
+- 運用フローや SNS 自動化は `OPERATIONS.md` を参照してください

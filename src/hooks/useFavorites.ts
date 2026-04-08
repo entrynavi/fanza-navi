@@ -2,23 +2,46 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-const STORAGE_KEY = "fanza-navi-favorites";
+export const FAVORITES_STORAGE_KEY = "fanza-navi-favorites";
+const FAVORITES_EVENT = "fanza-navi:favorites-changed";
 const MAX_FAVORITES = 50;
+
+function readFavorites(): string[] {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  try {
+    const stored = localStorage.getItem(FAVORITES_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
 
 export function useFavorites() {
   const [ids, setIds] = useState<string[]>([]);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) setIds(JSON.parse(stored));
-    } catch {}
+    const sync = () => {
+      setIds(readFavorites());
+    };
+
+    sync();
+    window.addEventListener("storage", sync);
+    window.addEventListener(FAVORITES_EVENT, sync);
+
+    return () => {
+      window.removeEventListener("storage", sync);
+      window.removeEventListener(FAVORITES_EVENT, sync);
+    };
   }, []);
 
   const persist = useCallback((next: string[]) => {
     setIds(next);
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(next));
+      window.dispatchEvent(new CustomEvent(FAVORITES_EVENT));
     } catch {}
   }, []);
 

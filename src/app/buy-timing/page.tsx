@@ -1,18 +1,16 @@
 import type { Metadata } from "next";
 import BuyTimingPage from "./BuyTimingPage";
 import { buildPageMetadata } from "@/lib/metadata";
-import { fetchSaleProducts, toProduct } from "@/lib/dmm-api";
+import { loadFeatureProducts } from "@/lib/catalog";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "買い時判定ツール｜今買うべき？を5秒で診断｜FANZAトクナビ",
+  title: "買う前チェック｜買い時・予算内セット・セール予測｜FANZAトクナビ",
   description:
-    "FANZA作品の買い時を独自スコアで判定。セール状況・割引率・評価・季節ボーナスを総合的に分析して「今が買い時」かどうかを診断します。",
+    "買い時判定、予算内まとめ買い、価格履歴の見どころ、次のセール波をひとまとめ。買うか待つかを決めやすくする購入判断ページです。",
   path: "/buy-timing",
 });
 
 export default async function Page() {
-  const raw = await fetchSaleProducts(50);
-  const products = raw.map((item, i) => toProduct(item, i + 1, { isSale: true }));
-
+  const products = await loadFeatureProducts({ limit: 180 });
   return <BuyTimingPage products={products} />;
 }

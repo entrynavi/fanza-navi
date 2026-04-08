@@ -1,33 +1,18 @@
 import type { Metadata } from "next";
 import WatchlistPage from "./WatchlistPage";
-import { loadRankingProducts, loadSaleProducts } from "@/lib/catalog";
+import { loadFeatureProducts } from "@/lib/catalog";
 import { buildPageMetadata } from "@/lib/metadata";
 import { ROUTES } from "@/lib/site";
-import type { Product } from "@/data/products";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "お気に入り＆ウォッチリスト",
+  title: "ウォッチリスト司令室｜保存作品の優先順位と深掘り候補｜FANZAトクナビ",
   description:
-    "お気に入りに追加した作品を一覧で確認。気になる作品をまとめてチェックできます。",
+    "保存作品の一覧だけでなく、値下げ中の候補、今チェック優先の作品、似た作品の深掘りまでまとめて見られるウォッチリストページです。",
   path: ROUTES.watchlist,
 });
 
-function dedupeProducts(products: Product[]): Product[] {
-  const seen = new Set<string>();
-  return products.filter((p) => {
-    if (seen.has(p.id)) return false;
-    seen.add(p.id);
-    return true;
-  });
-}
-
 export default async function Page() {
-  const [ranking, sale] = await Promise.all([
-    loadRankingProducts({ limit: 100 }),
-    loadSaleProducts({ limit: 100 }),
-  ]);
-
-  const allProducts = dedupeProducts([...ranking, ...sale]);
+  const allProducts = await loadFeatureProducts({ limit: 180 });
 
   return <WatchlistPage allProducts={allProducts} />;
 }

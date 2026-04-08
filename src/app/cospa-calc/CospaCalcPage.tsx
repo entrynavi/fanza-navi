@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaCalculator,
@@ -12,7 +12,14 @@ import {
   FaStar,
 } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
+import ProductPoolToolbar from "@/components/ProductPoolToolbar";
+import { useFavorites } from "@/hooks/useFavorites";
 import type { Product } from "@/data/products";
+import {
+  filterProductPool,
+  getProductPoolOptions,
+  type ProductPoolSource,
+} from "@/lib/product-pool";
 
 /* ------------------------------------------------------------------ */
 /*  Deterministic duration from product id                             */
@@ -76,11 +83,28 @@ interface Props {
 }
 
 export default function CospaCalcPage({ products }: Props) {
+  const { ids } = useFavorites();
   const [sortMode, setSortMode] = useState<SortMode>("cospa");
+  const [source, setSource] = useState<ProductPoolSource>("all");
+  const [query, setQuery] = useState("");
+
+  const sourceOptions = useMemo(
+    () => getProductPoolOptions(products, ids),
+    [ids, products]
+  );
+  const sourceProducts = useMemo(
+    () =>
+      filterProductPool(products, {
+        source,
+        query,
+        favoriteIds: ids,
+      }),
+    [ids, products, query, source]
+  );
 
   const enriched = useMemo(
     () =>
-      products
+      sourceProducts
         .filter((p) => p.price > 0)
         .map((p) => {
           const duration = getDuration(p.id);
@@ -88,7 +112,7 @@ export default function CospaCalcPage({ products }: Props) {
           const costPerMinute = effectivePrice / duration;
           return { ...p, duration, costPerMinute, effectivePrice };
         }),
-    [products]
+    [sourceProducts]
   );
 
   const sorted = useMemo(() => {
@@ -125,6 +149,20 @@ export default function CospaCalcPage({ products }: Props) {
           1分あたりの価格で作品をランキング！お得な作品が一目でわかる
         </p>
       </motion.div>
+
+      <ProductPoolToolbar
+        query={query}
+        onQueryChange={setQuery}
+        source={source}
+        onSourceChange={setSource}
+        options={sourceOptions}
+        placeholder="作品名・女優名・シリーズでコスパ比較"
+        summary={
+          source === "favorites"
+            ? "ウォッチリスト内だけでコスパ比較できるので、買う候補の優先順位を決めやすくしています。"
+            : `全取得作品 ${sourceProducts.length} 件から比較中。セール品だけ、高評価だけにも切り替えられます。`
+        }
+      />
 
       {/* Stats summary */}
       <motion.div

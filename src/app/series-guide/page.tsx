@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import SeriesGuidePage from "./SeriesGuidePage";
 import { buildPageMetadata } from "@/lib/metadata";
-import { fetchRanking, toProduct } from "@/lib/dmm-api";
+import { loadFeatureProducts } from "@/lib/catalog";
 import type { Product } from "@/data/products";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -23,14 +23,7 @@ function groupBySeries(products: Product[]): Record<string, Product[]> {
 }
 
 export default async function Page() {
-  let products: Product[] = [];
-  try {
-    const raw = await fetchRanking(100);
-    products = raw.map((item, i) => toProduct(item, i + 1));
-  } catch {
-    products = [];
-  }
-
+  const products: Product[] = await loadFeatureProducts({ limit: 180 });
   const grouped = groupBySeries(products);
 
   const seriesData = Object.entries(grouped)

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback, useRef } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaShareAlt,
@@ -18,8 +18,15 @@ import {
   FaThumbsUp,
 } from "react-icons/fa";
 import Breadcrumb from "@/components/Breadcrumb";
+import ProductPoolToolbar from "@/components/ProductPoolToolbar";
+import { useFavorites } from "@/hooks/useFavorites";
 import { ROUTES } from "@/lib/site";
 import type { Product } from "@/data/products";
+import {
+  filterProductPool,
+  getProductPoolOptions,
+  type ProductPoolSource,
+} from "@/lib/product-pool";
 
 /* ------------------------------------------------------------------ */
 /*  Card Templates                                                     */
@@ -200,20 +207,36 @@ interface Props {
 }
 
 export default function SnsCardsPage({ products }: Props) {
+  const { ids } = useFavorites();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<CardTemplate>(TEMPLATES[0]);
   const [searchQuery, setSearchQuery] = useState("");
   const [copied, setCopied] = useState(false);
+  const [source, setSource] = useState<ProductPoolSource>("all");
+
+  const sourceOptions = useMemo(
+    () => getProductPoolOptions(products, ids),
+    [ids, products]
+  );
+  const sourceProducts = useMemo(
+    () =>
+      filterProductPool(products, {
+        source,
+        query: searchQuery,
+        favoriteIds: ids,
+      }),
+    [ids, products, searchQuery, source]
+  );
 
   const filteredProducts = useMemo(() => {
-    if (!searchQuery) return products;
-    const q = searchQuery.toLowerCase();
-    return products.filter(
-      (p) =>
-        p.title.toLowerCase().includes(q) ||
-        p.tags.some((t) => t.toLowerCase().includes(q))
-    );
-  }, [products, searchQuery]);
+    return sourceProducts;
+  }, [sourceProducts]);
+
+  useEffect(() => {
+    if (!filteredProducts.some((product) => product.id === selectedProduct?.id)) {
+      setSelectedProduct(filteredProducts[0] ?? null);
+    }
+  }, [filteredProducts, selectedProduct?.id]);
 
   const handleCopyText = useCallback(() => {
     if (!selectedProduct) return;
@@ -248,6 +271,20 @@ export default function SnsCardsPage({ products }: Props) {
           お気に入りの作品をSNS映えするカードに変換。テンプレートを選んでワンクリックでシェアできます。
         </p>
       </motion.div>
+
+      <ProductPoolToolbar
+        query={searchQuery}
+        onQueryChange={setSearchQuery}
+        source={source}
+        onSourceChange={setSource}
+        options={sourceOptions}
+        placeholder="作品名・女優名・シリーズでカード化する作品を探す"
+        summary={
+          source === "favorites"
+            ? "ウォッチリストだけでSNSカードを作れます。推したい候補だけを高速で回せます。"
+            : `カード化できる候補は ${filteredProducts.length} 件。セール中や高評価に切り替えて投稿ネタを作りやすくしています。`
+        }
+      />
 
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Left: Product selection */}

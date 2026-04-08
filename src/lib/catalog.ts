@@ -11,6 +11,7 @@ import {
   toProduct,
 } from "@/lib/dmm-api";
 import type { DmmProduct } from "@/lib/dmm-api";
+import { dedupeProducts } from "@/lib/product-pool";
 
 export interface CatalogLoadOptions {
   limit?: number;
@@ -179,13 +180,22 @@ function getCuratedSeriesProducts(
   );
 }
 
-function mapApiProducts(items: DmmProduct[] | undefined, preserveRank = false, mapOptions?: { isSale?: boolean }): Product[] {
+function mapApiProducts(
+  items: DmmProduct[] | undefined,
+  preserveRank = false,
+  mapOptions?: { isSale?: boolean },
+  rankOffset = 0
+): Product[] {
   if (!Array.isArray(items)) {
     return [];
   }
 
   return items.map((item, index) => {
-    const product = toProduct(item, preserveRank ? index + 1 : undefined, mapOptions);
+    const product = toProduct(
+      item,
+      preserveRank ? rankOffset + index + 1 : undefined,
+      mapOptions
+    );
     return preserveRank ? product : stripRank(product);
   });
 }
@@ -195,11 +205,12 @@ async function loadCatalogProducts(
   fallback: Product[],
   options: CatalogLoadOptions = {},
   preserveRank = false,
-  mapOptions?: { isSale?: boolean }
+  mapOptions?: { isSale?: boolean },
+  rankOffset = 0
 ): Promise<Product[]> {
   const limit = normalizeLimit(options);
   const apiItems = await fetcher();
-  const apiProducts = mapApiProducts(apiItems, preserveRank, mapOptions);
+  const apiProducts = mapApiProducts(apiItems, preserveRank, mapOptions, rankOffset);
 
   return mergeProducts(apiProducts, fallback, limit, new Set(), preserveRank);
 }
@@ -214,7 +225,9 @@ export async function loadRankingProducts(
     () => fetchRanking(hits, options.offset ?? 1),
     getCuratedRanking(limit),
     { limit },
-    true
+    true,
+    undefined,
+    Math.max((options.offset ?? 1) - 1, 0)
   );
 }
 
@@ -225,7 +238,7 @@ export async function loadSaleProducts(
   const hits = options.hits ?? limit;
 
   return loadCatalogProducts(
-    () => fetchSaleProducts(hits),
+    () => fetchSaleProducts(hits, options.offset ?? 1),
     getCuratedSale(limit),
     { limit },
     false,
@@ -467,20 +480,32 @@ export async function loadSearchProducts(
   options: CatalogLoadOptions = {}
 ): Promise<Product[]> {
   const limit = normalizeLimit(options);
-  const [ranking, sale, newReleases] = await Promise.all([
-    loadRankingProducts({ limit: Math.ceil(limit * 0.5) }),
-    loadSaleProducts({ limit: Math.ceil(limit * 0.3) }),
-    loadNewProducts({ limit: Math.ceil(limit * 0.3) }),
+  const [ranking, rankingExtended, sale, saleExtended, newReleases, newExtended] = await Promise.all([
+    loadRankingProducts({ limit: Math.max(Math.ceil(limit * 0.5), 48) }),
+    loadRankingProducts({
+      limit: Math.max(Math.ceil(limit * 0.28), 24),
+      offset: Math.max(Math.ceil(limit * 0.5), 48) + 1,
+    }),
+    loadSaleProducts({ limit: Math.max(Math.ceil(limit * 0.36), 36) }),
+    loadSaleProducts({
+      limit: Math.max(Math.ceil(limit * 0.2), 18),
+      offset: Math.max(Math.ceil(limit * 0.36), 36) + 1,
+    }),
+    loadNewProducts({ limit: Math.max(Math.ceil(limit * 0.32), 30) }),
+    loadNewProducts({
+      limit: Math.max(Math.ceil(limit * 0.18), 18),
+      offset: Math.max(Math.ceil(limit * 0.32), 30) + 1,
+    }),
   ]);
 
-  const seen = new Set<string>();
-  const merged: Product[] = [];
-  for (const product of [...ranking, ...sale, ...newReleases]) {
-    if (!seen.has(product.id) && product.affiliateUrl.trim()) {
-      seen.add(product.id);
-      merged.push(product);
-    }
-    if (merged.length >= limit) break;
-  }
-  return merged;
+  return dedupeProducts(
+    [...ranking, ...sale, ...newReleases, ...rankingExtended, ...saleExtended, ...newExtended],
+    limit
+  );
+}
+
+export async function loadFeatureProducts(
+  options: CatalogLoadOptions = {}
+): Promise<Product[]> {
+  return loadSearchProducts(options);
 }
