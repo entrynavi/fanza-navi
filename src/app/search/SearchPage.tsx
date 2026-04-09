@@ -8,7 +8,7 @@ import ProductCard from "@/components/ProductCard";
 import SectionIntro from "@/components/SectionIntro";
 import type { GenreLandingPage } from "@/data/genres";
 import type { Product } from "@/data/products";
-import { getWorkersCatalogReady, hasWorkersApi, searchWorkersCatalog } from "@/lib/workers-api";
+import { isCatalogAvailable, searchStaticCatalog, getManifest } from "@/lib/static-catalog";
 
 const PAGE_SIZE = 24;
 
@@ -75,9 +75,9 @@ export default function SearchPage({
   allProducts: Product[];
   genres: GenreLandingPage[];
 }) {
-  const workersAvailable = hasWorkersApi();
-  const [scope, setScope] = useState<SearchScope>(workersAvailable ? "remote" : "local");
-  const [catalogReady, setCatalogReady] = useState<boolean | null>(workersAvailable ? null : false);
+  const [scope, setScope] = useState<SearchScope>("remote");
+  const [catalogReady, setCatalogReady] = useState<boolean | null>(null);
+  const [catalogTotal, setCatalogTotal] = useState<number>(0);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortValue>("popular");
   const [priceRange, setPriceRange] = useState(0);
@@ -91,7 +91,7 @@ export default function SearchPage({
   const [remoteTotal, setRemoteTotal] = useState<number | null>(null);
   const [remoteHasMore, setRemoteHasMore] = useState(false);
   const [remoteScannedCount, setRemoteScannedCount] = useState(0);
-  const [loadingRemote, setLoadingRemote] = useState(workersAvailable);
+  const [loadingRemote, setLoadingRemote] = useState(true);
   const [remoteNotice, setRemoteNotice] = useState("");
 
   const genreList = useMemo(() => {
@@ -144,41 +144,36 @@ export default function SearchPage({
   }, [allProducts, minRating, minReviewCount, priceRange, query, saleOnly, selectedGenre, sort]);
 
   useEffect(() => {
-    if (!workersAvailable) {
-      setCatalogReady(false);
-      return;
-    }
-
     const controller = new AbortController();
 
-    getWorkersCatalogReady({ signal: controller.signal })
-      .then((ready) => {
-        if (controller.signal.aborted) {
-          return;
-        }
-
+    isCatalogAvailable()
+      .then(async (ready) => {
+        if (controller.signal.aborted) return;
         setCatalogReady(ready);
+        if (ready) {
+          try {
+            const m = await getManifest();
+            setCatalogTotal(m.totalProducts);
+          } catch { /* ignore */ }
+        }
         if (!ready) {
           setScope("local");
           setRemoteNotice(
-            "FANZA全体検索は現在メンテナンス中のため、取得済みデータからの高速検索に切り替えています。"
+            "静的カタログが利用できないため、取得済みデータからの高速検索に切り替えています。"
           );
         }
       })
       .catch(() => {
-        if (controller.signal.aborted) {
-          return;
-        }
-
+        if (controller.signal.aborted) return;
         setCatalogReady(false);
         setScope("local");
         setRemoteNotice(
-          "FANZA全体検索は現在メンテナンス中のため、取得済みデータからの高速検索に切り替えています。"
+          "静的カタログが利用できないため、取得済みデータからの高速検索に切り替えています。"
         );
       });
 
     return () => controller.abort();
-  }, [workersAvailable]);
+  }, []);
 
   useEffect(() => {
     if (scope !== "remote" || catalogReady !== true) {
@@ -191,9 +186,9 @@ export default function SearchPage({
     setLoadingRemote(true);
     setRemoteNotice("");
 
-    searchWorkersCatalog({
+    searchStaticCatalog({
       keyword: query,
-      genre: selectedGenre,
+      genre: selectedGenre ?? undefined,
       sort,
       page,
       pageSize: PAGE_SIZE,
@@ -202,22 +197,19 @@ export default function SearchPage({
       maxPrice: range.max ?? undefined,
       minRating,
       minReviewCount,
-      signal: controller.signal,
     })
       .then((response) => {
+        if (controller.signal.aborted) return;
         setRemoteResults(response.items);
         setRemoteTotal(response.total);
         setRemoteHasMore(response.hasMore);
         setRemoteScannedCount(response.scannedCount);
       })
       .catch((error: unknown) => {
-        if (controller.signal.aborted) {
-          return;
-        }
-
-        console.error("[search] remote search failed", error);
+        if (controller.signal.aborted) return;
+        console.error("[search] static catalog search failed", error);
         setScope("local");
-        setRemoteNotice("FANZA全体検索に接続できなかったため、取得済みデータからの高速検索に切り替えました。");
+        setRemoteNotice("カタログ検索でエラーが発生したため、取得済みデータからの高速検索に切り替えました。");
       })
       .finally(() => {
         if (!controller.signal.aborted) {
@@ -257,7 +249,7 @@ export default function SearchPage({
         <SectionIntro
           eyebrow="作品検索"
           title="気になる作品を見つけよう"
-          description="FANZA全体をページング検索しつつ、取得済み1,200件超の高速検索にも切り替えられます。価格帯・評価・レビュー件数まで絞って、重くしすぎず精度を上げています。"
+          description={`${catalogTotal > 0 ? `${(catalogTotal / 10000).toFixed(1)}万件超` : "21万件超"}のFANZA作品をブラウザ内で高速検索。価格帯・評価・レビュー件数で絞り込めます。`}
         />
 
         <div className="mb-4 flex flex-wrap gap-2">
@@ -267,16 +259,16 @@ export default function SearchPage({
               setScope("remote");
               setPage(1);
             }}
-            disabled={!workersAvailable || catalogReady !== true}
+            disabled={catalogReady !== true}
             className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-all ${
               scope === "remote"
                 ? "border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 text-[var(--color-primary-light)]"
                 : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)]"
             } disabled:cursor-not-allowed disabled:opacity-40`}
           >
-            FANZA全体から検索
+            全作品から検索
             <span className="rounded-full bg-black/20 px-2 py-0.5 text-[10px]">
-              {catalogReady === null ? "接続確認中" : catalogReady ? "推奨" : "調整中"}
+              {catalogReady === null ? "読込中" : catalogReady ? `${catalogTotal > 0 ? `${(catalogTotal / 10000).toFixed(1)}万件` : "21万件超"}` : "利用不可"}
             </span>
           </button>
           <button
@@ -292,7 +284,7 @@ export default function SearchPage({
             }`}
           >
             高速モード
-            <span className="rounded-full bg-black/20 px-2 py-0.5 text-[10px]">1,200件超</span>
+            <span className="rounded-full bg-black/20 px-2 py-0.5 text-[10px]">{allProducts.length.toLocaleString()}件</span>
           </button>
         </div>
 

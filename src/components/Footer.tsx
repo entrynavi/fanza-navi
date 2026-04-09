@@ -15,8 +15,9 @@ import { ROUTES } from "@/lib/site";
 
 const navSections = [
   {
-    title: "探す・出会う",
+    title: "探す・決める",
     links: [
+      { href: ROUTES.search, label: "作品検索（21万件超）", icon: null },
       { href: ROUTES.discover, label: "シチュエーション検索", icon: <FaCompass size={10} /> },
       { href: `${ROUTES.discover}#night-diagnosis`, label: "今夜の1本診断", icon: null },
       { href: ROUTES.dailyPick, label: "今日のおすすめ", icon: null },
@@ -27,15 +28,15 @@ const navSections = [
     ],
   },
   {
-    title: "比べる・ランキング",
+    title: "ランキング・比較",
     links: [
       { href: ROUTES.customRanking, label: "独自ランキング", icon: <FaChartLine size={10} /> },
+      { href: ROUTES.ranking, label: "人気ランキング", icon: null },
       { href: ROUTES.communityRanking, label: "みんなの推し", icon: null },
       { href: ROUTES.actressRanking, label: "女優ランキング", icon: null },
       { href: ROUTES.makerRanking, label: "メーカー比較", icon: null },
-      { href: ROUTES.rankingBattle, label: "ランキングバトル", icon: null },
       { href: ROUTES.cospaCalc, label: "コスパ計算機", icon: null },
-      { href: ROUTES.simulator, label: "コスト比較", icon: null },
+      { href: ROUTES.reviews, label: "みんなのおすすめ作品レビュー", icon: null },
     ],
   },
   {
@@ -46,16 +47,14 @@ const navSections = [
       { href: ROUTES.salePredict, label: "セール予測", icon: null },
       { href: ROUTES.priceHistory, label: "価格履歴チャート", icon: null },
       { href: ROUTES.sale, label: "セール作品一覧", icon: null },
-      { href: ROUTES.ranking, label: "人気ランキング", icon: null },
+      { href: ROUTES.simulator, label: "コスト比較", icon: null },
     ],
   },
   {
-    title: "管理・共有・ガイド",
+    title: "その他",
     links: [
       { href: ROUTES.watchlist, label: "ウォッチリスト", icon: <FaBookmark size={10} /> },
-      { href: ROUTES.reviews, label: "みんなのおすすめ作品レビュー", icon: null },
       { href: ROUTES.snsCards, label: "SNS共有カード", icon: null },
-      { href: ROUTES.seriesGuide, label: "シリーズガイド", icon: null },
       { href: ROUTES.guide, label: "初心者ガイド", icon: <FaBookOpen size={10} /> },
       { href: ROUTES.articles, label: "記事一覧", icon: null },
       { href: ROUTES.contact, label: "お問い合わせ", icon: <FaEnvelope size={10} /> },
@@ -114,9 +113,9 @@ export default function Footer() {
               </span>
             </a>
             <p className="mt-4 max-w-xs text-sm leading-7 text-[var(--color-text-secondary)]">
-              公式FANZAにない切り口で作品を探せる<br className="hidden sm:block" />
-              無料ツール集です。シチュ検索・今夜の1本診断・<br className="hidden sm:block" />
-              セール解析で、迷わず選びやすくしています。
+              迷ったら、ここで今夜の1本を。<br className="hidden sm:block" />
+              21万件超のFANZA作品を独自切り口で<br className="hidden sm:block" />
+              検索・比較・レコメンドできる無料ツール集です。
             </p>
           </div>
 

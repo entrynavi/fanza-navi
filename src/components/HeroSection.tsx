@@ -97,12 +97,12 @@ export default function HeroSection({
             </div>
 
             <h1 className="mt-4 text-[2.2rem] font-semibold leading-[1.08] tracking-[-0.03em] text-[var(--color-text-primary)] sm:text-[2.8rem] md:text-[3.2rem] lg:text-[3.5rem]">
-              <span className="block whitespace-nowrap">公式にない探し方で、</span>
-              <span className="mt-1 block whitespace-nowrap">もっとお得に。</span>
+              <span className="block whitespace-nowrap">迷ったら、ここで</span>
+              <span className="mt-1 block whitespace-nowrap">今夜の1本を。</span>
             </h1>
 
             <p className="mt-3 text-base font-semibold text-[var(--color-accent)] md:text-lg">
-              シチュ検索・今夜の1本診断・独自ランキング、ここだけの導線。
+              21万件超のFANZA作品を独自の切り口で検索・比較・レコメンド。
             </p>
 
             <p className="mt-4 max-w-[34rem] text-[15px] leading-7 text-[var(--color-text-secondary)] md:text-[17px]">
@@ -111,14 +111,14 @@ export default function HeroSection({
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <PrimaryCta href={ROUTES.discover} size="lg">
-                シチュ検索を使う
+              <PrimaryCta href={ROUTES.search} size="lg">
+                作品を検索する
               </PrimaryCta>
-              <PrimaryCta href={ROUTES.customRanking} size="lg" variant="outline">
+              <PrimaryCta href={ROUTES.discover} size="lg" variant="outline">
+                シチュ検索・今夜の1本
+              </PrimaryCta>
+              <PrimaryCta href={ROUTES.customRanking} size="lg" variant="ghost">
                 独自ランキング
-              </PrimaryCta>
-              <PrimaryCta href={ROUTES.weeklySale} size="lg" variant="ghost">
-                週間セール
               </PrimaryCta>
             </div>
 

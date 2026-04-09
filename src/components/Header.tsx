@@ -6,29 +6,24 @@ import {
   FaBars,
   FaBookmark,
   FaBookOpen,
-  FaBolt,
-  FaCalculator,
   FaChartLine,
   FaEnvelope,
   FaSearch,
   FaTags,
   FaTimes,
-  FaCalendarAlt,
   FaTheaterMasks,
   FaUserFriends,
 } from "react-icons/fa";
 import { ROUTES } from "@/lib/site";
 
 const primaryLinks = [
-  { href: ROUTES.discover, label: "シチュ検索", icon: <FaTheaterMasks size={12} />, accent: true },
-  { href: ROUTES.customRanking, label: "独自ランキング", icon: <FaChartLine size={12} />, accent: false },
-  { href: ROUTES.sale, label: "セール", icon: <FaTags size={12} />, accent: false },
-  { href: ROUTES.ranking, label: "ランキング", icon: <FaBolt size={12} />, accent: false },
+  { href: ROUTES.search, label: "作品検索", icon: <FaSearch size={12} />, accent: true },
+  { href: ROUTES.discover, label: "探す・決める", icon: <FaTheaterMasks size={12} />, accent: false },
+  { href: ROUTES.customRanking, label: "ランキング", icon: <FaChartLine size={12} />, accent: false },
+  { href: ROUTES.sale, label: "セール・買い時", icon: <FaTags size={12} />, accent: false },
 ];
 
 const utilityLinks = [
-  { href: ROUTES.weeklySale, label: "週間セール", icon: <FaCalendarAlt size={11} /> },
-  { href: ROUTES.simulator, label: "コスト比較", icon: <FaCalculator size={11} /> },
   { href: ROUTES.watchlist, label: "ウォッチリスト", icon: <FaBookmark size={11} /> },
   { href: ROUTES.guide, label: "初心者ガイド", icon: <FaBookOpen size={11} /> },
   { href: ROUTES.contact, label: "お問い合わせ", icon: <FaEnvelope size={11} /> },
@@ -61,7 +56,7 @@ export default function Header() {
                   <span className="text-[var(--color-accent)]">FANZA</span><span className="gradient-text">トクナビ</span>
                 </p>
                 <p className="whitespace-nowrap text-[10px] font-medium text-[var(--color-text-muted)]">
-                  シチュ検索 × 今夜の1本 × 独自ランキング
+                  迷ったら、ここで今夜の1本を。
                 </p>
               </div>
             </div>

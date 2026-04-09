@@ -20,14 +20,14 @@ describe("HomePage", () => {
     expect(headings).toContain("値下げ中の作品");
     expect(headings).toContain("ジャンルから探す");
 
-    expect(screen.getByText(/公式にない探し方で/)).toBeInTheDocument();
+    expect(screen.getByText(/迷ったら、ここで/)).toBeInTheDocument();
     expect(screen.getByText(/人気女優ランキング/)).toBeInTheDocument();
     expect(screen.getAllByText(/値下げ中/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/新着/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/【FANZA限定】人気シリーズ最新作 Vol\.28/).length).toBeGreaterThan(0);
     expect(
-      screen.getByRole("link", { name: /シチュ検索を使う/ })
-    ).toHaveAttribute("href", ROUTES.discover);
+      screen.getByRole("link", { name: /作品を検索する/ })
+    ).toHaveAttribute("href", ROUTES.search);
     expect(
       container.querySelector(`a[href="${ROUTES.customRanking}"]`)
     ).not.toBeNull();
