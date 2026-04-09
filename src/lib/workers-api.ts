@@ -89,6 +89,19 @@ export interface SharedReviewDeleteResponse {
   deleted: boolean;
 }
 
+export interface ContactSubmissionInput {
+  name?: string;
+  email?: string;
+  subject: string;
+  message: string;
+}
+
+export interface ContactSubmissionResponse {
+  ok: true;
+  id: string;
+  createdAt: string;
+}
+
 export interface WorkersSearchParams {
   keyword?: string;
   genre?: string | null;
@@ -158,6 +171,13 @@ export async function deleteSharedReview(reviewId: string) {
   return fetchWorkersJson<SharedReviewDeleteResponse>("/api/reviews/delete", {
     method: "POST",
     body: JSON.stringify({ review_id: reviewId }),
+  });
+}
+
+export async function createContactSubmission(payload: ContactSubmissionInput) {
+  return fetchWorkersJson<ContactSubmissionResponse>("/api/contact", {
+    method: "POST",
+    body: JSON.stringify(payload),
   });
 }
 

@@ -621,6 +621,38 @@ async function handleReviewDelete(request: Request, env: Env, headers: Record<st
   return json({ ok: true, deleted: true }, headers);
 }
 
+// ─── Contact Form ────────────────────────────────────────────────────────────
+
+async function handleContactCreate(request: Request, env: Env, headers: Record<string, string>) {
+  const body = (await request.json()) as Record<string, unknown>;
+  const name = cleanText(body.name, 80);
+  const email = cleanText(body.email, 160).toLowerCase();
+  const subject = cleanText(body.subject, 120);
+  const message = cleanMultilineText(body.message, 4000);
+
+  if (!subject || !message) {
+    return json({ error: "subject and message are required" }, headers, 400);
+  }
+
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return json({ error: "invalid email address" }, headers, 400);
+  }
+
+  const id = crypto.randomUUID();
+  const requesterHash = await getRequesterHash(request);
+  const createdAt = new Date().toISOString();
+
+  await env.DB.prepare(
+    `INSERT INTO contact_messages (
+      id, name, email, subject, message, requester_hash, status, created_at
+    ) VALUES (?, ?, ?, ?, ?, ?, 'new', ?)`
+  )
+    .bind(id, name, email, subject, message, requesterHash, createdAt)
+    .run();
+
+  return json({ ok: true, id, createdAt }, headers);
+}
+
 // ─── Catalog Search ─────────────────────────────────────────────────────────
 
 async function handleCatalogSearch(url: URL, env: Env, headers: Record<string, string>) {
@@ -916,6 +948,9 @@ export default {
       }
       if (url.pathname === "/api/reviews/delete" && request.method === "POST") {
         return handleReviewDelete(request, env, corsHeaders);
+      }
+      if (url.pathname === "/api/contact" && request.method === "POST") {
+        return handleContactCreate(request, env, corsHeaders);
       }
       if (url.pathname === "/api/push/subscribe" && request.method === "POST") {
         return handlePushSubscribe(request, env, corsHeaders);

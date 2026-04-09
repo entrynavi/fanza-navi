@@ -1,21 +1,22 @@
 # FANZAトクナビ 運用・自動化ガイド
 
-> **最終更新:** 共有レビュー・FANZA全体検索・急上昇レーダー・ウォッチリスト安定化まで反映した最新版
+> **最終更新:** フォールバックランキング補強・全作品ガチャ拡張・非公開問い合わせフォーム・急上昇レーダー文言調整まで反映した最新版
 
 ## 目次
 1. [サイト構成](#サイト構成)
 2. [品質保証（テスト）](#品質保証テスト)
-3. [Workers デプロイ手順](#workers-デプロイ手順)
-4. [SNS運用戦略](#sns運用戦略)
-5. [自動化設定](#自動化設定)
-6. [日常運用チェックリスト](#日常運用チェックリスト)
-7. [KPI管理](#kpi管理)
-8. [コンテンツ更新スケジュール](#コンテンツ更新スケジュール)
-9. [トラブルシューティング](#トラブルシューティング)
-10. [サイトの使い方ガイド](#サイトの使い方ガイド)
-11. [これからの1週間の詳細運用フロー](#これからの1週間の詳細運用フロー)
-12. [AIへの指示テンプレート](#aiへの指示テンプレート運用自動化用)
-13. [次フェーズ: Workers本番化ロードマップ](#次フェーズ-workers本番化ロードマップ)
+3. [独自機能の整理案](#独自機能の整理案)
+4. [Workers デプロイ手順](#workers-デプロイ手順)
+5. [SNS運用戦略](#sns運用戦略)
+6. [自動化設定](#自動化設定)
+7. [日常運用チェックリスト](#日常運用チェックリスト)
+8. [KPI管理](#kpi管理)
+9. [コンテンツ更新スケジュール](#コンテンツ更新スケジュール)
+10. [トラブルシューティング](#トラブルシューティング)
+11. [サイトの使い方ガイド](#サイトの使い方ガイド)
+12. [これからの1週間の詳細運用フロー](#これからの1週間の詳細運用フロー)
+13. [AIへの指示テンプレート](#aiへの指示テンプレート運用自動化用)
+14. [次フェーズ: Workers本番化ロードマップ](#次フェーズ-workers本番化ロードマップ)
 
 ---
 
@@ -56,14 +57,14 @@
 | `/compare` | サービス比較 | 月1回 |
 | `/articles/*` | 記事群（セールカレンダー/節約術/VR/支払い方法/比較） | 適宜 |
 | `/daily-pick` | 今日のおすすめ（デイリーピック） | ビルド毎 |
-| `/gacha` | ランダム提案 | リアルタイム |
+| `/gacha` | ランダム提案。Workers接続時は FANZA 全体母数、未接続時はローカル作品プール | リアルタイム |
 | `/cospa-calc` | コスパ計算機（分/円ランキング） | ビルド毎 |
 | `/ranking-battle` | 2作品比較投票 | リアルタイム |
 | `/series-guide` | シリーズ完走ガイド | ビルド毎 |
 | `/sale-predict` | セール予測カレンダー | 週1回 |
 | `/price-history` | 価格履歴チャート | ビルド毎 |
 | `/sns-cards` | SNS共有カード自動生成 | リアルタイム |
-| `/contact` | 問い合わせ・新機能募集フォーム | 静的 |
+| `/contact` | 問い合わせ・新機能募集フォーム。Workers経由で受け付け、運営メールは非公開 | 静的 |
 | `/genre/*` | ジャンル別一覧 | ビルド毎 |
 | `/actress/*` | 女優別ページ | ビルド毎 |
 | `/maker/*` | メーカー別ページ | ビルド毎 |
@@ -80,8 +81,38 @@
    何を開けばいいか迷う再訪ユーザー向け。勢い・今夜向き・値下げ熱量を先に見せる。
 5. **ウォッチリスト + 深掘り (`/watchlist` / `/deep-dive`)**  
    保存→関連掘り→次候補の流れを作る、継続利用の中核。
-6. **ランキング / セール / 週間セール / ガイド**  
+6. **全作品ガチャ (`/gacha`)**  
+   迷い切って選べないユーザー向け。Workers接続時はFANZA全体から条件に合う候補を抽選。
+7. **ランキング / セール / 週間セール / ガイド**  
    検索流入、新規登録導線、情報収集需要を拾う定番ページ群。
+
+## 独自機能の整理案
+
+> **提案のみ。まだ画面統合は未実施。**
+
+### 推奨する見せ方
+
+| まとめ先 | 含める機能 | 狙い |
+|---|---|---|
+| **探す** | `/search` `/discover` `/gacha` `/trend-radar` | 「今どう探すか」を1カ所にまとめ、初回訪問でも迷わせない |
+| **比べる** | `/buy-timing` `/simulator` `/compare` `/ranking-battle` | 購入判断・比較判断を同じ文脈に寄せて離脱を減らす |
+| **保存して追う** | `/watchlist` `/deep-dive` `/price-history` `/personalized` | 保存→関連候補→値下げ監視の流れを1本化して再訪理由を強くする |
+| **みんなの声** | `/reviews` `/community-ranking` | レビュー投稿・投票・共感をひとつの導線にまとめる |
+| **セール攻略** | `/sale` `/weekly-sale` `/sale-predict` `/guide` | 購入の背中を押す情報を分散させず、実利導線を強める |
+
+### ページ単位の具体案
+
+1. `/discover` に **「検索 / 気分で探す / ガチャ」** の3タブを寄せ、ランダム提案を孤立させない  
+2. `/buy-timing` に **比較・月額vs単品・ランキングバトル** へのショートカットを集約し、「比較ハブ」にする  
+3. `/watchlist` から **深掘り / 値下げ履歴 / パーソナライズ** へ進める構造にし、保存後の次行動を明確にする  
+4. `/reviews` に **みんなの推しランキング** の抜粋を出し、投稿と閲覧の往復を増やす  
+5. `/sale` に **週間まとめ / 次のセール予測 / 初心者向け買い方** の導線を足し、節約系の需要を1カ所で回す  
+
+### いま残すべき独立ページ
+
+- `/guide`: 新規登録導線として役割が明確  
+- `/trend-radar`: 再訪理由が強く、SNSで切り出しやすい  
+- `/contact`: 新機能募集の受け皿として独立価値がある  
 
 ### 環境変数（Cloudflare Pages）
 
@@ -132,8 +163,9 @@ npm run build && npx vitest run && npx playwright test
 | `NEXT_PUBLIC_WORKERS_API` | Workers APIのURL | Workers使用時 |
 
 補足:
-- `DMM_API_ID` 未設定のローカル build はフォールバック作品を使うため、商品画像はプレースホルダー表示になります
-- `NEXT_PUBLIC_WORKERS_API` 未設定時、`/search` はローカル高速モードのみ、`/reviews` はブラウザ内保存モードで動作します
+- `DMM_API_ID` 未設定のローカル build はフォールバック作品を使うが、商品画像は生成カバー、遷移先は作品名ベースのFANZA検索リンクで補完されます
+- `NEXT_PUBLIC_WORKERS_API` 未設定時、`/search` はローカル高速モード、`/reviews` はブラウザ内保存、`/gacha` はローカル商品プール、`/contact` は接続待ち表示で動作します
+- `/contact` を本番運用するには `NEXT_PUBLIC_WORKERS_API` と Workers `/api/contact` の両方が必須です
 
 ---
 
@@ -151,17 +183,21 @@ npm install
 npx wrangler login
 
 # D1データベース作成
-npx wrangler d1 create fanza-navi-db
+npx wrangler d1 create fanza-otonavi
 
 # wrangler.toml の database_id を返された値に更新
 
 # テーブル作成
-npx wrangler d1 execute fanza-navi-db --file=schema.sql
+npx wrangler d1 execute fanza-otonavi --file=schema.sql
 
 # 既存DBを使っている場合も、schema.sql を再実行して
-# reviews / review_helpful_votes など新テーブルを反映
-npx wrangler d1 execute fanza-navi-db --remote --file=schema.sql
+# reviews / review_helpful_votes / contact_messages など新テーブルを反映
+npx wrangler d1 execute fanza-otonavi --remote --file=schema.sql
 ```
+
+現状メモ:
+- この作業環境では `npx wrangler whoami` が **未認証** を返しました
+- `workers/wrangler.toml` の `database_id` はまだ placeholder なので、そのままでは deploy できません
 
 ### 2. Workers環境変数
 
@@ -197,10 +233,12 @@ NEXT_PUBLIC_WORKERS_API=https://fanza-navi-worker.your-subdomain.workers.dev
 ### 5. Workers有効化で本番反映される機能
 - `/search`: `GET /api/search` を使った **FANZA全体検索**
 - `/reviews`: `GET /api/reviews` / `POST /api/reviews` / helpful vote / delete による **共有レビュー**
+- `/gacha`: `GET /api/search` を使った **FANZA全体母数での抽選**
+- `/contact`: `POST /api/contact` を使った **非公開問い合わせフォーム**
 - `/community-ranking`: 投票系のリアルタイム集計
 - `/price-history`: D1 に蓄積した価格履歴の表示
 
-Workers未接続でもサイトは動きますが、**全作品検索**と**ブラウザをまたいだレビュー共有**は本番Workers前提です。
+Workers未接続でもサイトは動きますが、**全作品検索・全作品ガチャ・ブラウザをまたいだレビュー共有・非公開問い合わせフォーム** は本番Workers前提です。
 
 ---
 

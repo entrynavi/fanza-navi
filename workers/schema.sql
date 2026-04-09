@@ -64,6 +64,20 @@ CREATE TABLE IF NOT EXISTS review_helpful_votes (
 );
 CREATE INDEX IF NOT EXISTS idx_review_helpful_review ON review_helpful_votes(review_id);
 
+-- Contact form submissions
+CREATE TABLE IF NOT EXISTS contact_messages (
+  id TEXT PRIMARY KEY,
+  name TEXT DEFAULT '',
+  email TEXT DEFAULT '',
+  subject TEXT NOT NULL,
+  message TEXT NOT NULL,
+  requester_hash TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'new',
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_contact_created ON contact_messages(created_at);
+CREATE INDEX IF NOT EXISTS idx_contact_status ON contact_messages(status);
+
 -- Sale alerts log (for bot)
 CREATE TABLE IF NOT EXISTS sale_alerts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

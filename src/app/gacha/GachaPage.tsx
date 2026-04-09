@@ -31,6 +31,23 @@ import {
 } from "@/lib/product-presenter";
 import { getRarity } from "@/lib/share-utils";
 import { getRecommendationWeight } from "@/lib/toolkit-insights";
+import { hasWorkersApi, searchWorkersCatalog } from "@/lib/workers-api";
+
+const REMOTE_GACHA_PAGE_SIZE = 36;
+
+function getRemoteSortForSource(source: ProductPoolSource) {
+  switch (source) {
+    case "new":
+      return "new" as const;
+    case "high-rated":
+      return "rating" as const;
+    case "sale":
+      return "popular" as const;
+    case "all":
+    default:
+      return "popular" as const;
+  }
+}
 
 function pickWeightedProduct(products: Product[]): Product {
   const totalWeight = products.reduce(
@@ -64,6 +81,11 @@ export default function GachaPage({
   const [spinKey, setSpinKey] = useState(0);
   const [source, setSource] = useState<ProductPoolSource>("all");
   const [query, setQuery] = useState("");
+  const [remotePreview, setRemotePreview] = useState<Product[]>([]);
+  const [remoteTotal, setRemoteTotal] = useState<number | null>(null);
+  const [remoteLoading, setRemoteLoading] = useState(false);
+  const [remoteError, setRemoteError] = useState("");
+  const remoteEnabled = hasWorkersApi();
 
   const sourceOptions = useMemo(
     () => getProductPoolOptions(allProducts, ids),
@@ -90,7 +112,7 @@ export default function GachaPage({
     }
   }, [genres, selectedGenre]);
 
-  const filteredProducts = useMemo(() => {
+  const localFilteredProducts = useMemo(() => {
     return sourceProducts.filter((p) => {
       if (selectedGenre !== "all" && p.genre !== selectedGenre) return false;
       if (getPresentedCurrentPrice(p) > maxPrice) return false;
@@ -99,20 +121,138 @@ export default function GachaPage({
     });
   }, [maxPrice, minRating, selectedGenre, sourceProducts]);
 
-  const handleGacha = useCallback(() => {
-    if (filteredProducts.length === 0 || isSpinning) return;
+  const useRemoteCatalog = remoteEnabled && source !== "favorites";
+  const filteredProducts = useMemo(
+    () => (useRemoteCatalog ? remotePreview : localFilteredProducts),
+    [localFilteredProducts, remotePreview, useRemoteCatalog]
+  );
+  const availableCount = useMemo(() => {
+    if (!useRemoteCatalog) {
+      return localFilteredProducts.length;
+    }
+
+    return remoteTotal ?? remotePreview.length;
+  }, [localFilteredProducts.length, remotePreview.length, remoteTotal, useRemoteCatalog]);
+
+  useEffect(() => {
+    if (!useRemoteCatalog) {
+      setRemotePreview([]);
+      setRemoteTotal(null);
+      setRemoteError("");
+      return;
+    }
+
+    const controller = new AbortController();
+
+    async function loadRemotePreview() {
+      setRemoteLoading(true);
+      setRemoteError("");
+
+      try {
+        const response = await searchWorkersCatalog({
+          keyword: query,
+          genre: selectedGenre === "all" ? null : selectedGenre,
+          sort: getRemoteSortForSource(source),
+          page: 1,
+          pageSize: REMOTE_GACHA_PAGE_SIZE,
+          saleOnly: source === "sale",
+          maxPrice,
+          minRating: source === "high-rated" ? Math.max(minRating, 4) : minRating,
+          signal: controller.signal,
+        });
+
+        setRemotePreview(response.items);
+        setRemoteTotal(response.total);
+      } catch (error) {
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        setRemoteError(
+          error instanceof Error
+            ? error.message
+            : "FANZA全体ガチャの候補取得に失敗しました。"
+        );
+        setRemotePreview([]);
+        setRemoteTotal(null);
+      } finally {
+        if (!controller.signal.aborted) {
+          setRemoteLoading(false);
+        }
+      }
+    }
+
+    void loadRemotePreview();
+
+    return () => controller.abort();
+  }, [maxPrice, minRating, query, selectedGenre, source, useRemoteCatalog]);
+
+  const handleGacha = useCallback(async () => {
+    if (isSpinning) return;
+    if (!useRemoteCatalog && localFilteredProducts.length === 0) return;
+    if (useRemoteCatalog && availableCount === 0) return;
 
     setIsSpinning(true);
     setResult(null);
+    setRemoteError("");
 
-    setTimeout(() => {
-      const picked = pickWeightedProduct(filteredProducts);
+    try {
+      let candidates = filteredProducts;
+
+      if (useRemoteCatalog) {
+        const totalPages =
+          remoteTotal && remoteTotal > 0
+            ? Math.max(1, Math.ceil(remoteTotal / REMOTE_GACHA_PAGE_SIZE))
+            : 1;
+        const randomPage =
+          totalPages > 1 ? Math.floor(Math.random() * Math.min(totalPages, 40)) + 1 : 1;
+        const response = await searchWorkersCatalog({
+          keyword: query,
+          genre: selectedGenre === "all" ? null : selectedGenre,
+          sort: getRemoteSortForSource(source),
+          page: randomPage,
+          pageSize: REMOTE_GACHA_PAGE_SIZE,
+          saleOnly: source === "sale",
+          maxPrice,
+          minRating: source === "high-rated" ? Math.max(minRating, 4) : minRating,
+        });
+
+        candidates = response.items;
+        setRemotePreview(response.items);
+        setRemoteTotal(response.total);
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      if (candidates.length === 0) {
+        setIsSpinning(false);
+        return;
+      }
+
+      const picked = pickWeightedProduct(candidates);
       setResult(picked);
       setHistory((prev) => [picked, ...prev].slice(0, 20));
       setSpinKey((k) => k + 1);
+    } catch (error) {
+      setRemoteError(
+        error instanceof Error ? error.message : "ガチャ候補の取得に失敗しました。"
+      );
+    } finally {
       setIsSpinning(false);
-    }, 1500);
-  }, [filteredProducts, isSpinning]);
+    }
+  }, [
+    availableCount,
+    filteredProducts,
+    isSpinning,
+    localFilteredProducts.length,
+    maxPrice,
+    minRating,
+    query,
+    remoteTotal,
+    selectedGenre,
+    source,
+    useRemoteCatalog,
+  ]);
 
   /* -- rarity for current result -- */
   const resultRarity = result ? getRarity(result.rating) : null;
@@ -148,9 +288,17 @@ export default function GachaPage({
         summary={
           source === "favorites"
             ? "ウォッチリストだけで回せるので、迷っている候補の中から今日の1本を決めやすくしています。"
-            : `候補母数は ${sourceProducts.length} 件。高評価・レビュー数・セール状況を反映した重み付き抽選です。`
+            : useRemoteCatalog
+              ? "FANZA全体を対象に、条件に合う候補を引き直しながら重み付き抽選します。作品数が多い時も、表示を重くせず広く拾える設定です。"
+              : `候補母数は ${sourceProducts.length} 件。高評価・レビュー数・セール状況を反映した重み付き抽選です。`
         }
       />
+
+      {remoteError ? (
+        <div className="mb-6 rounded-[20px] border border-[var(--color-accent)]/20 bg-[var(--color-accent)]/6 px-4 py-3 text-sm leading-7 text-[var(--color-text-secondary)]">
+          {remoteError}
+        </div>
+      ) : null}
 
       {/* フィルター */}
       <motion.section
@@ -221,7 +369,11 @@ export default function GachaPage({
           </div>
         </div>
         <p className="mt-3 text-xs text-[var(--color-text-muted)]">
-          対象作品数: {filteredProducts.length}件
+          {useRemoteCatalog
+            ? remoteLoading
+              ? "FANZA全体から候補を取得中..."
+              : `対象作品数: ${availableCount.toLocaleString()}${remoteTotal === null ? "件以上" : "件"}`
+            : `対象作品数: ${filteredProducts.length}件`}
         </p>
       </motion.section>
 
@@ -229,7 +381,7 @@ export default function GachaPage({
       <div className="mb-10 flex flex-col items-center">
         <motion.button
           onClick={handleGacha}
-          disabled={isSpinning || filteredProducts.length === 0}
+          disabled={isSpinning || availableCount === 0 || remoteLoading}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="group relative flex h-32 w-32 items-center justify-center rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] shadow-[0_0_40px_rgba(158,68,90,0.4)] transition-shadow hover:shadow-[0_0_60px_rgba(158,68,90,0.6)] disabled:opacity-50 disabled:cursor-not-allowed md:h-40 md:w-40"
@@ -249,7 +401,7 @@ export default function GachaPage({
         <p className="mt-4 text-lg font-bold text-white">
           {isSpinning
             ? "抽選中..."
-            : filteredProducts.length === 0
+            : availableCount === 0
               ? "条件に合う作品がありません"
               : "ガチャを回す！"}
         </p>

@@ -46,16 +46,18 @@ describe("Product Data Integrity", () => {
     }
   });
 
-  it("does not change product links when affiliate env changes", async () => {
+  it("wraps fallback product links when affiliate env changes", async () => {
     const defaultUrl = sampleProducts[0].affiliateUrl;
+    expect(defaultUrl).toContain("searchstr=");
 
     vi.stubEnv("DMM_AFFILIATE_ID", "product-affiliate");
     vi.resetModules();
 
     const { sampleProducts: envProducts } = await import("@/data/products");
 
-    expect(envProducts[0].affiliateUrl).toBe(defaultUrl);
-    expect(envProducts[0].affiliateUrl).not.toContain("al.dmm.co.jp");
+    expect(envProducts[0].affiliateUrl).not.toBe(defaultUrl);
+    expect(envProducts[0].affiliateUrl).toContain("al.dmm.co.jp");
+    expect(decodeURIComponent(envProducts[0].affiliateUrl)).toContain("searchstr=");
   });
 
   it("sale products have valid sale price less than regular price", () => {
