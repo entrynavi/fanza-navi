@@ -124,6 +124,10 @@ npm run db:migrate:remote
 npm run deploy:prod
 ```
 
+現在の production Worker:
+
+- `https://fanza-otonavi-api.chidori0543.workers.dev`
+
 ## 運用メモ
 
 - DMM API が取れない場合でもフォールバックデータで一覧が空になりにくく、トップランキングも生成カバー画像つきで崩れにくい構成です

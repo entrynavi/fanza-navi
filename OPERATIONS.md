@@ -242,6 +242,11 @@ NEXT_PUBLIC_WORKERS_API=https://fanza-navi-worker.your-subdomain.workers.dev
 
 Workers未接続でもサイトは動きますが、**全作品検索・全作品ガチャ・ブラウザをまたいだレビュー共有・非公開問い合わせフォーム** は本番Workers前提です。
 
+現行本番メモ:
+- Worker URL: `https://fanza-otonavi-api.chidori0543.workers.dev`
+- D1: `fanza-otonavi`（`3882d698-a33e-43d9-a159-337243bb43f2`）
+- Pages production secret `NEXT_PUBLIC_WORKERS_API` は設定済み
+
 ---
 
 ## SNS運用戦略
