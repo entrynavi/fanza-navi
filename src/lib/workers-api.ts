@@ -125,6 +125,19 @@ export interface WorkersSearchResponse {
   source: "remote";
 }
 
+export interface WorkersHealthResponse {
+  status: "ok";
+  timestamp: string;
+  catalogSearchReady?: boolean;
+}
+
+let catalogHealthCache:
+  | {
+      ready: boolean;
+      expiresAt: number;
+    }
+  | null = null;
+
 export async function fetchSharedReviews(options: {
   query?: string;
   ratingMin?: number;
@@ -218,4 +231,33 @@ export async function searchWorkersCatalog(options: WorkersSearchParams & { sign
   return fetchWorkersJson<WorkersSearchResponse>(`/api/search?${params.toString()}`, {
     signal: options.signal,
   });
+}
+
+export async function getWorkersCatalogReady(options?: { force?: boolean; signal?: AbortSignal }) {
+  if (!WORKERS_API_BASE) {
+    return false;
+  }
+
+  const now = Date.now();
+  if (!options?.force && catalogHealthCache && catalogHealthCache.expiresAt > now) {
+    return catalogHealthCache.ready;
+  }
+
+  try {
+    const response = await fetchWorkersJson<WorkersHealthResponse>("/api/health?include_catalog=1", {
+      signal: options?.signal,
+    });
+    const ready = Boolean(response.catalogSearchReady);
+    catalogHealthCache = {
+      ready,
+      expiresAt: now + (ready ? 5 * 60_000 : 60_000),
+    };
+    return ready;
+  } catch {
+    catalogHealthCache = {
+      ready: false,
+      expiresAt: now + 60_000,
+    };
+    return false;
+  }
 }

@@ -31,7 +31,7 @@ import {
 } from "@/lib/product-presenter";
 import { getRarity } from "@/lib/share-utils";
 import { getRecommendationWeight } from "@/lib/toolkit-insights";
-import { hasWorkersApi, searchWorkersCatalog } from "@/lib/workers-api";
+import { getWorkersCatalogReady, hasWorkersApi, searchWorkersCatalog } from "@/lib/workers-api";
 
 const REMOTE_GACHA_PAGE_SIZE = 36;
 
@@ -86,7 +86,9 @@ export default function GachaPage({
   const [remoteLoading, setRemoteLoading] = useState(false);
   const [remoteError, setRemoteError] = useState("");
   const [forceLocalFallback, setForceLocalFallback] = useState(false);
-  const remoteEnabled = hasWorkersApi();
+  const workersAvailable = hasWorkersApi();
+  const [catalogReady, setCatalogReady] = useState<boolean | null>(workersAvailable ? null : false);
+  const remoteEnabled = workersAvailable && catalogReady === true;
 
   const sourceOptions = useMemo(
     () => getProductPoolOptions(allProducts, ids),
@@ -112,6 +114,45 @@ export default function GachaPage({
       setSelectedGenre("all");
     }
   }, [genres, selectedGenre]);
+
+  useEffect(() => {
+    if (!workersAvailable) {
+      setCatalogReady(false);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    getWorkersCatalogReady({ signal: controller.signal })
+      .then((ready) => {
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        setCatalogReady(ready);
+        if (ready) {
+          setRemoteError("");
+        } else if (source !== "favorites") {
+          setRemoteError(
+            "FANZA全体ガチャは現在メンテナンス中のため、取得済みデータからの抽選に切り替えています。"
+          );
+        }
+      })
+      .catch(() => {
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        setCatalogReady(false);
+        if (source !== "favorites") {
+          setRemoteError(
+            "FANZA全体ガチャは現在メンテナンス中のため、取得済みデータからの抽選に切り替えています。"
+          );
+        }
+      });
+
+    return () => controller.abort();
+  }, [source, workersAvailable]);
 
   const localFilteredProducts = useMemo(() => {
     return sourceProducts.filter((p) => {
@@ -144,7 +185,11 @@ export default function GachaPage({
     if (!useRemoteCatalog) {
       setRemotePreview([]);
       setRemoteTotal(null);
-      setRemoteError("");
+      setRemoteError(
+        catalogReady === false && source !== "favorites"
+          ? "FANZA全体ガチャは現在メンテナンス中のため、取得済みデータからの抽選に切り替えています。"
+          : ""
+      );
       setForceLocalFallback(false);
       return;
     }
@@ -192,7 +237,7 @@ export default function GachaPage({
     void loadRemotePreview();
 
     return () => controller.abort();
-  }, [maxPrice, minRating, query, selectedGenre, source, useRemoteCatalog]);
+  }, [catalogReady, maxPrice, minRating, query, selectedGenre, source, useRemoteCatalog]);
 
   const handleGacha = useCallback(async () => {
     if (isSpinning) return;

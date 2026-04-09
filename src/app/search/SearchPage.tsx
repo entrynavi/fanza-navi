@@ -8,7 +8,7 @@ import ProductCard from "@/components/ProductCard";
 import SectionIntro from "@/components/SectionIntro";
 import type { GenreLandingPage } from "@/data/genres";
 import type { Product } from "@/data/products";
-import { hasWorkersApi, searchWorkersCatalog } from "@/lib/workers-api";
+import { getWorkersCatalogReady, hasWorkersApi, searchWorkersCatalog } from "@/lib/workers-api";
 
 const PAGE_SIZE = 24;
 
@@ -77,6 +77,7 @@ export default function SearchPage({
 }) {
   const workersAvailable = hasWorkersApi();
   const [scope, setScope] = useState<SearchScope>(workersAvailable ? "remote" : "local");
+  const [catalogReady, setCatalogReady] = useState<boolean | null>(workersAvailable ? null : false);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortValue>("popular");
   const [priceRange, setPriceRange] = useState(0);
@@ -143,7 +144,44 @@ export default function SearchPage({
   }, [allProducts, minRating, minReviewCount, priceRange, query, saleOnly, selectedGenre, sort]);
 
   useEffect(() => {
-    if (scope !== "remote") {
+    if (!workersAvailable) {
+      setCatalogReady(false);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    getWorkersCatalogReady({ signal: controller.signal })
+      .then((ready) => {
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        setCatalogReady(ready);
+        if (!ready) {
+          setScope("local");
+          setRemoteNotice(
+            "FANZA全体検索は現在メンテナンス中のため、取得済みデータからの高速検索に切り替えています。"
+          );
+        }
+      })
+      .catch(() => {
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        setCatalogReady(false);
+        setScope("local");
+        setRemoteNotice(
+          "FANZA全体検索は現在メンテナンス中のため、取得済みデータからの高速検索に切り替えています。"
+        );
+      });
+
+    return () => controller.abort();
+  }, [workersAvailable]);
+
+  useEffect(() => {
+    if (scope !== "remote" || catalogReady !== true) {
       setLoadingRemote(false);
       return;
     }
@@ -188,7 +226,7 @@ export default function SearchPage({
       });
 
     return () => controller.abort();
-  }, [minRating, minReviewCount, page, priceRange, query, saleOnly, scope, selectedGenre, sort]);
+  }, [catalogReady, minRating, minReviewCount, page, priceRange, query, saleOnly, scope, selectedGenre, sort]);
 
   const activeFilterCount =
     (selectedGenre ? 1 : 0) +
@@ -229,7 +267,7 @@ export default function SearchPage({
               setScope("remote");
               setPage(1);
             }}
-            disabled={!workersAvailable}
+            disabled={!workersAvailable || catalogReady !== true}
             className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-all ${
               scope === "remote"
                 ? "border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 text-[var(--color-primary-light)]"
@@ -237,7 +275,9 @@ export default function SearchPage({
             } disabled:cursor-not-allowed disabled:opacity-40`}
           >
             FANZA全体から検索
-            <span className="rounded-full bg-black/20 px-2 py-0.5 text-[10px]">推奨</span>
+            <span className="rounded-full bg-black/20 px-2 py-0.5 text-[10px]">
+              {catalogReady === null ? "接続確認中" : catalogReady ? "推奨" : "調整中"}
+            </span>
           </button>
           <button
             type="button"

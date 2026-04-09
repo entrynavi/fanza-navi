@@ -821,6 +821,24 @@ async function handleCatalogSearch(url: URL, env: Env, headers: Record<string, s
   }
 }
 
+async function getCatalogSearchReady(env: Env) {
+  if (!env.DMM_API_ID || !env.DMM_AFFILIATE_ID) {
+    return false;
+  }
+
+  try {
+    await fetchDmmBatch(env, {
+      sort: "popular",
+      hits: 1,
+      offset: 1,
+    });
+    return true;
+  } catch (error) {
+    console.error("[health] catalog readiness failed", error);
+    return false;
+  }
+}
+
 // ─── Sale Alert Bot ─────────────────────────────────────────────────────────
 
 async function postTweet(env: Env, text: string) {
@@ -1025,7 +1043,16 @@ export default {
         return handleVoteRanking(url, env, corsHeaders);
       }
       if (url.pathname === "/api/health") {
-        return json({ status: "ok", timestamp: new Date().toISOString() }, corsHeaders);
+        const includeCatalog = url.searchParams.get("include_catalog") === "1";
+        const catalogSearchReady = includeCatalog ? await getCatalogSearchReady(env) : undefined;
+        return json(
+          {
+            status: "ok",
+            timestamp: new Date().toISOString(),
+            catalogSearchReady,
+          },
+          corsHeaders
+        );
       }
 
       return new Response("Not Found", { status: 404, headers: corsHeaders });
