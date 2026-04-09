@@ -1,7 +1,7 @@
 # FANZAトクナビ
 
-迷ったら、ここで今夜の1本を。  
-21万件超のFANZA作品を独自の切り口で検索・比較・レコメンドできる無料ツール集です。
+FANZA / DMM アフィリエイト向けの静的メディアです。  
+公式カタログの代替ではなく、**シチュエーション検索・今夜の1本診断・セール解析・比較導線** を前面に出した構成にしています。
 
 ## 技術スタック
 
@@ -9,57 +9,45 @@
 - React 19
 - Tailwind CSS v4
 - Framer Motion
-- Cloudflare Workers + D1（レビュー・問い合わせ・投票用）
-- 静的カタログ（21万件・FANZA GraphQL から nightly 生成）
+- Cloudflare Workers + D1
 - Vitest + Testing Library
 - Playwright
 - Cloudflare Pages
 
-## サイト構成（3ハブ）
-
-### 探す・決める
+## 主要導線
 
 | URL | 役割 |
 | --- | --- |
-| `/search` | **作品検索**。21万件超の静的カタログからブラウザ内高速検索 |
+| `/` | ランキング、セール、独自導線をまとめたトップページ |
 | `/discover` | **シチュエーション検索**。気分から探しつつ、今夜の1本診断も使える |
-| `/daily-pick` | 今日のおすすめ |
-| `/gacha` | ランダム提案。21万件超の静的カタログから抽選 |
-| `/trend-radar` | 急上昇・今夜向き・セール勢いをまとめて見る再訪導線 |
+| `/buy-timing` | **買い時判定ツール**。買い時、予算内まとめ買い、次のセール波を確認する |
+| `/watchlist` | **ウォッチリスト**。ブラウザ保存で作品を溜めて、値下げ候補や次候補まで管理する |
 | `/personalized` | ウォッチリスト起点のパーソナライズフィード |
+| `/search` | 検索入口。Workers 接続時は FANZA 全体検索、未接続時は 1,200 件超の高速モード |
+| `/gacha` | ランダム提案。Workers 接続時は FANZA 全体母数、未接続時はローカル作品プール |
+| `/trend-radar` | 急上昇・今夜向き・セール勢いをまとめて見る再訪導線 |
 | `/deep-dive` | ウォッチリスト起点で女優・メーカー・シリーズを芋づる提案 |
-
-### ランキング・比較
-
-| URL | 役割 |
-| --- | --- |
-| `/custom-ranking` | 独自ランキング（コスパ・隠れ名作・大幅値下げ・新人注目） |
+| `/reviews` | みんなのおすすめ作品レビュー。Workers 接続時は共有レビューとして動作 |
+| `/contact` | 問い合わせ・新機能募集フォーム。Workers 経由で受け付け、運営メールは非公開 |
 | `/ranking` | 売上ランキング |
-| `/community-ranking` | 投票型ランキング |
-| `/actress-ranking` | 女優ランキング |
-| `/maker-ranking` | メーカー比較ガイド |
-| `/cospa-calc` | コスパ計算機 |
-| `/reviews` | みんなのおすすめ作品レビュー（Workers 接続時は共有） |
-
-### セール・買い時
-
-| URL | 役割 |
-| --- | --- |
-| `/weekly-sale` | 今週のセールまとめ |
-| `/buy-timing` | 買い時判定ツール |
-| `/sale-predict` | セール予測カレンダー |
-| `/price-history` | 価格履歴チャート |
+| `/custom-ranking` | 独自ランキング |
 | `/sale` | セール作品一覧 |
-| `/simulator` | 月額 vs 単品コスト比較 |
+| `/weekly-sale` | 今週のセールまとめ |
+| `/guide` | 初心者向けの登録・支払い・お得な買い方ガイド |
 
-### その他
+## 独自機能
 
-| URL | 役割 |
-| --- | --- |
-| `/watchlist` | ウォッチリスト（ブラウザ保存） |
-| `/sns-cards` | SNS共有カード生成 |
-| `/guide` | 初心者ガイド |
-| `/contact` | 問い合わせ・新機能募集（Workers 経由） |
+- `/daily-pick` 今日のおすすめ
+- `/gacha` ランダム提案（Workers 接続時は FANZA 全体母数）
+- `/trend-radar` 急上昇レーダー
+- `/cospa-calc` コスパ計算
+- `/price-history` 価格推移の確認
+- `/sale-predict` 次のセール予測
+- `/ranking-battle` 2作品比較
+- `/series-guide` シリーズ導線
+- `/sns-cards` SNS投稿用カード
+- `/community-ranking` 投票型ランキング
+- `/simulator` 月額 vs 単品比較
 
 ## ローカル起動
 
@@ -73,18 +61,10 @@ npm run dev
 ## ビルド
 
 ```bash
-# 通常ビルド（事前にカタログ生成済みの場合）
 npm run build
-
-# カタログ生成 + ビルド（本番デプロイ用）
-npm run build:full
-
-# カタログのみ生成
-npm run catalog:build
 ```
 
-静的出力は `out/` に生成され、Cloudflare Pages ではこのディレクトリを配信します。  
-カタログは `public/catalog/` に生成されます（gitignored、デプロイ時に `build:full` で生成）。
+静的出力は `out/` に生成され、Cloudflare Pages ではこのディレクトリを配信します。
 
 ## テスト
 
@@ -119,12 +99,12 @@ cp .env.example .env.local
 - `SITE_URL` 未設定の build では sitemap は空、robots は noindex 相当で出力します
 - アフィリエイトリンクは `src/lib/affiliate.ts` を通して生成します
 - `DMM_API_ID` 未設定のローカル build はフォールバック作品を使いますが、商品画像は生成カバー、CTA は作品名ベースの FANZA 検索リンクで補完されます
-- `/search` と `/gacha` は静的カタログ（21万件超）をブラウザ内で検索・抽選するため Workers リクエストを消費しません
-- `NEXT_PUBLIC_WORKERS_API` 未設定時、`/reviews` はブラウザ内保存、`/contact` は接続待ち表示で動作します
+- `NEXT_PUBLIC_WORKERS_API` 未設定時、`/search` はローカル高速モード、`/reviews` はブラウザ内保存、`/gacha` はローカル作品プール、`/contact` は接続待ち表示で動作します
+- 本番 Worker 接続時の `/search` `/gacha` は public FANZA GraphQL を使うため、full-catalog 検索/抽選の復旧自体は `DMM_API_ID` に依存しません
 
 ## Cloudflare Pages
 
-- Build command: `npm run build:full`
+- Build command: `npm run build`
 - Build output directory: `out`
 
 必要な環境変数:
