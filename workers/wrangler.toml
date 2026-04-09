@@ -8,7 +8,7 @@ crons = ["0 6 * * *"]  # Daily at 6am JST (9pm UTC previous day)
 [[d1_databases]]
 binding = "DB"
 database_name = "fanza-otonavi"
-database_id = "placeholder-replace-with-actual-id"
+database_id = "3882d698-a33e-43d9-a159-337243bb43f2"
 
 [vars]
 SITE_URL = "https://fanza-navi.pages.dev"

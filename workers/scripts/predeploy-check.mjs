@@ -1,6 +1,5 @@
-import { existsSync, readFileSync } from "node:fs";
-import { homedir } from "node:os";
-import { join } from "node:path";
+import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 
 function fail(message) {
   console.error(`[workers doctor] ${message}`);
@@ -15,10 +14,13 @@ if (!databaseId || databaseId === "placeholder-replace-with-actual-id") {
   fail("wrangler.toml の database_id が未設定です。Cloudflare D1 の実IDに差し替えてください。");
 }
 
-const hasApiToken = Boolean(process.env.CLOUDFLARE_API_TOKEN || process.env.CF_API_TOKEN);
-const hasWranglerSession = existsSync(join(homedir(), ".wrangler", "config", "default.toml"));
-
-if (!hasApiToken && !hasWranglerSession) {
+try {
+  const npxCommand = process.platform === "win32" ? "npx.cmd" : "npx";
+  execFileSync(npxCommand, ["wrangler", "whoami"], {
+    cwd: new URL("..", import.meta.url),
+    stdio: "ignore",
+  });
+} catch {
   fail("Cloudflare 認証が見つかりません。`wrangler login` か `CLOUDFLARE_API_TOKEN` を設定してください。");
 }
 
